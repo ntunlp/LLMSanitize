@@ -1,0 +1,55 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <value>
+          <list size="42">
+            <item index="0" class="java.lang.String" itemvalue="absl-py" />
+            <item index="1" class="java.lang.String" itemvalue="protobuf" />
+            <item index="2" class="java.lang.String" itemvalue="wasabi" />
+            <item index="3" class="java.lang.String" itemvalue="joblib" />
+            <item index="4" class="java.lang.String" itemvalue="nltk" />
+            <item index="5" class="java.lang.String" itemvalue="rouge-score" />
+            <item index="6" class="java.lang.String" itemvalue="wcwidth" />
+            <item index="7" class="java.lang.String" itemvalue="numpy" />
+            <item index="8" class="java.lang.String" itemvalue="spacy-legacy" />
+            <item index="9" class="java.lang.String" itemvalue="srsly" />
+            <item index="10" class="java.lang.String" itemvalue="rouge" />
+            <item index="11" class="java.lang.String" itemvalue="importlib-metadata" />
+            <item index="12" class="java.lang.String" itemvalue="Jinja2" />
+            <item index="13" class="java.lang.String" itemvalue="preshed" />
+            <item index="14" class="java.lang.String" itemvalue="FastNLP" />
+            <item index="15" class="java.lang.String" itemvalue="spacy" />
+            <item index="16" class="java.lang.String" itemvalue="sentencepiece" />
+            <item index="17" class="java.lang.String" itemvalue="zipp" />
+            <item index="18" class="java.lang.String" itemvalue="smart-open" />
+            <item index="19" class="java.lang.String" itemvalue="blis" />
+            <item index="20" class="java.lang.String" itemvalue="urllib3" />
+            <item index="21" class="java.lang.String" itemvalue="tokenizers" />
+            <item index="22" class="java.lang.String" itemvalue="pydantic" />
+            <item index="23" class="java.lang.String" itemvalue="pyrouge" />
+            <item index="24" class="java.lang.String" itemvalue="transformers" />
+            <item index="25" class="java.lang.String" itemvalue="sacremoses" />
+            <item index="26" class="java.lang.String" itemvalue="typer" />
+            <item index="27" class="java.lang.String" itemvalue="botocore" />
+            <item index="28" class="java.lang.String" itemvalue="packaging" />
+            <item index="29" class="java.lang.String" itemvalue="torch" />
+            <item index="30" class="java.lang.String" itemvalue="pathy" />
+            <item index="31" class="java.lang.String" itemvalue="catalogue" />
+            <item index="32" class="java.lang.String" itemvalue="jmespath" />
+            <item index="33" class="java.lang.String" itemvalue="prettytable" />
+            <item index="34" class="java.lang.String" itemvalue="boto3" />
+            <item index="35" class="java.lang.String" itemvalue="regex" />
+            <item index="36" class="java.lang.String" itemvalue="s3transfer" />
+            <item index="37" class="java.lang.String" itemvalue="cymem" />
+            <item index="38" class="java.lang.String" itemvalue="cytoolz" />
+            <item index="39" class="java.lang.String" itemvalue="tensorboardX" />
+            <item index="40" class="java.lang.String" itemvalue="murmurhash" />
+            <item index="41" class="java.lang.String" itemvalue="thinc" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
