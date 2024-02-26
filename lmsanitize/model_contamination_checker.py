@@ -6,7 +6,7 @@ from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
 
 from lmsanitize.configs.config import supported_methods, config
-from lmsanitize.utils.method_utils import guided_prompt_process_fn
+from lmsanitize.utils.method_utils import guided_prompt_process_fn, sharded_likelihood_main
 from lmsanitize.base_contamination_checker import BaseContaminationChecker
 
 class ModelContaminationChecker(BaseContaminationChecker):
@@ -46,4 +46,12 @@ class ModelContaminationChecker(BaseContaminationChecker):
         print("Early Stopping for debugging")
         
     def sharded_likelihood_comparison_test(self):
-        None
+        sharded_likelihood_main(self.sharded_likelihood_model,
+                                self.eval_data,
+                                context_len=self.sharded_likelihood_context_len,
+                                stride=self.sharded_likelihood_stride,
+                                num_shards=self.sharded_likelihood_num_shards,
+                                permutations_per_shard=self.sharded_likelihood_permutations_per_shard,
+                                random_seed=self.seed,
+                                max_examples=self.sharded_likelihood_max_examples,
+                                log_file_path=self.log_file_path)
