@@ -1,0 +1,13 @@
+openai:
+  creds_key_file: "openai_creds/openai_api_key.txt"
+  model_name: "gpt-3.5-turbo-0125"
+local:
+  port: 1
+  model_path: "mistralai/Mixtral-8x7B-Instruct-v0.1" 
+query:
+  max_request_time: 100
+  num_samples: 1
+  temperature: 0.0
+  sleep_time: 10
+
+  

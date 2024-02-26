@@ -5,30 +5,24 @@ from datasets import load_dataset
 from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
 
-from lmsanitize.supported_methods import supported_methods
-
+from lmsanitize.configs.config import supported_methods
+from lmsanitize.utils.method_utils import guided_prompt_process_fn
 
 class DataContaminationChecker:
-    def __init__(self,
-                 train_set="train_set",
-                 eval_set="eval_set",
-                 eval_key="test",
-                 text_key='ctx'):
-        self.train_set_name = train_set
-        self.eval_set_name = eval_set
-        self.eval_key = eval_key
-        self.text_key = text_key
+    def __init__(self, args):
+        for key, value in args.__dict__.items():
+            setattr(self, key, value)
         self.supported_methods = supported_methods
-
+        
         self.download_data()
 
     def download_data(self):
-        self.train_data = load_dataset(self.train_set_name)
+        self.train_data = load_dataset(self.train_data_name)
         self.train_data = self.train_data['train']
         self.train_data = self.train_data[self.text_key]
 
-        self.eval_data = load_dataset(self.eval_set_name)
-        self.eval_data = self.eval_data[self.eval_key]
+        self.eval_data = load_dataset(self.eval_data_name)
+        self.eval_data = self.eval_data[self.eval_set_key]
         self.eval_data = self.eval_data[self.text_key]
         message = f"There are {len(self.train_data)} train elements and {len(self.eval_data)} eval elements"
         print(message)
@@ -40,6 +34,8 @@ class DataContaminationChecker:
 
         if method == "gpt-2":
             self.contamination_gpt2()
+        elif method == "guided-prompting":
+            self.contamination_guided_prompting()
 
     def contamination_gpt2(self):
         def clean_text_gpt2(text):
@@ -75,7 +71,11 @@ class DataContaminationChecker:
             frac = 100 * found / count
             all_fracs.append(frac)
         mean_frac = np.mean(all_fracs)
-        message = f"8-grams overlap (GPT-2 style data contamination detection) between {self.train_set_name} (train) " \
-                  f"and {self.eval_set_name}/{self.eval_key}: {mean_frac:.4f}%"
+        message = f"8-grams overlap (GPT-2 style data contamination detection) between {self.train_data_name} (train) " \
+                  f"and {self.eval_data_name}/{self.eval_set_key}: {mean_frac:.4f}%"
         print(message)
 
+    def contamination_guided_prompting(self):
+        # 
+        print("Early Stopping for debugging")
+        process_fn = guided_prompt_process_fn
