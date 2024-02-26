@@ -1,8 +1,9 @@
 # GPT-J
-import openai 
+import openai
 import time
 import random
 from pathlib import Path
+
 
 def calculate_openai_cost(engine_name, usage_dict):
     pricing_json = {
@@ -19,7 +20,7 @@ def calculate_openai_cost(engine_name, usage_dict):
     if engine_name not in pricing_json.keys():
         return 0
     input_price, output_price = pricing_json[engine_name]
-    return input_price * (usage_dict['prompt_tokens']/1000.) + output_price * (usage_dict['completion_tokens']/1000.)
+    return input_price * (usage_dict['prompt_tokens'] / 1000.) + output_price * (usage_dict['completion_tokens'] / 1000.)
 
 
 def initialize_openai(config):
@@ -51,10 +52,12 @@ def query_llm_api(config, prompt):
                 model=engine['name'],
                 messages=prompt,
                 n=config.query.num_samples,
-                max_tokens=config.query.max_tokens
+                max_tokens=config.query.max_tokens,
+                logprobs=config.top_logbrobs > 0,  # boolean
+                top_logprobs=config.top_logbrobs,  # int, [0, 5]
             )
             output_strs += [
-                choice["message"]['content'] for choice in response["choices"]
+                choice["message"]['content'] for choice in response["choices"]  # TODO: The response keys should be checked.
             ]
             total_cost += calculate_openai_cost(engine['name'], response['usage'])
             break
@@ -63,9 +66,8 @@ def query_llm_api(config, prompt):
                 f"Unexpected exception in generating solution. Sleeping again: {e}"
             )
             time.sleep(config.query.sleep_time)
-    
+
     if not output_strs:
         output_strs.append('N/A')
-    
-    return output_strs, total_cost
 
+    return output_strs, total_cost
