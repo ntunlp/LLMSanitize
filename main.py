@@ -1,9 +1,11 @@
-from lmsanitize import DataContaminationChecker
+from lmsanitize import DataContaminationChecker, ModelContaminationChecker
 from lmsanitize.configs.config import supported_methods
+from lmsanitize.utils.utils import seed_everything
 import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser()
+    # General arguments
     parser.add_argument("--dataset_name", type=str, default="") # ["Rowan/hellaswag"]
     parser.add_argument("--train_data_name", type=str, default="", help="training dataset name") # ["Rowan/hellaswag"]
     parser.add_argument("--eval_data_name", type=str, default="", help="eval dataset name") # ["Rowan/hellaswag"]
@@ -13,6 +15,9 @@ def parse_args():
     parser.add_argument("--use_local_model", action='store_true')
     parser.add_argument("--num_proc", type=int, default=20, help="recommend: 20 for openai calls, 80 for local calls")
     parser.add_argument("--method_name", type=str, choices=supported_methods.keys())
+    parser.add_argument("--seed", type=int, default=20)
+    # Method specific-arguments
+    parser.add_argument("--guided_prompting_task_type", choices=["CLS", "NLI", "SUM", "XSUM"], help="For guided-prompting: set task type to either {classification, NLI, summarization, extreme-summarization}")
     args = parser.parse_args()
     # if dataset name is set, set train_set and eval_set to dataset_name
     if len(args.dataset_name) > 0:
@@ -22,7 +27,15 @@ def parse_args():
 
 def main():
     args = parse_args()
-    contamination_checker = DataContaminationChecker(args)
+    seed_everything(args.seed)
+    # assign data / model contamination checker based on method type
+    assert args.method_name in supported_methods, f"Error, {args.method_name} not in supported methods: {list(supported_methods.keys())}"
+    if supported_methods[args.method_name]['type'] == 'data':
+        ContaminationChecker = DataContaminationChecker
+    elif supported_methods[args.method_name]['type'] == 'model':
+        ContaminationChecker = ModelContaminationChecker
+    
+    contamination_checker = ContaminationChecker(args)
     contamination_checker.run_contamination(args.method_name)
 
 if __name__ == '__main__':

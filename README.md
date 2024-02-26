@@ -10,4 +10,9 @@ Relies on Python 3.9.
     2. run `sh scripts/install.sh`
 
 ## Run Contamination Check
+(pre-requisite) If the method requires local model inference, run vllm serving in a separate bash/zsh window:
+```bash
+sh scripts/vllm_hosting.sh
+```
+Then: 
 1. `sh scripts/run_contamination.sh`

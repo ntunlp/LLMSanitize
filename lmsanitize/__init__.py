@@ -1,1 +1,2 @@
 from lmsanitize.data_contamination_checker import DataContaminationChecker
+from lmsanitize.model_contamination_checker import ModelContaminationChecker

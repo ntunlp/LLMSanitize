@@ -9,10 +9,8 @@ with open(Path(__file__).parent / 'llm_config.yaml', 'r') as rf:
     config = dict_to_object(config_dict)
     print(config_dict)
 
+supported_methods = {dic['name']:dic for dic in config_dict['methods']}
+
 # Following are some constants (usually won't change)
 FAILURE_TOLERANCE = 2
 
-supported_methods = {
-    "gpt-2": "string matching",
-    "guided-prompting": "Method in TIME TRAVEL IN LLMS: TRACING DATA CONTAMINATION IN LARGE LANGUAGE MODELS"
-}

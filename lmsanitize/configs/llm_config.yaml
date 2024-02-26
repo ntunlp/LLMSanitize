@@ -9,5 +9,14 @@ query:
   num_samples: 1
   temperature: 0.0
   sleep_time: 10
+  max_tokens: 500
+methods:
+  - name: "gpt-2"
+    type: "data" # choices: ["data", "model"], whether it's a data-contamination method or model-contamination method
+    help: "string matching"
+
+  - name: "guided-prompting"
+    type: "model"
+    help: "Method in TIME TRAVEL IN LLMS: TRACING DATA CONTAMINATION IN LARGE LANGUAGE MODELS"
 
   
