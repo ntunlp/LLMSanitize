@@ -20,6 +20,9 @@ class ModelContaminationChecker(BaseContaminationChecker):
 
         if method == "guided-prompting":
             self.contamination_guided_prompting()
+            
+        if method == "sharded-likelihood":
+            self.sharded_likelihood_comparison_test()
 
     def contamination_guided_prompting(self):
         import lmsanitize.prompts.guided_prompting.general_instructions as gi_prompts
@@ -41,3 +44,6 @@ class ModelContaminationChecker(BaseContaminationChecker):
                         text_key=self.text_key, general_template=general_template, guided_template=guided_template)
 
         print("Early Stopping for debugging")
+        
+    def sharded_likelihood_comparison_test(self):
+        None
