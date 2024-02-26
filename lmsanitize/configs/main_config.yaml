@@ -1,0 +1,26 @@
+openai:
+  creds_key_file: "openai_creds/openai_api_key.txt"
+  model_name: "gpt-3.5-turbo-0125"
+local:
+  port: 1
+  model_path: "mistralai/Mixtral-8x7B-Instruct-v0.1" 
+query:
+  max_request_time: 100
+  num_samples: 1
+  temperature: 0.0
+  sleep_time: 10
+  max_tokens: 500
+methods:
+  - name: "gpt-2"
+    type: "data" # choices: ["data", "model"], whether it's a data-contamination method or model-contamination method
+    help: "string matching"
+
+  - name: "guided-prompting"
+    type: "model"
+    help: "Method in TIME TRAVEL IN LLMS: TRACING DATA CONTAMINATION IN LARGE LANGUAGE MODELS"
+
+  - name: "sharded-likelihood"
+    type: "model"
+    help: "Method in PROVING TEST SET CONTAMINATION IN BLACK BOX LANGUAGE MODELS"
+
+  
