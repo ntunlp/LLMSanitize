@@ -4,7 +4,7 @@ import yaml
 from lmsanitize.utils.utils import dict_to_object
 
 # Read yaml config for variable configs (configuration that can change frequently)
-with open(Path(__file__).parent / 'llm_config.yaml', 'r') as rf:
+with open(Path(__file__).parent / 'main_config.yaml', 'r') as rf:
     config_dict = yaml.safe_load(rf)
     config = dict_to_object(config_dict)
     print(config_dict)
