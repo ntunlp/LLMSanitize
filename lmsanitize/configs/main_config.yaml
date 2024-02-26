@@ -19,4 +19,8 @@ methods:
     type: "model"
     help: "Method in TIME TRAVEL IN LLMS: TRACING DATA CONTAMINATION IN LARGE LANGUAGE MODELS"
 
+  - name: "sharded-likelihood"
+    type: "model"
+    help: "Method in PROVING TEST SET CONTAMINATION IN BLACK BOX LANGUAGE MODELS"
+
   

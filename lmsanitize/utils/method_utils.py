@@ -7,7 +7,20 @@ from lmsanitize.utils.utils import seed_everything, fill_template
 from lmsanitize.llm import LLM
 import nltk
 from copy import copy
+
+# sharded likelihood
+import numpy as np
 import os
+from scipy.stats import binom
+from scipy.stats import t as tdist
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import GPUtil
+from multiprocessing import Process, Queue
+from tqdm import tqdm
+import math
+
+
 
 def guided_prompt_process_fn(example, idx, config, use_local_model, split_name, 
                                 dataset_name, label_key, text_key, general_template, guided_template):
@@ -32,7 +45,7 @@ def guided_prompt_process_fn(example, idx, config, use_local_model, split_name,
     
 
 ###### Code for Sharded Likelihood ######
-def load_dataset(dataset_path):
+def _load_dataset(dataset_path):
     # stringfy the dataset
     lines = []
     for i in range(len(dataset_path)):
@@ -48,7 +61,7 @@ def load_dataset(dataset_path):
     return lines
 
 
-def compute_logprob_of_token_sequence(tokens, model, context_len=2048, stride=1024, device=0):
+def _compute_logprob_of_token_sequence(tokens, model, context_len=2048, stride=1024, device=0):
     """
     Approximates logp(tokens) by sliding a window over the tokens with a stride.
     """
@@ -83,7 +96,7 @@ def compute_logprob_of_token_sequence(tokens, model, context_len=2048, stride=10
     return logp.item()
 
 
-def worker(model_name_or_path,
+def _worker(model_name_or_path,
            context_len,
            stride,
            device,
@@ -103,7 +116,7 @@ def worker(model_name_or_path,
             break
 
         # Compute logprob of tokens.
-        logprob = compute_logprob_of_token_sequence(tokens, 
+        logprob = _compute_logprob_of_token_sequence(tokens, 
                                                     m, 
                                                     context_len, 
                                                     stride,
@@ -159,7 +172,7 @@ def sharded_likelihood_main(model_name_or_path,
     #                                      main_queue,
     #                                      worker_queues[i]))
     for i in range(num_workers):
-        p = Process(target=worker, args=(model_name_or_path,
+        p = Process(target=_worker, args=(model_name_or_path,
                                          context_len,
                                          stride,
                                          i,
