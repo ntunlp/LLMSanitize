@@ -3,8 +3,8 @@ This file includes method-specific utilization functions
 """
 
 import random
-from lmsanitize.utils.utils import seed_everything, fill_template
-from lmsanitize.llm import LLM
+from llmsanitize.utils.utils import seed_everything, fill_template
+from llmsanitize.llm import LLM
 import nltk
 from copy import copy
 

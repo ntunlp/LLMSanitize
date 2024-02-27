@@ -67,7 +67,7 @@ def tag_strings(data, strings_set, string_size, n_samples, text_processing_metho
         clean_text_i = text_i
         if text_processing_method != None:
             clean_text_i = text_processing_method(text_i)
-        if len(clean_text_i) < string_size:
+        if len(clean_text_i) <= string_size:
             continue
 
         tagged = 0
