@@ -1,6 +1,6 @@
 from pathlib import Path
 import yaml
-from lmsanitize.utils.utils import dict_to_object
+from llmsanitize.utils.utils import dict_to_object
 from dataclasses import dataclass
 import torch
 

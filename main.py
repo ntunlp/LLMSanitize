@@ -1,6 +1,6 @@
-from lmsanitize import DataContaminationChecker, ModelContaminationChecker
-from lmsanitize.configs.config import supported_methods
-from lmsanitize.utils.utils import seed_everything
+from llmsanitize import DataContaminationChecker, ModelContaminationChecker
+from llmsanitize.configs.config import supported_methods
+from llmsanitize.utils.utils import seed_everything
 import argparse
 
 def parse_args():

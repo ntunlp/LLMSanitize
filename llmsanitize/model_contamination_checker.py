@@ -5,9 +5,9 @@ from datasets import load_dataset
 from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
 
-from lmsanitize.configs.config import supported_methods, config
-from lmsanitize.utils.method_utils import guided_prompt_process_fn, sharded_likelihood_main
-from lmsanitize.base_contamination_checker import BaseContaminationChecker
+from llmsanitize.configs.config import supported_methods, config
+from llmsanitize.utils.method_utils import guided_prompt_process_fn, sharded_likelihood_main
+from llmsanitize.base_contamination_checker import BaseContaminationChecker
 
 class ModelContaminationChecker(BaseContaminationChecker):
     def __init__(self, args):

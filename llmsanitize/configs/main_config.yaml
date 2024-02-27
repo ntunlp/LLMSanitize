@@ -19,6 +19,10 @@ methods:
     type: "data"
     help: "string matching (13-gram)"
 
+  - name: "gpt-4"
+    type: "data"
+    help: "string matching (50-chars)"
+
   - name: "guided-prompting"
     type: "model"
     help: "Method in TIME TRAVEL IN LLMS: TRACING DATA CONTAMINATION IN LARGE LANGUAGE MODELS"

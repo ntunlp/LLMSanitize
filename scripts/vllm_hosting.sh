@@ -1,5 +1,6 @@
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
-export RAY_memory_monitor_refresh_ms=0; export CUDA_VISIBLE_DEVICES=0,1,2,3; \
+export RAY_memory_monitor_refresh_ms=0;
+export CUDA_VISIBLE_DEVICES=0,1,2,3;
 server_type=vllm.entrypoints.openai.api_server
 
 python -m $server_type \

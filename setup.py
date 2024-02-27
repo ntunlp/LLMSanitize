@@ -1,8 +1,8 @@
 from setuptools import find_packages, setup
 
 setup(
-    name='lmsanitize',
-    packages=find_packages(include=['lmsanitize']),
+    name='llmsanitize',
+    packages=find_packages(include=['llmsanitize']),
     version='0.0.1',
     description='An open-source library for contamination detection in NLP',
     author='NTU-NLP',

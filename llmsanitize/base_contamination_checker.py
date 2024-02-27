@@ -5,7 +5,7 @@ from datasets import load_dataset
 from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
 
-from lmsanitize.configs.config import supported_methods, config
+from llmsanitize.configs.config import supported_methods, config
 
 class BaseContaminationChecker:
     """ Base class of ContaminationChecker

@@ -1,9 +1,9 @@
-from lmsanitize.utils.openai_api_utils import (
+from llmsanitize.utils.openai_api_utils import (
     initialize_openai,
     initialize_openai_local,
     query_llm_api,
 )
-# from lmsanitize.configs.config import *
+# from llmsanitize.configs.config import *
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch

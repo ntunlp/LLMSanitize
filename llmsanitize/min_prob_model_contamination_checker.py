@@ -14,10 +14,10 @@ from tqdm import tqdm
 import numpy as np
 from datasets import load_dataset
 
-from lmsanitize.configs.config import supported_methods, config
-from lmsanitize.utils.method_utils import guided_prompt_process_fn
-from lmsanitize.base_contamination_checker import BaseContaminationChecker
-from lmsanitize.llm import LLM
+from llmsanitize.configs.config import supported_methods, config
+from llmsanitize.utils.method_utils import guided_prompt_process_fn
+from llmsanitize.base_contamination_checker import BaseContaminationChecker
+from llmsanitize.llm import LLM
 
 
 def load_model(name1, name2):
