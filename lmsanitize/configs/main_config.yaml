@@ -13,7 +13,11 @@ query:
 methods:
   - name: "gpt-2"
     type: "data" # choices: ["data", "model"], whether it's a data-contamination method or model-contamination method
-    help: "string matching"
+    help: "string matching (8-gram)"
+
+  - name: "gpt-3"
+    type: "data"
+    help: "string matching (13-gram)"
 
   - name: "guided-prompting"
     type: "model"
