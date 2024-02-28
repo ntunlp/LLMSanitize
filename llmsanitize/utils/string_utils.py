@@ -3,6 +3,7 @@ from tqdm import tqdm
 from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
 
+# collect all unique n-grams of size ngram_size
 def build_ngrams(data, ngram_size, text_processing_method=None):
     set_ngrams = {}
     for i in tqdm(range(len(data))):
@@ -18,7 +19,8 @@ def build_ngrams(data, ngram_size, text_processing_method=None):
 
     return set_ngrams
 
-def tag_ngrams(data, ngrams_set, ngram_size, text_processing_method=None):
+# compute the fraction of n-grams which have been seen before
+def fraction_ngrams(data, ngrams_set, ngram_size, text_processing_method=None):
     all_fracs = []
     for i in tqdm(range(len(data))):
         text_i = data[i]
@@ -39,6 +41,30 @@ def tag_ngrams(data, ngrams_set, ngram_size, text_processing_method=None):
     
     return all_fracs
 
+# check the fraction of ngrams overlap
+def overlap_ngrams(data, ngrams_set, ngram_size, overlap_thresh, text_processing_method=None):
+    overlaps = []
+    for i in tqdm(range(len(data))):
+        text_i = data[i]
+        clean_text_i = text_i
+        if text_processing_method != None:
+            clean_text_i = text_processing_method(text_i)
+        words = word_tokenize(clean_text_i)
+        if len(words) < ngram_size:
+            continue
+        ngrams_i = ngrams(sequence=words, n=ngram_size)
+        found, count = 0, 0
+        for ngram in ngrams_i:
+            if ngram in ngrams_set.keys():
+                found += 1
+            count += 1
+        frac = 100 * found / count
+        overlap = int(frac > overlap_thresh)
+        overlaps.append(overlap)
+
+    return overlaps
+
+# collect all unique strings of size string_size
 def build_strings(data, string_size, text_processing_method=None):
     set_strings = {}
     for i in tqdm(range(len(data))):
@@ -60,7 +86,8 @@ def build_strings(data, string_size, text_processing_method=None):
 
     return set_strings
 
-def tag_strings(data, strings_set, string_size, n_samples, text_processing_method=None):
+# compute the fraction of strings which have been seen before
+def fraction_sampled_strings(data, strings_set, string_size, n_samples, text_processing_method=None):
     all_tagged = []
     for i in tqdm(range(len(data))):
         text_i = data[i]

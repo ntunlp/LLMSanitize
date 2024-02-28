@@ -19,6 +19,10 @@ methods:
     type: "data"
     help: "string matching (13-gram)"
 
+  - name: "palm"
+    type: "data"
+    help: "string matching (8-grams)"
+
   - name: "gpt-4"
     type: "data"
     help: "string matching (50-chars)"
