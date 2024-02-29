@@ -41,8 +41,8 @@ class DataContaminationChecker(BaseContaminationChecker):
             return text
 
         ## only keep the content per data example, discard labels
-        self.train_data = self.train_data[self.text_key]
-        self.eval_data = self.eval_data[self.text_key]
+        self.train_data = self.train_data["text"]
+        self.eval_data = self.eval_data["text"]
 
         ngram_size = 8
         train_ngrams = build_ngrams(self.train_data, ngram_size, clean_text_gpt2) 
@@ -64,8 +64,8 @@ class DataContaminationChecker(BaseContaminationChecker):
 
             return text
         
-        self.train_data = self.train_data[self.text_key]
-        self.eval_data = self.eval_data[self.text_key]
+        self.train_data = self.train_data["text"]
+        self.eval_data = self.eval_data["text"]
 
         ngram_size = 13
         train_ngrams = build_ngrams(self.train_data, ngram_size, clean_text_gpt3)
@@ -81,8 +81,8 @@ class DataContaminationChecker(BaseContaminationChecker):
     # Following the logic in PaLM's paper: https://arxiv.org/pdf/2204.02311.pdf section 8
     def contamination_palm(self):
         ## only keep the content per data example, discard labels
-        self.train_data = self.train_data[self.text_key]
-        self.eval_data = self.eval_data[self.text_key]
+        self.train_data = self.train_data["text"]
+        self.eval_data = self.eval_data["text"]
 
         ngram_size = 8
         train_ngrams = build_ngrams(self.train_data, ngram_size, None)
@@ -105,8 +105,8 @@ class DataContaminationChecker(BaseContaminationChecker):
             return text
 
         ## only keep the content per data example, discard labels
-        self.train_data = self.train_data[self.text_key]
-        self.eval_data = self.eval_data[self.text_key]
+        self.train_data = self.train_data["text"]
+        self.eval_data = self.eval_data["text"]
 
         string_size = 50
         train_strings = build_strings(self.train_data, string_size, clean_text_gpt4)
