@@ -33,31 +33,37 @@ class BaseContaminationChecker:
 
     def combine_text_keys(self):
         for key in self.text_keys:
-            assert key in self.train_data, "Error - please provide a text key that is in this dataset"
-        self.combine_text_keys_subset_(self.train_data)
-        self.combine_text_keys_subset_(self.eval_data)
+            assert key in self.train_data.features, "Error - please provide a text key that is in this dataset"
+        self.train_data = self.combine_text_keys_subset_(self.train_data)
+        self.eval_data = self.combine_text_keys_subset_(self.eval_data)
 
     def combine_text_keys_subset_(self, subset):
         texts = []
+        vals = {}
+        for key in self.text_keys:
+            vals[key] = subset[key]
         for i in tqdm(range(len(subset))):
             text = ""
             for j in range(len(self.text_keys)):
                 key = self.text_keys[j]
                 if j == 0:
-                    text += subset[i][key]
+                    text += vals[key][i]
                 else:
-                    text += " | " + subset[i][key]
+                    text += " | " + vals[key][i]
             texts.append(text)
-        subset["text"] = texts
+        subset = subset.add_column("text", texts)
+        
+        return subset
 
     def normalize_text_key(self):
-        self.normalize_text_key_(self.train_data)
-        self.normalize_text_key_(self.eval_data)
+        self.train_data = self.normalize_text_key_(self.train_data)
+        self.eval_data = self.normalize_text_key_(self.eval_data)
 
     def normalize_text_key_(self, subset):
-        assert self.text_key in subset, "Error - please provide a text key that is in this dataset"
-        subset["text"] = subset[self.text_key]
-        del subset[self.text_key]
+        assert self.text_key in subset.features, "Error - please provide a text key that is in this dataset"
+        subset = subset.add_column("text", subset[self.text_key])
+        
+        return subset
 
     def run_contamination(self, method):
         print("run_contamination not implemented")
