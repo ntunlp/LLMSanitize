@@ -14,11 +14,22 @@ def parse_args():
     parser.add_argument("--text_key", type=str, default="ctx", help="the key to text content of each data instance.")
     parser.add_argument("--text_keys", type=list, default=[], help="the keys of text contents to be combined of each data instance.")
     parser.add_argument("--label_key", type=str, default="label", help="the key to label content of each data instance.")
-    parser.add_argument("--use_local_model", action='store_true', default=False)
+    # parser.add_argument("--use_local_model", action='store_true', default=False)
+    parser.add_argument("--local_model_path", default=None, help="local model path for non-service based inference.")
+    parser.add_argument("--local_tokenizer_path", default=None, help="local tokenizer path for non-service based inference.")
     parser.add_argument("--num_proc", type=int, default=20, help="recommend: 20 for openai calls, 80 for local calls")
     parser.add_argument("--method_name", type=str, choices=supported_methods.keys())
     parser.add_argument("--seed", type=int, default=20)
     parser.add_argument("--log_file_path", type=str, default="log.txt", help="log file path")
+    # OpenAI API or vLLM inference arguments
+    parser.add_argument("--openai_creds_key_file", type=str, default=None, help="OpenAI API key file path.")
+    parser.add_argument("--local_port", type=str, default=None, help="Local model port for service based inference.")
+    parser.add_argument("--model_name", type=str, default=None, help="model name for service based inference.")
+    parser.add_argument("--num_samples", type=int, default=1, help="number of samples to generate")
+    parser.add_argument("--max_tokens", type=int, default=128, help="max tokens for each sample")
+    parser.add_argument("--top_logprobs", type=int, default=0, help="top logprobs for each sample")
+    parser.add_argument("--max_request_time", type=int, default=0, help="max request time for each sample")
+    parser.add_argument("--sleep_time", type=int, default=0, help="sleep time for each sample")
     # Method specific-arguments
     parser.add_argument("--guided_prompting_task_type", choices=["CLS", "NLI", "SUM", "XSUM"],
                         help="For guided-prompting: set task type to either {classification, NLI, summarization, extreme-summarization}")
@@ -54,9 +65,11 @@ def main():
     contamination_checker = ContaminationChecker(args)
     contamination_checker.run_contamination(args.method_name)
 
+
 def check_args(args):
     assert args.method_name in supported_methods, f"Error, {args.method_name} not in supported methods: {list(supported_methods.keys())}"
     assert args.text_key != "" or args.text_key != [], f"Error, specify some text key"
+
 
 if __name__ == '__main__':
     main()
