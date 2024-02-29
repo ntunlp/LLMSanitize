@@ -35,4 +35,7 @@ methods:
     type: "model"
     help: "Method in PROVING TEST SET CONTAMINATION IN BLACK BOX LANGUAGE MODELS"
 
+  - name: "min-prob"
+    type: "model"
+    help: "Detecting Pretraining Data from Large Language Models."
   
