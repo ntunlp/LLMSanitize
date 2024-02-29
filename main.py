@@ -12,6 +12,7 @@ def parse_args():
     parser.add_argument("--eval_data_name", type=str, default="", help="eval dataset name")  # ["Rowan/hellaswag"]
     parser.add_argument("--eval_set_key", type=str, default="test", help="eval set key")
     parser.add_argument("--text_key", type=str, default="ctx", help="the key to text content of each data instance.")
+    parser.add_argument("--text_keys", type=list, default=[], help="the keys of text contents to be combined of each data instance.")
     parser.add_argument("--label_key", type=str, default="label", help="the key to label content of each data instance.")
     parser.add_argument("--use_local_model", action='store_true', default=False)
     parser.add_argument("--num_proc", type=int, default=20, help="recommend: 20 for openai calls, 80 for local calls")
@@ -40,6 +41,9 @@ def parse_args():
 def main():
     args = parse_args()
     seed_everything(args.seed)
+
+    check_args(args)
+
     # assign data / model contamination checker based on method type
     assert args.method_name in supported_methods, f"Error, {args.method_name} not in supported methods: {list(supported_methods.keys())}"
     if supported_methods[args.method_name]['type'] == 'data':
@@ -50,6 +54,9 @@ def main():
     contamination_checker = ContaminationChecker(args)
     contamination_checker.run_contamination(args.method_name)
 
+def check_args(args):
+    assert args.method_name in supported_methods, f"Error, {args.method_name} not in supported methods: {list(supported_methods.keys())}"
+    assert args.text_key != "" or args.text_key != [], f"Error, specify some text key"
 
 if __name__ == '__main__':
     main()
