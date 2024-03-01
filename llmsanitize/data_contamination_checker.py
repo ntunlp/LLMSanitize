@@ -145,7 +145,9 @@ class DataContaminationChecker(BaseContaminationChecker):
         thresh = 0.8
         contaminated = (np.max(cos, axis=1) >= thresh).astype(int)
         frac = 100 * np.mean(contaminated)
-        message = f"Sentence-Transformers embeddings matching (threshold: {thresh}) ratio (Platypus-style data contamination) "\
-                f"between {self.train_data_name} and {self.eval_data_name}/{self.eval_set_key}: {frac:.4f}%"
+        n_contaminated = np.sum(contaminated)
+        message = f"Data contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name}"
+        message += f"\nMethod: Sentence-Transformers embeddings cosine above {thresh} (Platypus style)"
+        message += f"\n# Contaminated points: {n_contaminated}/{self.eval_data.shape[0]} or {frac:.4f}%"
         print(message)
 
