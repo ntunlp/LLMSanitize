@@ -5,16 +5,19 @@ This file includes common utilization functions
 import re
 import random
 import os
+import torch
 import numpy as np
 from copy import copy
 
 
-def clean_train_text(text):
-    text = text.lower()
-    text = re.sub(r'\W+', '', text)  # keep alphanumeric characters
-    text = re.sub(' +', ' ', text)  # only single spaces
-    text = text.strip()
-
+def seed_everything(seed):
+    random.seed(seed)
+    os.environ['PYTHONASSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = True
 
 def dict_to_object(dict_):
     class Struct(object):
@@ -29,13 +32,6 @@ def dict_to_object(dict_):
                 return Struct(value) if isinstance(value, dict) else value
 
     return Struct(dict_)
-
-
-def seed_everything(seed):
-    random.seed(seed)
-    os.environ['PYTHONASSEED'] = str(seed)
-    np.random.seed(seed)
-
 
 def fill_template(template, vars_map):
     ''' vars_map: {"var_name_in_template": actual_var}

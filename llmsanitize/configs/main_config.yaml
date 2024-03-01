@@ -11,6 +11,7 @@ query:
   sleep_time: 10
   max_tokens: 500
 methods:
+  ### Data contamination methods
   - name: "gpt-2"
     type: "data" # choices: ["data", "model"], whether it's a data-contamination method or model-contamination method
     help: "Method in GPT-2 paper -> string matching (8-gram)"
@@ -27,6 +28,11 @@ methods:
     type: "data"
     help: "Method in GPT-4 technical report -> string matching (50-chars)"
 
+  - name: "platypus"
+    type: "data"
+    help: "Method in Platypus paper -> cosine similarity between Sentence Transformers embeddings"
+
+  ### Model contamination methods
   - name: "guided-prompting"
     type: "model"
     help: "Method in TIME TRAVEL IN LLMS: TRACING DATA CONTAMINATION IN LARGE LANGUAGE MODELS"

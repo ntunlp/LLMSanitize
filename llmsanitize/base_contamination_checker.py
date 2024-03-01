@@ -1,3 +1,7 @@
+"""
+Parent contamination detection class
+"""
+
 import re
 import numpy as np
 from tqdm import tqdm

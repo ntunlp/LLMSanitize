@@ -1,3 +1,7 @@
+"""
+Contamination detection class for data contamination use cases: func(data1, data2)
+"""
+
 import re
 import string
 import numpy as np
@@ -28,6 +32,8 @@ class DataContaminationChecker(BaseContaminationChecker):
             self.contamination_palm()
         elif method == "gpt-4":
             self.contamination_gpt4()
+        elif method =="platypus":
+            self.contamination_platypus()
 
     # Following the logic in GPT-2's paper: https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf section 4
     def contamination_gpt2(self):
@@ -119,3 +125,24 @@ class DataContaminationChecker(BaseContaminationChecker):
         message = f"50-chars string matching ratio (GPT-4 style data contamination detection) between {self.train_data_name} (train) " \
                   f"and {self.eval_data_name}/{self.eval_set_key}: {mean_frac:.4f}%"
         print(message)
+
+    # Following the logic in Platypus paper: https://arxiv.org/pdf/2308.07317.pdf section 2.2
+    def contamination_platypus(self):
+        from sentence_transformers import SentenceTransformer
+
+        model = SentenceTransformer("all-MiniLM-L6-v2")
+
+        ## only keep the content per data example, discard labels
+        self.train_data = self.train_data["text"]
+        self.eval_data = self.eval_data["text"]
+
+        train_embeddings = model.encode(self.train_data)
+        eval_embeddings = model.encode(self.eval_data)
+        print(type(train_embeddings))
+        print(train_embeddings.shape, eval_embeddings.shape)
+
+
+
+
+
+

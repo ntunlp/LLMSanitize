@@ -1,3 +1,7 @@
+"""
+Contamination detection class for model contamination use cases: func(llm, data)
+"""
+
 import re
 import numpy as np
 from tqdm import tqdm
@@ -30,8 +34,8 @@ class ModelContaminationChecker(BaseContaminationChecker):
             self.min_prob_comparison()
 
     def contamination_guided_prompting(self):
-        import lmsanitize.prompts.guided_prompting.general_instructions as gi_prompts
-        import lmsanitize.prompts.guided_prompting.guided_instructions as gui_prompts
+        import llmsanitize.prompts.guided_prompting.general_instructions as gi_prompts
+        import llmsanitize.prompts.guided_prompting.guided_instructions as gui_prompts
         # method-specific dataset processing:
         ## only examine eval data here
         process_fn = guided_prompt_process_fn
