@@ -1,16 +1,16 @@
 ### Data contamination use cases
 
 # test gpt-2 string matching
-#python main.py --dataset_name Rowan/hellaswag --method gpt-2
+python main.py --dataset_name Rowan/hellaswag --method gpt-2
 
 # test gpt-3 string matching
-#python main.py --dataset_name Rowan/hellaswag --method gpt-3
+python main.py --dataset_name Rowan/hellaswag --method gpt-3
 
 # test palm string matching
-#python main.py --dataset_name Rowan/hellaswag --method palm
+python main.py --dataset_name Rowan/hellaswag --method palm
 
 # test gpt-4 string matching
-#python main.py --dataset_name Rowan/hellaswag --method gpt-4
+python main.py --dataset_name Rowan/hellaswag --method gpt-4
 
 # test platypus emebddings similarity
 python main.py --dataset_name Rowan/hellaswag --method platypus
