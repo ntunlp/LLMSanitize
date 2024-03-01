@@ -9,11 +9,13 @@ from tqdm import tqdm
 from datasets import load_dataset
 from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
+from sklearn.metrics.pairwise import cosine_similarity
 
 from llmsanitize.configs.config import supported_methods, config
 from llmsanitize.utils.method_utils import guided_prompt_process_fn
 from llmsanitize.base_contamination_checker import BaseContaminationChecker
 from llmsanitize.utils.string_utils import *
+
 
 class DataContaminationChecker(BaseContaminationChecker):
     def __init__(self, args):
@@ -130,19 +132,20 @@ class DataContaminationChecker(BaseContaminationChecker):
     def contamination_platypus(self):
         from sentence_transformers import SentenceTransformer
 
-        model = SentenceTransformer("all-MiniLM-L6-v2")
-
         ## only keep the content per data example, discard labels
         self.train_data = self.train_data["text"]
         self.eval_data = self.eval_data["text"]
 
+        model_name = "all-MiniLM-L6-v2"
+        model = SentenceTransformer(model_name)
         train_embeddings = model.encode(self.train_data)
         eval_embeddings = model.encode(self.eval_data)
-        print(type(train_embeddings))
-        print(train_embeddings.shape, eval_embeddings.shape)
+        cos = cosine_similarity(eval_embeddings, train_embeddings)
 
-
-
-
-
+        thresh = 0.8
+        contaminated = (np.max(cos, axis=1) >= thresh).astype(int)
+        frac = 100 * np.mean(contaminated)
+        message = f"Sentence-Transformers embeddings matching (threshold: {thresh}) ratio (Platypus-style data contamination) "\
+                f"between {self.train_data_name} and {self.eval_data_name}/{self.eval_set_key}: {frac:.4f}%"
+        print(message)
 
