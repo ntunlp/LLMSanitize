@@ -57,13 +57,16 @@ class DataContaminationChecker(BaseContaminationChecker):
         message = f"There are {len(train_ngrams.keys())} {ngram_size}-grams in the training set"
         print(message)
 
-        fractions = fraction_ngrams(self.eval_data, train_ngrams, ngram_size, clean_text_gpt2)
-        contaminated = np.array([int(x > 0) for x in fractions])
+        ngram_overlaps = overlap_ngrams(self.eval_data, train_ngrams, ngram_size, clean_text_gpt2)
+        contaminated = np.array([int(x[0] > 0) for x in ngram_overlaps])
         frac = 100 * np.mean(contaminated)
         n_contaminated = np.sum(contaminated)
+        overlaps = np.array([100 * x[0]/x[1] for x in ngram_overlaps])
+        mean_overlap = np.mean(overlaps)
         message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"
         message += f"\nMethod: matching of {ngram_size}-grams (GPT-2 style data contamination)"
         message += f"\n# Contaminated points: {n_contaminated}/{len(self.eval_data)} or {frac:.4f}%"
+        message += f"\nMean {ngram_size}-grams overlap: {mean_overlap:.4f}%"
         print(message)
 
     # Following the logic in GPT-3's paper: https://arxiv.org/pdf/2005.14165.pdf section C
@@ -83,13 +86,26 @@ class DataContaminationChecker(BaseContaminationChecker):
         message = f"There are {len(train_ngrams.keys())} {ngram_size}-grams in the training set"
         print(message)
 
-        fractions = fraction_ngrams(self.eval_data, train_ngrams, ngram_size, clean_text_gpt3)
-        contaminated = np.array([int(x > 0) for x in fractions])
+        max_count = 10
+        n_removed = 0
+        for k in train_ngrams.keys():
+            if train_ngrams[k] >= max_count:
+                del train_ngrams[k]
+                n_removed += 1
+        message = f"Removed {n_removed} {ngram_size}-grams being too frequent in the training set"
+        print(message)
+
+        n_collisions = 1
+        ngram_overlaps = overlap_ngrams(self.eval_data, train_ngrams, ngram_size, clean_text_gpt3)
+        contaminated = np.array([int(x[0] >= n_collisions) for x in ngram_overlaps])
         frac = 100 * np.mean(contaminated)
         n_contaminated = np.sum(contaminated)
+        overlaps = np.array([100 * x[0] / x[1] for x in ngram_overlaps])
+        mean_overlap = np.mean(overlaps)
         message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"
         message += f"\nMethod: matching of {ngram_size}-grams (GPT-3 style data contamination)"
         message += f"\n# Contaminated points: {n_contaminated}/{len(self.eval_data)} or {frac:.4f}%"
+        message += f"\nMean {ngram_size}-grams overlap: {mean_overlap:.4f}%"
         print(message)
 
     # Following the logic in PaLM's paper: https://arxiv.org/pdf/2204.02311.pdf section 8
@@ -104,7 +120,9 @@ class DataContaminationChecker(BaseContaminationChecker):
         print(message)
 
         overlap_thresh = 70
-        contaminated = overlap_ngrams(self.eval_data, train_ngrams, ngram_size, overlap_thresh, None)
+        ngram_overlaps = overlap_ngrams(self.eval_data, train_ngrams, ngram_size, None)
+        overlaps = np.array([100 * x[0] / x[1] for x in ngram_overlaps])
+        contaminated = np.array([int(x >= overlap_thresh) for x in overlaps])
         frac = 100 * np.mean(contaminated)
         n_contaminated = np.sum(contaminated)
         message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"
@@ -130,7 +148,7 @@ class DataContaminationChecker(BaseContaminationChecker):
         print(message)
 
         n_samples = 3
-        contaminated = fraction_sampled_strings(self.eval_data, train_strings, string_size, n_samples, clean_text_gpt4)
+        contaminated = overlap_strings_sample(self.eval_data, train_strings, string_size, n_samples, clean_text_gpt4)
         frac = 100 * np.mean(contaminated)
         n_contaminated = np.sum(contaminated)
         message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"

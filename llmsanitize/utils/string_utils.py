@@ -19,30 +19,8 @@ def build_ngrams(data, ngram_size, text_processing_method=None):
 
     return set_ngrams
 
-# compute the fraction of n-grams which have been seen before
-def fraction_ngrams(data, ngrams_set, ngram_size, text_processing_method=None):
-    all_fracs = []
-    for i in tqdm(range(len(data))):
-        text_i = data[i]
-        clean_text_i = text_i
-        if text_processing_method != None:
-            clean_text_i = text_processing_method(text_i)
-        words = word_tokenize(clean_text_i)
-        if len(words) < ngram_size:
-            continue
-        ngrams_i = ngrams(sequence=words, n=ngram_size)
-        found, count = 0, 0
-        for ngram in ngrams_i:
-            if ngram in ngrams_set.keys():
-                found += 1
-            count += 1
-        frac = 100 * found / count
-        all_fracs.append(frac)
-    
-    return all_fracs
-
-# check the fraction of ngrams overlap
-def overlap_ngrams(data, ngrams_set, ngram_size, overlap_thresh, text_processing_method=None):
+# find ngrams in eval dataset which have been seen before
+def overlap_ngrams(data, ngrams_set, ngram_size, text_processing_method=None):
     overlaps = []
     for i in tqdm(range(len(data))):
         text_i = data[i]
@@ -58,8 +36,7 @@ def overlap_ngrams(data, ngrams_set, ngram_size, overlap_thresh, text_processing
             if ngram in ngrams_set.keys():
                 found += 1
             count += 1
-        frac = 100 * found / count
-        overlap = int(frac > overlap_thresh)
+        overlap = (found, count)
         overlaps.append(overlap)
 
     return overlaps
@@ -87,7 +64,7 @@ def build_strings(data, string_size, text_processing_method=None):
     return set_strings
 
 # compute the fraction of strings which have been seen before
-def fraction_sampled_strings(data, strings_set, string_size, n_samples, text_processing_method=None):
+def overlap_strings_sample(data, strings_set, string_size, n_samples, text_processing_method=None):
     all_tagged = []
     for i in tqdm(range(len(data))):
         text_i = data[i]
