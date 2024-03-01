@@ -65,7 +65,7 @@ class DataContaminationChecker(BaseContaminationChecker):
         mean_overlap = np.mean(overlaps)
         message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"
         message += f"\nMethod: matching of {ngram_size}-grams (GPT-2 style data contamination)"
-        message += f"\n# Contaminated points: {n_contaminated}/{len(self.eval_data)} or {frac:.4f}%"
+        message += f"\n# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%"
         message += f"\nMean {ngram_size}-grams overlap: {mean_overlap:.4f}%"
         print(message)
 
@@ -104,7 +104,7 @@ class DataContaminationChecker(BaseContaminationChecker):
         mean_overlap = np.mean(overlaps)
         message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"
         message += f"\nMethod: matching of {ngram_size}-grams (GPT-3 style data contamination)"
-        message += f"\n# Contaminated points: {n_contaminated}/{len(self.eval_data)} or {frac:.4f}%"
+        message += f"\n# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%"
         message += f"\nMean {ngram_size}-grams overlap: {mean_overlap:.4f}%"
         print(message)
 
@@ -127,7 +127,7 @@ class DataContaminationChecker(BaseContaminationChecker):
         n_contaminated = np.sum(contaminated)
         message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"
         message += f"\nMethod: ratio of contaminated {ngram_size}-grams is above {overlap_thresh}% (PaLM style data contamination)"
-        message += f"\n# Contaminated points: {n_contaminated}/{len(self.eval_data)} or {frac:.4f}%"
+        message += f"\n# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%"
         print(message)
 
     # Following the logic in GPT-4's report: https://arxiv.org/pdf/2303.08774.pdf appendix C
@@ -153,7 +153,7 @@ class DataContaminationChecker(BaseContaminationChecker):
         n_contaminated = np.sum(contaminated)
         message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"
         message += f"\nMethod: sampling {n_samples} {string_size}-chars substring (GPT-4 style data contamination)"
-        message += f"\n# Contaminated points: {n_contaminated}/{len(self.eval_data)} or {frac:.4f}%"
+        message += f"\n# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%"
         print(message)
 
     # Following the logic in Platypus paper: https://arxiv.org/pdf/2308.07317.pdf section 2.2
@@ -176,6 +176,6 @@ class DataContaminationChecker(BaseContaminationChecker):
         n_contaminated = np.sum(contaminated)
         message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"
         message += f"\nMethod: Sentence-Transformers embeddings cosine above {thresh} (Platypus style)"
-        message += f"\n# Contaminated points: {n_contaminated}/{len(self.eval_data)} or {frac:.4f}%"
+        message += f"\n# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%"
         print(message)
 
