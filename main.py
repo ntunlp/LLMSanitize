@@ -23,14 +23,18 @@ def parse_args():
     parser.add_argument("--log_file_path", type=str, default="log.txt", help="log file path")
     # OpenAI API or vLLM inference arguments
     parser.add_argument("--openai_creds_key_file", type=str, default=None, help="OpenAI API key file path.")
+    parser.add_argument("--openai_creds_key_file_2", type=str, default=None, help="OpenAI API key file path.")
     parser.add_argument("--local_port", type=str, default=None, help="Local model port for service based inference.")
+    parser.add_argument("--local_port_2", type=str, default=None, help="Local model port for service based inference.")  # TODO: If there is better way to initialize two models.
     parser.add_argument("--model_name", type=str, default=None, help="model name for service based inference.")
+    parser.add_argument("--model_name_2", type=str, default=None, help="model name for service based inference.")
     parser.add_argument("--num_samples", type=int, default=1, help="number of samples to generate")
     parser.add_argument("--max_tokens", type=int, default=128, help="max tokens for each sample")
     parser.add_argument("--top_logprobs", type=int, default=0, help="top logprobs for each sample")
     parser.add_argument("--max_request_time", type=int, default=0, help="max request time for each sample")
     parser.add_argument("--sleep_time", type=int, default=0, help="sleep time for each sample")
     # Method specific-arguments
+
     parser.add_argument("--guided_prompting_task_type", choices=["CLS", "NLI", "SUM", "XSUM"],
                         help="For guided-prompting: set task type to either {classification, NLI, summarization, extreme-summarization}")
 

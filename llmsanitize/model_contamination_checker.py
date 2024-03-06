@@ -18,6 +18,7 @@ from llmsanitize.min_prob_model_contamination_checker import evaluate_data
 class ModelContaminationChecker(BaseContaminationChecker):
     def __init__(self, args):
         super(ModelContaminationChecker, self).__init__(args)
+        self.args = args
 
     def run_contamination(self, method):
         if not (method in self.supported_methods.keys()):
@@ -66,4 +67,4 @@ class ModelContaminationChecker(BaseContaminationChecker):
                                 log_file_path=self.log_file_path)
 
     def min_prob_comparison(self):
-        evaluate_data(self.eval_data, self.use_local_model, self.seed, self.log_file_path)
+        evaluate_data(self, self.eval_data)

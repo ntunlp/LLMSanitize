@@ -1,7 +1,6 @@
 # TODO: Add the inherited copyright here.
 # Most codes are copied from https://github.com/swj0419/detect-pretrain-code/blob/main/src/run.py
-
-
+import argparse
 import copy
 import logging
 
@@ -13,6 +12,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from tqdm import tqdm
 import numpy as np
 from datasets import load_dataset
+from typing import Union
 
 from llmsanitize.configs.config import supported_methods, config
 from llmsanitize.utils.method_utils import guided_prompt_process_fn
@@ -127,26 +127,23 @@ def inference(llm1: LLM, llm2: LLM, text, ex):
         topk_prob = np.sort(all_prob)[:k_length]
         pred[f"Min_{ratio * 100}% Prob"] = -np.mean(topk_prob).item()
 
-    ex["pred"] = pred
-    return ex
+    return pred
 
 
-def evaluate_data(test_data, model1, model2, tokenizer1, tokenizer2, col_name, modelname1, modelname2):
-    # TODO: Should make the model initialization procedure more clear.
-    model1_config = copy.deepcopy(config)
-    model1_config.local_model_path = modelname1
-    llm1 = LLM(model1_config, use_local_model=True)
+def evaluate_data(args, test_data):
+    llm1 = LLM.from_args(args=args)
 
-    model2_config = copy.deepcopy(config)
-    model2_config.local_model_path = modelname2
-    llm2 = LLM(model2_config, use_local_model=True)
+    tmp_args = copy.deepcopy(args)
+    tmp_args.model_name = args.model_name_2
+    tmp_args.openai_creds_key_file = args.openai_creds_key_file_2
+    tmp_args.local_port = args.local_port_2
+    llm2 = LLM.from_args(args=tmp_args)
 
     print(f"all data size: {len(test_data)}")
     all_output = []
     test_data = test_data
-    for ex in tqdm(test_data):
-        text = ex[col_name]
-        new_ex = inference(llm1, llm2, text, ex)
+    for text in tqdm(test_data):
+        new_ex = inference(llm1, llm2, text)
         all_output.append(new_ex)
     return all_output
 
