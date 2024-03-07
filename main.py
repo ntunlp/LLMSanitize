@@ -14,7 +14,6 @@ def parse_args():
     parser.add_argument("--text_key", type=str, default="ctx", help="the key to text content of each data instance.")
     parser.add_argument("--text_keys", type=str, default="", help="the keys of text contents to be combined of each data instance - pass them as key_1+key_2.")
     parser.add_argument("--label_key", type=str, default="label", help="the key to label content of each data instance.")
-    parser.add_argument("--use_local_model", action='store_true', default=False)
     parser.add_argument("--local_model_path", default=None, help="local model path for non-service based inference.")
     parser.add_argument("--local_tokenizer_path", default=None, help="local tokenizer path for non-service based inference.")
     parser.add_argument("--num_proc", type=int, default=20, help="recommend: 20 for openai calls, 80 for local calls")
@@ -28,8 +27,8 @@ def parse_args():
     parser.add_argument("--num_samples", type=int, default=1, help="number of samples to generate")
     parser.add_argument("--max_tokens", type=int, default=128, help="max tokens for each sample")
     parser.add_argument("--top_logprobs", type=int, default=0, help="top logprobs for each sample")
-    parser.add_argument("--max_request_time", type=int, default=0, help="max request time for each sample")
-    parser.add_argument("--sleep_time", type=int, default=0, help="sleep time for each sample")
+    parser.add_argument("--max_request_time", type=int, default=180, help="max request time for each sample")
+    parser.add_argument("--sleep_time", type=int, default=1, help="sleep time for each sample")
     # Method specific-arguments
     ### Guided prompting
     parser.add_argument("--guided_prompting_task_type", choices=["CLS", "NLI", "SUM", "XSUM"],
@@ -49,6 +48,7 @@ def parse_args():
         args.train_data_name = args.dataset_name
         args.eval_data_name = args.dataset_name
     args.text_keys = args.text_keys.split("+")
+    print(args)
     return args
 
 

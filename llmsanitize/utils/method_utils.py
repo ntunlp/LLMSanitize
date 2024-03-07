@@ -20,18 +20,24 @@ from multiprocessing import Process, Queue
 from tqdm import tqdm
 import math
 import json
+from rouge_score import rouge_scorer
 
+def guided_prompt_filter_fn(example, text_key):
+    text = example[text_key]
+    # 1. split text to sentences --> 
+    sentences = nltk.sent_tokenize(text)
+    if len(sentences) <= 2:
+        return False
+    return True
 
-
-def guided_prompt_process_fn(example, idx, config, use_local_model, split_name,
+def guided_prompt_process_fn(example, idx, model_name, split_name,
                                 dataset_name, label_key, text_key, general_template, guided_template):
     label = str(example[label_key])
     text = example[text_key]
     seed_everything(idx)
-    # 1. split text to sentences --> 2. randomly split sentences to two parts
+    # 1. split text to sentences --> 
     sentences = nltk.sent_tokenize(text)
-    if len(sentences) <= 2:
-        return None
+    #2. randomly split sentences to two parts
     first_part_length = random.randint(1, len(sentences) - 1)
     first_part = ''.join(sentences[:first_part_length])
     second_part = ''.join(sentences[first_part_length:])
@@ -39,10 +45,22 @@ def guided_prompt_process_fn(example, idx, config, use_local_model, split_name,
     vars_map = {"split_name": split_name, "dataset_name": dataset_name, "first_piece": first_part, "label": label}
     general_prompt = fill_template(general_template, vars_map)
     guided_prompt = fill_template(guided_template, vars_map)
-    llm = LLM(use_local_model)
+    llm = LLM(local_port='1', model_name=model_name)
     general_response, cost = llm.query(general_prompt)
     guided_response, cost_ = llm.query(guided_prompt)
-    import pdb;pdb.set_trace()
+    # get scores
+    scorer = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True)
+    general_score = scorer.score(second_part, general_response)['rougeL'].fmeasure
+    guided_score = scorer.score(second_part, guided_response)['rougeL'].fmeasure
+    
+    # return
+    example['general_score'] = general_score
+    example['guided_score'] = guided_score
+    example['general_response'] = general_response
+    example['guided_response'] = guided_response
+    example['first_part'] = first_part
+    example['second_part'] = second_part
+    return example
 
 
 ###### Code for Sharded Likelihood ######

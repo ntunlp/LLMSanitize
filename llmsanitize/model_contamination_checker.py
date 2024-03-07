@@ -5,15 +5,16 @@ Contamination detection class for model contamination use cases: func(llm, data)
 import re
 import numpy as np
 from tqdm import tqdm
-from datasets import load_dataset
+from datasets import load_dataset, Value
 from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
 
 from llmsanitize.configs.config import supported_methods, config
-from llmsanitize.utils.method_utils import guided_prompt_process_fn, sharded_likelihood_main
+from llmsanitize.utils.method_utils import guided_prompt_process_fn, sharded_likelihood_main, guided_prompt_filter_fn
 from llmsanitize.base_contamination_checker import BaseContaminationChecker
 from llmsanitize.min_prob_model_contamination_checker import evaluate_data
-
+   
+from functools import partial
 
 class ModelContaminationChecker(BaseContaminationChecker):
     def __init__(self, args):
@@ -45,14 +46,31 @@ class ModelContaminationChecker(BaseContaminationChecker):
         guided_template = getattr(gui_prompts, f"GUI_{type_str}")
         general_template = getattr(gi_prompts, f"GI_{type_str}")
 
-        # TODO: randomly sample a subset of data instances to check (with seed)
-        # process each example
-        for idx, example in tqdm(enumerate(self.eval_data)):
-            process_fn(example, idx, config=config, use_local_model=self.use_local_model,
+        # TODO: process each example parallely
+        num_examples_to_test = 160
+        random_examples = self.eval_data.shuffle(seed=42).filter(partial(guided_prompt_filter_fn, text_key=self.text_key))\
+                                                        .filter(lambda _, idx: idx < num_examples_to_test, with_indices=True)
+        process_fn = partial(process_fn, model_name=self.model_name,
                        split_name=self.eval_set_key, dataset_name=self.eval_data_name, label_key=self.label_key,
                        text_key=self.text_key, general_template=general_template, guided_template=guided_template)
-
-        print("Early Stopping for debugging")
+        
+        # somehow I need to do this to avoid datasets bug (https://github.com/huggingface/datasets/issues/6020#issuecomment-1632803184)
+        features = self.eval_data.features
+        features['general_score'] = Value(dtype='float64', id=None)
+        features['guided_score'] = Value(dtype='float64', id=None)
+        features["general_response"] = Value(dtype='string', id=None)
+        features["guided_response"] = Value(dtype='string', id=None)
+        features["first_part"] = Value(dtype='string', id=None)
+        features["second_part"] = Value(dtype='string', id=None)
+        
+        processed_examples = random_examples.map(process_fn, with_indices=True, num_proc=self.num_proc, features=features)\
+                            .filter(lambda example: len(example['general_response']) > 0 and len(example['guided_response']) > 0)
+        
+        scores_diff = [example['guided_score']-example['general_score'] for example in processed_examples]
+        print(f"Tested on {len(processed_examples)} examples for guided-prompting")
+        print(f"guided_score - general_score (RougeL)\nmean: {np.mean(scores_diff):.2f}, std: {np.std(scores_diff):.2f}")
+        # TODO: add significance measure and bootstrap resampling
+        print("skipping the bootstrap resampling and significance measure for now")
 
     def sharded_likelihood_comparison_test(self):
         sharded_likelihood_main(self.sharded_likelihood_model,

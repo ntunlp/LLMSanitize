@@ -25,8 +25,8 @@ class LLM:
                  num_samples: int = 1,
                  max_tokens: int = 128,
                  top_logprobs: int = 0,
-                 max_request_time: int = 0,
-                 sleep_time: int = 0):
+                 max_request_time: int = 600,
+                 sleep_time: int = 1):
         """
         :param config: config object
             required fields:

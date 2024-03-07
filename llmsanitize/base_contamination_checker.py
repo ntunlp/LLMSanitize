@@ -23,7 +23,7 @@ class BaseContaminationChecker:
         self.download_data()
 
         # standardize the text field
-        if self.text_keys != []:
+        if self.text_keys != [] and self.text_keys != ['']:
             self.combine_text_keys()
         else:
             self.normalize_text_key()

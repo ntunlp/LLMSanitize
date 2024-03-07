@@ -53,8 +53,8 @@ def query_llm_api(config, prompt):
                 messages=prompt,
                 n=config.query.num_samples,
                 max_tokens=config.query.max_tokens,
-                logprobs=config.query.top_logbrobs > 0,  # boolean
-                top_logprobs=config.query.top_logbrobs,  # int, [0, 5]
+                logprobs=config.query.top_logprobs > 0,  # boolean
+                top_logprobs=config.query.top_logprobs,  # int, [0, 5]
             )
             output_strs += [
                 choice["message"]['content'] for choice in response["choices"]  # TODO: The response keys should be checked.
