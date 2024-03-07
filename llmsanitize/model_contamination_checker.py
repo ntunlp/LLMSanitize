@@ -69,7 +69,8 @@ class ModelContaminationChecker(BaseContaminationChecker):
     def min_prob_comparison(self):
         """
         The command for testing:
-
+        python main.py --method min-prob --local_port 6000 --local_port_2 6000 --model_name gemma-2b --model_name_2 gemma-2b --top_logprobs 2 \\
+        --eval_data_name swj0419/WikiMIA --eval_set_key WikiMIA_length32 --text_key input --max_request_time 5
         """
         results = evaluate_data(self, self.eval_data)
         print(results)
