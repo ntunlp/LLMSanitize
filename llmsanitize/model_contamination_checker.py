@@ -47,7 +47,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
 
         # TODO: randomly sample a subset of data instances to check (with seed)
         # process each example
-        for idx, example in enumerate(self.eval_data):
+        for idx, example in tqdm(enumerate(self.eval_data)):
             process_fn(example, idx, config=config, use_local_model=self.use_local_model,
                        split_name=self.eval_set_key, dataset_name=self.eval_data_name, label_key=self.label_key,
                        text_key=self.text_key, general_template=general_template, guided_template=guided_template)
