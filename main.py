@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument("--text_key", type=str, default="ctx", help="the key to text content of each data instance.")
     parser.add_argument("--text_keys", type=list, default=[], help="the keys of text contents to be combined of each data instance.")
     parser.add_argument("--label_key", type=str, default="label", help="the key to label content of each data instance.")
-    # parser.add_argument("--use_local_model", action='store_true', default=False)
+    parser.add_argument("--use_local_model", action='store_true', default=False)
     parser.add_argument("--local_model_path", default=None, help="local model path for non-service based inference.")
     parser.add_argument("--local_tokenizer_path", default=None, help="local tokenizer path for non-service based inference.")
     parser.add_argument("--num_proc", type=int, default=20, help="recommend: 20 for openai calls, 80 for local calls")

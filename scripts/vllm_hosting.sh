@@ -9,4 +9,4 @@ python -m $server_type \
     --max-num-seqs=200 \
     --disable-log-requests \
     --host 127.0.0.1 --tensor-parallel-size 4 \
-    --download_dir /export/home/cache \
+    --download-dir /export/home/cache \
