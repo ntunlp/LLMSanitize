@@ -60,9 +60,9 @@ class BaseContaminationChecker:
             for j in range(len(self.text_keys)):
                 key = self.text_keys[j]
                 if j == 0:
-                    text += vals[key][i]
+                    text += str(vals[key][i])
                 else:
-                    text += " | " + vals[key][i]
+                    text += " | " + str(vals[key][i])
             texts.append(text)
         subset = subset.add_column("text", texts)
         
