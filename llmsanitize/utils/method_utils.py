@@ -29,7 +29,7 @@ def guided_prompt_filter_fn(example, text_key):
         return False
     return True
 
-def guided_prompt_process_fn(example, idx, model_name, split_name,
+def guided_prompt_process_fn(example, idx, llm, split_name,
                                 dataset_name, label_key, text_key, general_template, guided_template):
     label = str(example[label_key])
     text = example[text_key]
@@ -44,7 +44,6 @@ def guided_prompt_process_fn(example, idx, model_name, split_name,
     vars_map = {"split_name": split_name, "dataset_name": dataset_name, "first_piece": first_part, "label": label}
     general_prompt = fill_template(general_template, vars_map)
     guided_prompt = fill_template(guided_template, vars_map)
-    llm = LLM(local_port='1', model_name=model_name)
     general_response, cost = llm.query(general_prompt)
     guided_response, cost_ = llm.query(guided_prompt)
     # get scores

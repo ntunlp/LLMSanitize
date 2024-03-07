@@ -13,6 +13,7 @@ from llmsanitize.configs.config import supported_methods, config
 from llmsanitize.utils.method_utils import guided_prompt_process_fn, sharded_likelihood_main, guided_prompt_filter_fn
 from llmsanitize.base_contamination_checker import BaseContaminationChecker
 from llmsanitize.min_prob_model_contamination_checker import evaluate_data
+from llmsanitize.llm import LLM
    
 from functools import partial
 
@@ -47,11 +48,12 @@ class ModelContaminationChecker(BaseContaminationChecker):
         guided_template = getattr(gui_prompts, f"GUI_{type_str}")
         general_template = getattr(gi_prompts, f"GI_{type_str}")
 
-        # TODO: process each example parallely
-        num_examples_to_test = 160
+        # process selected examples parallely
+        num_examples_to_test = 800
         random_examples = self.eval_data.shuffle(seed=42).filter(partial(guided_prompt_filter_fn, text_key=self.text_key))\
                                                         .filter(lambda _, idx: idx < num_examples_to_test, with_indices=True)
-        process_fn = partial(process_fn, model_name=self.model_name,
+        llm = LLM(local_port='8000', model_name=self.model_name)
+        process_fn = partial(process_fn, llm=llm,
                        split_name=self.eval_set_key, dataset_name=self.eval_data_name, label_key=self.label_key,
                        text_key=self.text_key, general_template=general_template, guided_template=guided_template)
         
