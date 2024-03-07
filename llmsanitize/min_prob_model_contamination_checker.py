@@ -1,7 +1,6 @@
 # TODO: Add the inherited copyright here.
 # Most codes are copied from https://github.com/swj0419/detect-pretrain-code/blob/main/src/run.py
-
-
+import argparse
 import copy
 import logging
 
@@ -13,6 +12,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from tqdm import tqdm
 import numpy as np
 from datasets import load_dataset
+from typing import Union
 
 from llmsanitize.configs.config import supported_methods, config
 from llmsanitize.utils.method_utils import guided_prompt_process_fn
@@ -88,14 +88,15 @@ def load_model(name1, name2):
 def calculate_perplexity(prompt, llm: LLM):
     # TODO: This can be moved to LLM class as a internal function.
     prompt = prompt.replace('\x00', '')
-    responses = llm.query(prompt)
+    _, responses, _ = llm.query(prompt, return_full_response=True)
+    # print("Response", responses)
     data = responses["choices"][0]["logprobs"]
     all_prob = [d for d in data["token_logprobs"] if d is not None]
     p1 = np.exp(-np.mean(all_prob))
     return p1, all_prob, np.mean(all_prob)
 
 
-def inference(llm1: LLM, llm2: LLM, text, ex):
+def inference(llm1: LLM, llm2: LLM, text):
     pred = {}
 
     # if "davinci" in modelname1:
@@ -127,27 +128,29 @@ def inference(llm1: LLM, llm2: LLM, text, ex):
         topk_prob = np.sort(all_prob)[:k_length]
         pred[f"Min_{ratio * 100}% Prob"] = -np.mean(topk_prob).item()
 
-    ex["pred"] = pred
-    return ex
+    return pred
 
 
-def evaluate_data(test_data, model1, model2, tokenizer1, tokenizer2, col_name, modelname1, modelname2):
-    # TODO: Should make the model initialization procedure more clear.
-    model1_config = copy.deepcopy(config)
-    model1_config.local_model_path = modelname1
-    llm1 = LLM(model1_config, use_local_model=True)
+def evaluate_data(args, test_data):
+    llm1 = LLM.from_args(args=args)
 
-    model2_config = copy.deepcopy(config)
-    model2_config.local_model_path = modelname2
-    llm2 = LLM(model2_config, use_local_model=True)
+    tmp_args = copy.deepcopy(args)
+    tmp_args.model_name = args.model_name_2
+    tmp_args.openai_creds_key_file = args.openai_creds_key_file_2
+    tmp_args.local_port = args.local_port_2
+    llm2 = LLM.from_args(args=tmp_args)
 
     print(f"all data size: {len(test_data)}")
     all_output = []
     test_data = test_data
-    for ex in tqdm(test_data):
-        text = ex[col_name]
-        new_ex = inference(llm1, llm2, text, ex)
+    debug = 0  # TODO: This is for debug, remove `debug` variable when finished.
+    for text in tqdm(test_data):  # TODO: Use multiprocessing to accelerate here.
+        print(text)
+        new_ex = inference(llm1, llm2, text["text"])  # Here, `test_data` is Dataset, and `text` is a dictionary.
         all_output.append(new_ex)
+        debug += 1
+        if debug > 5:
+            break
     return all_output
 
 #
@@ -166,4 +169,5 @@ def evaluate_data(test_data, model1, model2, tokenizer1, tokenizer2, col_name, m
 #         data = convert_huggingface_data_to_list_dic(dataset)
 #
 #     all_output = evaluate_data(data, model1, model2, tokenizer1, tokenizer2, args.key_name, args.target_model, args.ref_model)
+#     # TODO: Implement this line:
 #     fig_fpr_tpr(all_output, args.output_dir)

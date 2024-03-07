@@ -15,7 +15,6 @@ from scipy.stats import binom
 from scipy.stats import t as tdist
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
-import GPUtil
 from multiprocessing import Process, Queue
 from tqdm import tqdm
 import math

@@ -60,17 +60,19 @@ class BaseContaminationChecker:
             for j in range(len(self.text_keys)):
                 key = self.text_keys[j]
                 if j == 0:
-                    text += vals[key][i]
+                    text += str(vals[key][i])
                 else:
-                    text += " | " + vals[key][i]
+                    text += " | " + str(vals[key][i])
             texts.append(text)
         subset = subset.add_column("text", texts)
         
         return subset
 
     def normalize_text_key(self):
-        self.train_data = self.normalize_text_key_(self.train_data)
-        self.eval_data = self.normalize_text_key_(self.eval_data)
+        if self.train_data:
+            self.train_data = self.normalize_text_key_(self.train_data)
+        if self.eval_data:
+            self.eval_data = self.normalize_text_key_(self.eval_data)
 
     def normalize_text_key_(self, subset):
         if self.text_key != "text":

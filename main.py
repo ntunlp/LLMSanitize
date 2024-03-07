@@ -1,6 +1,7 @@
 from llmsanitize import DataContaminationChecker, ModelContaminationChecker
 from llmsanitize.configs.config import supported_methods
 from llmsanitize.utils.utils import seed_everything
+import multiprocessing as mp
 import argparse
 
 
@@ -22,8 +23,11 @@ def parse_args():
     parser.add_argument("--log_file_path", type=str, default="log.txt", help="log file path")
     # OpenAI API or vLLM inference arguments
     parser.add_argument("--openai_creds_key_file", type=str, default=None, help="OpenAI API key file path.")
+    parser.add_argument("--openai_creds_key_file_2", type=str, default=None, help="OpenAI API key file path.")
     parser.add_argument("--local_port", type=str, default=None, help="Local model port for service based inference.")
+    parser.add_argument("--local_port_2", type=str, default=None, help="Local model port for service based inference.")  # TODO: If there is better way to initialize two models.
     parser.add_argument("--model_name", type=str, default=None, help="model name for service based inference.")
+    parser.add_argument("--model_name_2", type=str, default=None, help="model name for service based inference.")
     parser.add_argument("--num_samples", type=int, default=1, help="number of samples to generate")
     parser.add_argument("--max_tokens", type=int, default=128, help="max tokens for each sample")
     parser.add_argument("--top_logprobs", type=int, default=0, help="top logprobs for each sample")
@@ -42,6 +46,7 @@ def parse_args():
     parser.add_argument("--sharded_likelihood_permutations_per_shard", type=int, default=25,
                         help="For sharded-likelihood: set number of permutations per shard")
     parser.add_argument("--sharded_likelihood_max_examples", type=int, default=5000, help="For sharded-likelihood: set max examples")
+    parser.add_argument("--sharded_likelihood_mp_prawn", action='store_true', default=False)
     args = parser.parse_args()
     # if dataset name is set, set train_set and eval_set to dataset_name
     if len(args.dataset_name) > 0:
@@ -57,6 +62,9 @@ def main():
     seed_everything(args.seed)
 
     check_args(args)
+
+    if args.sharded_likelihood_mp_prawn:
+        mp.set_start_method('spawn')
 
     # assign data / model contamination checker based on method type
     assert args.method_name in supported_methods, f"Error, {args.method_name} not in supported methods: {list(supported_methods.keys())}"

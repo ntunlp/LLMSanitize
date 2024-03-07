@@ -19,6 +19,7 @@ from functools import partial
 class ModelContaminationChecker(BaseContaminationChecker):
     def __init__(self, args):
         super(ModelContaminationChecker, self).__init__(args)
+        self.args = args
 
     def run_contamination(self, method):
         if not (method in self.supported_methods.keys()):
@@ -84,4 +85,10 @@ class ModelContaminationChecker(BaseContaminationChecker):
                                 log_file_path=self.log_file_path)
 
     def min_prob_comparison(self):
-        evaluate_data(self.eval_data, self.use_local_model, self.seed, self.log_file_path)
+        """
+        The command for testing:
+        python main.py --method min-prob --local_port 6000 --local_port_2 6000 --model_name gemma-2b --model_name_2 gemma-2b --top_logprobs 2 \\
+        --eval_data_name swj0419/WikiMIA --eval_set_key WikiMIA_length32 --text_key input --max_request_time 5
+        """
+        results = evaluate_data(self, self.eval_data)
+        print(results)
