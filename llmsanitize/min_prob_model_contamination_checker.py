@@ -88,14 +88,15 @@ def load_model(name1, name2):
 def calculate_perplexity(prompt, llm: LLM):
     # TODO: This can be moved to LLM class as a internal function.
     prompt = prompt.replace('\x00', '')
-    responses = llm.query(prompt)
+    _, responses, _ = llm.query(prompt, return_full_response=True)
+    # print("Response", responses)
     data = responses["choices"][0]["logprobs"]
     all_prob = [d for d in data["token_logprobs"] if d is not None]
     p1 = np.exp(-np.mean(all_prob))
     return p1, all_prob, np.mean(all_prob)
 
 
-def inference(llm1: LLM, llm2: LLM, text, ex):
+def inference(llm1: LLM, llm2: LLM, text):
     pred = {}
 
     # if "davinci" in modelname1:
@@ -142,9 +143,14 @@ def evaluate_data(args, test_data):
     print(f"all data size: {len(test_data)}")
     all_output = []
     test_data = test_data
-    for text in tqdm(test_data):
-        new_ex = inference(llm1, llm2, text)
+    debug = 0  # TODO: This is for debug, remove `debug` variable when finished.
+    for text in tqdm(test_data):  # TODO: Use multiprocessing to accelerate here.
+        print(text)
+        new_ex = inference(llm1, llm2, text["text"])  # Here, `test_data` is Dataset, and `text` is a dictionary.
         all_output.append(new_ex)
+        debug += 1
+        if debug > 5:
+            break
     return all_output
 
 #
@@ -163,4 +169,5 @@ def evaluate_data(args, test_data):
 #         data = convert_huggingface_data_to_list_dic(dataset)
 #
 #     all_output = evaluate_data(data, model1, model2, tokenizer1, tokenizer2, args.key_name, args.target_model, args.ref_model)
+#     # TODO: Implement this line:
 #     fig_fpr_tpr(all_output, args.output_dir)

@@ -67,4 +67,9 @@ class ModelContaminationChecker(BaseContaminationChecker):
                                 log_file_path=self.log_file_path)
 
     def min_prob_comparison(self):
-        evaluate_data(self, self.eval_data)
+        """
+        The command for testing:
+
+        """
+        results = evaluate_data(self, self.eval_data)
+        print(results)

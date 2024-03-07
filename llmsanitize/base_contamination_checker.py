@@ -69,8 +69,10 @@ class BaseContaminationChecker:
         return subset
 
     def normalize_text_key(self):
-        self.train_data = self.normalize_text_key_(self.train_data)
-        self.eval_data = self.normalize_text_key_(self.eval_data)
+        if self.train_data:
+            self.train_data = self.normalize_text_key_(self.train_data)
+        if self.eval_data:
+            self.eval_data = self.normalize_text_key_(self.eval_data)
 
     def normalize_text_key_(self, subset):
         assert self.text_key in subset.features, "Error - please provide a text key that is in this dataset"
