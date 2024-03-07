@@ -1,6 +1,7 @@
 from llmsanitize import DataContaminationChecker, ModelContaminationChecker
 from llmsanitize.configs.config import supported_methods
 from llmsanitize.utils.utils import seed_everything
+import multiprocessing as mp
 import argparse
 
 
@@ -12,7 +13,7 @@ def parse_args():
     parser.add_argument("--eval_data_name", type=str, default="", help="eval dataset name")  # ["Rowan/hellaswag"]
     parser.add_argument("--eval_set_key", type=str, default="test", help="eval set key")
     parser.add_argument("--text_key", type=str, default="ctx", help="the key to text content of each data instance.")
-    parser.add_argument("--text_keys", type=list, default=[], help="the keys of text contents to be combined of each data instance.")
+    parser.add_argument("--text_keys", type=str, default="", help="the keys of text contents to be combined of each data instance - pass them as key_1+key_2.")
     parser.add_argument("--label_key", type=str, default="label", help="the key to label content of each data instance.")
     # parser.add_argument("--use_local_model", action='store_true', default=False)
     parser.add_argument("--local_model_path", default=None, help="local model path for non-service based inference.")
@@ -34,10 +35,11 @@ def parse_args():
     parser.add_argument("--max_request_time", type=int, default=0, help="max request time for each sample")
     parser.add_argument("--sleep_time", type=int, default=0, help="sleep time for each sample")
     # Method specific-arguments
-
+    ### Guided prompting
     parser.add_argument("--guided_prompting_task_type", choices=["CLS", "NLI", "SUM", "XSUM"],
                         help="For guided-prompting: set task type to either {classification, NLI, summarization, extreme-summarization}")
-
+    parser.add_argument("--use_local_model", action='store_true', default=False)
+    ### Sharded likelihood
     parser.add_argument("--sharded_likelihood_model", type=str, default="gpt2-xl", help="For sharded-likelihood: set model name or path")
     parser.add_argument("--sharded_likelihood_context_len", type=int, default=1024, help="For sharded-likelihood: set context length")
     parser.add_argument("--sharded_likelihood_stride", type=int, default=512, help="For sharded-likelihood: set stride length")
@@ -45,11 +47,13 @@ def parse_args():
     parser.add_argument("--sharded_likelihood_permutations_per_shard", type=int, default=25,
                         help="For sharded-likelihood: set number of permutations per shard")
     parser.add_argument("--sharded_likelihood_max_examples", type=int, default=5000, help="For sharded-likelihood: set max examples")
+    parser.add_argument("--sharded_likelihood_mp_prawn", action='store_true', default=False)
     args = parser.parse_args()
     # if dataset name is set, set train_set and eval_set to dataset_name
     if len(args.dataset_name) > 0:
         args.train_data_name = args.dataset_name
         args.eval_data_name = args.dataset_name
+    args.text_keys = args.text_keys.split("+")
     return args
 
 
@@ -58,6 +62,9 @@ def main():
     seed_everything(args.seed)
 
     check_args(args)
+
+    if args.sharded_likelihood_mp_prawn:
+        mp.set_start_method('spawn')
 
     # assign data / model contamination checker based on method type
     assert args.method_name in supported_methods, f"Error, {args.method_name} not in supported methods: {list(supported_methods.keys())}"
