@@ -25,6 +25,7 @@ class BaseContaminationChecker:
         self.download_data()
 
         # subsample the eval dataset
+        self.subsample_eval_data()
 
         # standardize the text field
         if self.text_keys != [] and self.text_keys != ['']:
@@ -52,7 +53,8 @@ class BaseContaminationChecker:
         if len(self.eval_data) > 0 and self.n_eval_data_points > 0:
             p = np.random.permutation(len(self.eval_data))
             p = p[:self.n_eval_data_points]
-            self.eval_data = self.eval_data[p]
+            p = list(p)
+            self.eval_data = self.eval_data.select(p)
             message = f"After sub-sampling, there are now {len(self.eval_data)} eval data points"
             print(message)
 

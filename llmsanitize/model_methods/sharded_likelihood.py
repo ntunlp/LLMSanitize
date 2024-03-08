@@ -66,12 +66,14 @@ def _compute_logprob_of_token_sequence(tokens, model, context_len=2048, stride=1
     return logp.item()
 
 
-def _worker(model_name_or_path,
-           context_len,
-           stride,
-           device,
-           main_queue,
-           worker_queue):
+def _worker(
+    model_name_or_path,
+    context_len,
+    stride,
+    device,
+    main_queue,
+    worker_queue
+):
 
     # Load model.
     m = AutoModelForCausalLM.from_pretrained(model_name_or_path)
@@ -113,14 +115,10 @@ def main_sharded_likelihood(
     flatten = lambda l : [x for s in l for x in s]
     shuffle = lambda l : random.sample(l, k=len(l))
 
-    # Set random seed(s).
-    random.seed(random_seed)
-    np.random.seed(random_seed)
-
     # Load the dataset.
     examples = _load_dataset(dataset_path)
     examples = examples[:max_examples]
-    print(examples[:5])
+    print(examples[:2])
     num_examples = len(examples)
     print(f"Loaded {num_examples} examples from {dataset_path}")
 

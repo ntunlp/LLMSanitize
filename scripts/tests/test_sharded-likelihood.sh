@@ -9,4 +9,5 @@ python main.py --dataset_name google/boolq \
 --sharded_likelihood_num_shards 15 \
 --sharded_likelihood_permutations_per_shard 25 \
 --sharded_likelihood_max_examples 1000 \
+--sharded_likelihood_mp_prawn \
 --log_file_path "sharded-likelihood-result.log"
