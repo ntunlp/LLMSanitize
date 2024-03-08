@@ -30,7 +30,7 @@
 
 # test guided prompting
 echo "this method might require running vllm serving locally"
-python main.py --dataset_name ag_news --method guided-prompting --text_key text --num_proc 80 \
+python main.py --dataset_name ag_news --method guided-prompting --text_key text --num_proc 80 --local_port 8000 \
 --guided_prompting_task_type CLS --use_local_model --model_name "deepseek-ai/deepseek-llm-7b-chat"
 
 # sharded likelihood

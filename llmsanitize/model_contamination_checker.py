@@ -53,7 +53,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
         random_examples = self.eval_data.shuffle(seed=42).filter(partial(guided_prompt_filter_fn, text_key=self.text_key))\
                                                         .filter(lambda _, idx: idx < num_examples_to_test, with_indices=True)
 
-        llm = LLM(local_port='8000', model_name=self.model_name)
+        llm = LLM(local_port=self.local_port, model_name=self.model_name)
         process_fn = partial(process_fn, llm=llm,
                        split_name=self.eval_set_key, dataset_name=self.eval_data_name, label_key=self.label_key,
                        text_key=self.text_key, general_template=general_template, guided_template=guided_template)
