@@ -48,6 +48,9 @@ def parse_args():
         args.eval_data_name = args.dataset_name
     return args
 
+def check_args(args):
+    assert args.method_name in supported_methods, f"Error, {args.method_name} not in supported methods: {list(supported_methods.keys())}"
+    assert args.text_key != "" or args.text_key != [], f"Error, specify some text key"
 
 def main():
     args = parse_args()
@@ -64,11 +67,6 @@ def main():
 
     contamination_checker = ContaminationChecker(args)
     contamination_checker.run_contamination(args.method_name)
-
-
-def check_args(args):
-    assert args.method_name in supported_methods, f"Error, {args.method_name} not in supported methods: {list(supported_methods.keys())}"
-    assert args.text_key != "" or args.text_key != [], f"Error, specify some text key"
 
 
 if __name__ == '__main__':

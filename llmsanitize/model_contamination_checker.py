@@ -26,10 +26,8 @@ class ModelContaminationChecker(BaseContaminationChecker):
 
         if method == "guided-prompting":
             self.contamination_guided_prompting()
-
         if method == "sharded-likelihood":
             self.sharded_likelihood_comparison_test()
-
         if method == "min-prob":
             self.min_prob_comparison()
 

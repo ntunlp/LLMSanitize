@@ -22,7 +22,6 @@ import math
 import json
 
 
-
 def guided_prompt_process_fn(example, idx, config, use_local_model, split_name,
                                 dataset_name, label_key, text_key, general_template, guided_template):
     label = str(example[label_key])
