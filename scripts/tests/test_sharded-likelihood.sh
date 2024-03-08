@@ -1,4 +1,6 @@
+# test sharded-likelihood model contamination method
 python main.py --dataset_name google/boolq \
+--text_keys question+answer+passage \
 --eval_set_key validation \
 --method sharded-likelihood \
 --sharded_likelihood_model gpt2-xl \

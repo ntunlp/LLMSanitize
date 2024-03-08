@@ -2,19 +2,12 @@
 Contamination detection class for data contamination use cases: func(data1, data2)
 """
 
-import re
-import string
-import numpy as np
-from tqdm import tqdm
-from datasets import load_dataset
-from nltk.tokenize import word_tokenize
-from nltk.util import ngrams
-from sklearn.metrics.pairwise import cosine_similarity
-
-from llmsanitize.configs.config import supported_methods, config
-from llmsanitize.utils.method_utils import guided_prompt_process_fn
 from llmsanitize.base_contamination_checker import BaseContaminationChecker
-from llmsanitize.utils.string_utils import *
+from llmsanitize.data_methods.gpt2 import main_gpt2
+from llmsanitize.data_methods.gpt3 import main_gpt3
+from llmsanitize.data_methods.palm import main_palm
+from llmsanitize.data_methods.gpt4 import main_gpt4
+from llmsanitize.data_methods.platypus import main_platypus
 
 
 class DataContaminationChecker(BaseContaminationChecker):
@@ -37,145 +30,48 @@ class DataContaminationChecker(BaseContaminationChecker):
         elif method =="platypus":
             self.contamination_platypus()
 
-    # Following the logic in GPT-2's paper: https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf section 4
     def contamination_gpt2(self):
-        # method-specific dataset processing:
-        def clean_text_gpt2(text):
-            text = text.lower() # lower case
-            text = ''.join(i if (i.isalpha() or i==" ") else '' for i in text) # keep alphanumeric characters
-            text = re.sub(' +', ' ', text) # only single spaces
-            text = text.strip() # initial and final spaces
+        main_gpt2(
+            train_data=self.train_data,
+            eval_data=self.eval_data,
+            train_data_name=self.train_data_name,
+            eval_data_name=self.eval_data_name,
+            eval_set_key=self.eval_set_key
+        )
 
-            return text
-
-        ## only keep the content per data example, discard labels
-        self.train_data = self.train_data["text"]
-        self.eval_data = self.eval_data["text"]
-
-        ngram_size = 8
-        train_ngrams = build_ngrams(self.train_data, ngram_size, clean_text_gpt2) 
-        message = f"There are {len(train_ngrams.keys())} {ngram_size}-grams in the training set"
-        print(message)
-
-        ngram_overlaps = overlap_ngrams(self.eval_data, train_ngrams, ngram_size, clean_text_gpt2)
-        contaminated = np.array([int(x[0] > 0) for x in ngram_overlaps])
-        frac = 100 * np.mean(contaminated)
-        n_contaminated = np.sum(contaminated)
-        overlaps = np.array([100 * x[0]/x[1] for x in ngram_overlaps])
-        mean_overlap = np.mean(overlaps)
-        message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"
-        message += f"\nMethod: matching of {ngram_size}-grams (GPT-2 style data contamination)"
-        message += f"\n# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%"
-        message += f"\nMean {ngram_size}-grams overlap: {mean_overlap:.4f}%"
-        print(message)
-
-    # Following the logic in GPT-3's paper: https://arxiv.org/pdf/2005.14165.pdf section C
     def contamination_gpt3(self):
-        # method-specific dataset processing:
-        def clean_text_gpt3(text):
-            text = text.lower() # lower case
-            text = ' '.join(word.strip(string.punctuation) for word in text.split())
+        main_gpt3(
+            train_data=self.train_data,
+            eval_data=self.eval_data,
+            train_data_name=self.train_data_name,
+            eval_data_name=self.eval_data_name,
+            eval_set_key=self.eval_set_key
+        )
 
-            return text
-        
-        self.train_data = self.train_data["text"]
-        self.eval_data = self.eval_data["text"]
-
-        ngram_size = 13
-        train_ngrams = build_ngrams(self.train_data, ngram_size, clean_text_gpt3)
-        message = f"There are {len(train_ngrams.keys())} {ngram_size}-grams in the training set"
-        print(message)
-
-        max_count = 10
-        n_removed = 0
-        for k in train_ngrams.keys():
-            if train_ngrams[k] >= max_count:
-                del train_ngrams[k]
-                n_removed += 1
-        message = f"Removed {n_removed} {ngram_size}-grams being too frequent in the training set"
-        print(message)
-
-        n_collisions = 1
-        ngram_overlaps = overlap_ngrams(self.eval_data, train_ngrams, ngram_size, clean_text_gpt3)
-        contaminated = np.array([int(x[0] >= n_collisions) for x in ngram_overlaps])
-        frac = 100 * np.mean(contaminated)
-        n_contaminated = np.sum(contaminated)
-        overlaps = np.array([100 * x[0] / x[1] for x in ngram_overlaps])
-        mean_overlap = np.mean(overlaps)
-        message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"
-        message += f"\nMethod: matching of {ngram_size}-grams (GPT-3 style data contamination)"
-        message += f"\n# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%"
-        message += f"\nMean {ngram_size}-grams overlap: {mean_overlap:.4f}%"
-        print(message)
-
-    # Following the logic in PaLM's paper: https://arxiv.org/pdf/2204.02311.pdf section 8
     def contamination_palm(self):
-        ## only keep the content per data example, discard labels
-        self.train_data = self.train_data["text"]
-        self.eval_data = self.eval_data["text"]
+        main_palm(
+            train_data=self.train_data,
+            eval_data=self.eval_data,
+            train_data_name=self.train_data_name,
+            eval_data_name=self.eval_data_name,
+            eval_set_key=self.eval_set_key
+        )
 
-        ngram_size = 8
-        train_ngrams = build_ngrams(self.train_data, ngram_size, None)
-        message = f"There are {len(train_ngrams.keys())} {ngram_size}-grams strings in the training set"
-        print(message)
-
-        overlap_thresh = 70
-        ngram_overlaps = overlap_ngrams(self.eval_data, train_ngrams, ngram_size, None)
-        overlaps = np.array([100 * x[0] / x[1] for x in ngram_overlaps])
-        contaminated = np.array([int(x >= overlap_thresh) for x in overlaps])
-        frac = 100 * np.mean(contaminated)
-        n_contaminated = np.sum(contaminated)
-        message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"
-        message += f"\nMethod: ratio of contaminated {ngram_size}-grams is above {overlap_thresh}% (PaLM style data contamination)"
-        message += f"\n# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%"
-        print(message)
-
-    # Following the logic in GPT-4's report: https://arxiv.org/pdf/2303.08774.pdf appendix C
     def contamination_gpt4(self):
-        # method-specific dataset processing:
-        def clean_text_gpt4(text):
-            text = ''.join(i if i.isalpha() else '' for i in text) # keep alphanumeric characters
+        main_gpt4(
+            train_data=self.train_data,
+            eval_data=self.eval_data,
+            train_data_name=self.train_data_name,
+            eval_data_name=self.eval_data_name,
+            eval_set_key=self.eval_set_key
+        )
 
-            return text
-
-        ## only keep the content per data example, discard labels
-        self.train_data = self.train_data["text"]
-        self.eval_data = self.eval_data["text"]
-
-        string_size = 50
-        train_strings = build_strings(self.train_data, string_size, clean_text_gpt4)
-        message = f"There are {len(train_strings.keys())} {string_size}-chars strings in the training set"
-        print(message)
-
-        n_samples = 3
-        contaminated = overlap_strings_sample(self.eval_data, train_strings, string_size, n_samples, clean_text_gpt4)
-        frac = 100 * np.mean(contaminated)
-        n_contaminated = np.sum(contaminated)
-        message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"
-        message += f"\nMethod: sampling {n_samples} {string_size}-chars substring (GPT-4 style data contamination)"
-        message += f"\n# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%"
-        print(message)
-
-    # Following the logic in Platypus paper: https://arxiv.org/pdf/2308.07317.pdf section 2.2
     def contamination_platypus(self):
-        from sentence_transformers import SentenceTransformer
-
-        ## only keep the content per data example, discard labels
-        self.train_data = self.train_data["text"]
-        self.eval_data = self.eval_data["text"]
-
-        model_name = "all-MiniLM-L6-v2"
-        model = SentenceTransformer(model_name)
-        train_embeddings = model.encode(self.train_data)
-        eval_embeddings = model.encode(self.eval_data)
-        cos = cosine_similarity(eval_embeddings, train_embeddings)
-
-        thresh = 0.8
-        contaminated = (np.max(cos, axis=1) >= thresh).astype(int)
-        frac = 100 * np.mean(contaminated)
-        n_contaminated = np.sum(contaminated)
-        message = f"\nData contamination: checking {self.eval_data_name}/{self.eval_set_key} against {self.train_data_name} (train)"
-        message += f"\nMethod: Sentence-Transformers embeddings cosine above {thresh} (Platypus style)"
-        message += f"\n# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%"
-        print(message)
+        main_platypus(
+            train_data=self.train_data,
+            eval_data=self.eval_data,
+            train_data_name=self.train_data_name,
+            eval_data_name=self.eval_data_name,
+            eval_set_key=self.eval_set_key
+        )
 

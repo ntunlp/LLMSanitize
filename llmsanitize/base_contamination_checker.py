@@ -20,10 +20,14 @@ class BaseContaminationChecker:
         for key, value in args.__dict__.items():
             setattr(self, key, value)
         self.supported_methods = supported_methods
+
+        # download the datasets -> using HF's datasets
         self.download_data()
 
+        # subsample the eval dataset
+
         # standardize the text field
-        if self.text_keys != []:
+        if self.text_keys != [] and self.text_keys != ['']:
             self.combine_text_keys()
         else:
             self.normalize_text_key()
@@ -41,8 +45,16 @@ class BaseContaminationChecker:
         else:
             self.eval_data = []
 
-        message = f"There are {len(self.train_data)} train elements and {len(self.eval_data)} eval elements"
+        message = f"There are {len(self.train_data)} train data points and {len(self.eval_data)} eval data points"
         print(message)
+
+    def subsample_eval_data(self):
+        if len(self.eval_data) > 0 and self.n_eval_data_points > 0:
+            p = np.random.permutation(len(self.eval_data))
+            p = p[:self.n_eval_data_points]
+            self.eval_data = self.eval_data[p]
+            message = f"After sub-sampling, there are now {len(self.eval_data)} eval data points"
+            print(message)
 
     def combine_text_keys(self):
         for key in self.text_keys:
@@ -60,21 +72,24 @@ class BaseContaminationChecker:
             for j in range(len(self.text_keys)):
                 key = self.text_keys[j]
                 if j == 0:
-                    text += vals[key][i]
+                    text += str(vals[key][i])
                 else:
-                    text += " | " + vals[key][i]
+                    text += " | " + str(vals[key][i])
             texts.append(text)
         subset = subset.add_column("text", texts)
         
         return subset
 
     def normalize_text_key(self):
-        self.train_data = self.normalize_text_key_(self.train_data)
-        self.eval_data = self.normalize_text_key_(self.eval_data)
+        if self.train_data:
+            self.train_data = self.normalize_text_key_(self.train_data)
+        if self.eval_data:
+            self.eval_data = self.normalize_text_key_(self.eval_data)
 
     def normalize_text_key_(self, subset):
-        assert self.text_key in subset.features, "Error - please provide a text key that is in this dataset"
-        subset = subset.add_column("text", subset[self.text_key])
+        if self.text_key != "text":
+            assert self.text_key in subset.features, "Error - please provide a text key that is in this dataset"
+            subset = subset.add_column("text", subset[self.text_key])
         
         return subset
 

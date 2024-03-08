@@ -1,47 +1,17 @@
 """
-This file includes method-specific utilization functions
+This file implements model contamination detection through the sharded likelihood approach.
 """
 
-import random
-from llmsanitize.utils.utils import seed_everything, fill_template
-from llmsanitize.llm import LLM
-import nltk
-from copy import copy
-
-# sharded likelihood
-import numpy as np
 import os
-from scipy.stats import binom
-from scipy.stats import t as tdist
+import random
+import numpy as np
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import GPUtil
-from multiprocessing import Process, Queue
-from tqdm import tqdm
 import math
 import json
-
-
-def guided_prompt_process_fn(example, idx, config, use_local_model, split_name,
-                                dataset_name, label_key, text_key, general_template, guided_template):
-    label = str(example[label_key])
-    text = example[text_key]
-    seed_everything(idx)
-    # 1. split text to sentences --> 2. randomly split sentences to two parts
-    sentences = nltk.sent_tokenize(text)
-    if len(sentences) <= 2:
-        return None
-    first_part_length = random.randint(1, len(sentences) - 1)
-    first_part = ''.join(sentences[:first_part_length])
-    second_part = ''.join(sentences[first_part_length:])
-    # query llm
-    vars_map = {"split_name": split_name, "dataset_name": dataset_name, "first_piece": first_part, "label": label}
-    general_prompt = fill_template(general_template, vars_map)
-    guided_prompt = fill_template(guided_template, vars_map)
-    llm = LLM(use_local_model)
-    general_response, cost = llm.query(general_prompt)
-    guided_response, cost_ = llm.query(guided_prompt)
-    import pdb;pdb.set_trace()
+from scipy.stats import t as tdist
+from tqdm import tqdm
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from multiprocessing import Process, Queue
 
 
 ###### Code for Sharded Likelihood ######
@@ -127,17 +97,18 @@ def _worker(model_name_or_path,
 
     del m
 
-
-def sharded_likelihood_main(model_name_or_path,
-                            dataset_path,
-                            context_len=2048,
-                            stride=1024,
-                            num_shards=50,
-                            permutations_per_shard=250,
-                            random_seed=0,
-                            log_file_path=None,
-                            max_examples=5000):
-
+# Following the logic from this paper: https://arxiv.org/pdf/2310.17623.pdf
+def main_sharded_likelihood(
+    model_name_or_path,
+    dataset_path,
+    context_len=2048,
+    stride=1024,
+    num_shards=50,
+    permutations_per_shard=250,
+    random_seed=0,
+    log_file_path=None,
+    max_examples=5000
+):
     os.environ['TOKENIZERS_PARALLELISM'] = "True"
     flatten = lambda l : [x for s in l for x in s]
     shuffle = lambda l : random.sample(l, k=len(l))
@@ -244,7 +215,7 @@ def sharded_likelihood_main(model_name_or_path,
 
     # Calculate p-value.
     canonical_logprobs = np.asarray(canonical_logprobs)
-    shuffled_logprobs  = np.asarray(shuffled_logprobs)
+    shuffled_logprobs = np.asarray(shuffled_logprobs)
 
     # T-test.
     diffs = canonical_logprobs - shuffled_logprobs.mean(axis=1)

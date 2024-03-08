@@ -1,4 +1,11 @@
+"""
+This file implements an LLM class used for model-based contamination detection methods.
+"""
+
 import copy
+import torch
+from argparse import Namespace
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from llmsanitize.utils.openai_api_utils import (
     initialize_openai,
@@ -6,27 +13,25 @@ from llmsanitize.utils.openai_api_utils import (
     query_llm_api,
 )
 # from llmsanitize.configs.config import *
-
-from transformers import AutoModelForCausalLM, AutoTokenizer
-import torch
 from llmsanitize.utils.utils import dict_to_object
-from argparse import Namespace
 from llmsanitize.configs.config import config
 
 
 class LLM:
-    def __init__(self,
-                 openai_creds_key_file: str = None,
-                 local_port: str = None,
-                 local_model_path: str = None,
-                 local_tokenizer_path: str = None,
-                 device: str = "cuda" if torch.cuda.is_available() else "cpu",
-                 model_name: str = None,
-                 num_samples: int = 1,
-                 max_tokens: int = 128,
-                 top_logprobs: int = 0,
-                 max_request_time: int = 0,
-                 sleep_time: int = 0):
+    def __init__(
+        self,
+        openai_creds_key_file: str = None,
+        local_port: str = None,
+        local_model_path: str = None,
+        local_tokenizer_path: str = None,
+        device: str = "cuda" if torch.cuda.is_available() else "cpu",
+        model_name: str = None,
+        num_samples: int = 1,
+        max_tokens: int = 128,
+        top_logprobs: int = 0,
+        max_request_time: int = 600,
+        sleep_time: int = 1
+    ):
         """
         :param config: config object
             required fields:
@@ -48,15 +53,18 @@ class LLM:
         #   so that we can initialize two models at the same time.
         # self.config = config
         if local_model_path:
+            print(f"Loading local model from {local_model_path} and tokenizer from {local_tokenizer_path}.")
             self.model = AutoModelForCausalLM.from_pretrained(local_model_path, torch_dtype="auto").to(device)
             self.tokenizer = AutoTokenizer.from_pretrained(local_tokenizer_path)
             self.api_base = False
         elif local_port:
+            print(f"Initializing vllm service from port {local_port}.")
             _config = dict_to_object({"local": {"port": local_port}})
             initialize_openai_local(_config)
             self.query_fn = query_llm_api
             self.api_base = True
         else:
+            print("Initializing OpenAI API.")
             _config = dict_to_object({"openai": {"creds_key_file": openai_creds_key_file}})
             initialize_openai(_config)
             self.query_fn = query_llm_api
@@ -95,11 +103,15 @@ class LLM:
             }
         }
         self._query_config = dict_to_object(_query_config)
+        print("====================== Query Config =======================")
+        print(_query_config)
 
-    def query(self, prompt):
+    def query(self, prompt, return_full_response: bool = False):
         if self.api_base:
-            outputs, cost = self.query_fn(self._query_config, prompt)
+            outputs, full_response, cost = self.query_fn(self._query_config, prompt)
             assert len(outputs) == 1
+            if return_full_response:
+                return outputs[0], full_response, cost
             return outputs[0], cost
         else:
             inputs = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=512)
