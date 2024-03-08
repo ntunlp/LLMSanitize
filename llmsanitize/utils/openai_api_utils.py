@@ -68,7 +68,6 @@ def query_llm_api(config, prompt):
             print(
                 f"Unexpected exception in generating solution. Sleeping again: {e}"
             )
-            import pdb;pdb.set_trace()
             time.sleep(config.query.sleep_time)
 
     if not output_strs:

@@ -52,6 +52,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
         num_examples_to_test = 800
         random_examples = self.eval_data.shuffle(seed=42).filter(partial(guided_prompt_filter_fn, text_key=self.text_key))\
                                                         .filter(lambda _, idx: idx < num_examples_to_test, with_indices=True)
+
         llm = LLM(local_port='8000', model_name=self.model_name)
         process_fn = partial(process_fn, llm=llm,
                        split_name=self.eval_set_key, dataset_name=self.eval_data_name, label_key=self.label_key,
@@ -70,7 +71,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
                             .filter(lambda example: len(example['general_response']) > 0 and len(example['guided_response']) > 0)
         
         scores_diff = [example['guided_score']-example['general_score'] for example in processed_examples]
-        print(f"Tested on {len(processed_examples)} examples for guided-prompting")
+        print(f"Tested {len(processed_examples)} examples with guided-prompting for model {self.model_name}")
         print(f"guided_score - general_score (RougeL)\nmean: {np.mean(scores_diff):.2f}, std: {np.std(scores_diff):.2f}")
         # TODO: add significance measure and bootstrap resampling
         print("skipping the bootstrap resampling and significance measure for now")

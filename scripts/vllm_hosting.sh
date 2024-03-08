@@ -3,8 +3,9 @@ export RAY_memory_monitor_refresh_ms=0;
 export CUDA_VISIBLE_DEVICES=0,1,2,3;
 server_type=vllm.entrypoints.openai.api_server
 
+model="deepseek-ai/deepseek-llm-7b-chat" # [google/gemma-7b, mistralai/Mixtral-8x7B-Instruct-v0.1, deepseek-ai/deepseek-llm-7b-chat]
 python -m $server_type \
-    --model mistralai/Mixtral-8x7B-Instruct-v0.1 \
+    --model $model \
     --gpu-memory-utilization=0.9 \
     --max-num-seqs=200 \
     --disable-log-requests \

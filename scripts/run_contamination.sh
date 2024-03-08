@@ -29,9 +29,9 @@
 ### Model contamination use cases
 
 # test guided prompting
-#echo "this method might require running vllm serving locally"
+echo "this method might require running vllm serving locally"
 python main.py --dataset_name ag_news --method guided-prompting --text_key text --num_proc 80 \
---guided_prompting_task_type CLS --use_local_model --model_name "mistralai/Mixtral-8x7B-Instruct-v0.1"
+--guided_prompting_task_type CLS --use_local_model --model_name "deepseek-ai/deepseek-llm-7b-chat"
 
 # sharded likelihood
 # python main.py --dataset_name google/boolq \
