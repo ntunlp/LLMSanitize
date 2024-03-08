@@ -4,9 +4,10 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3;
 server_type=vllm.entrypoints.openai.api_server
 
 python -m $server_type \
-    --model mistralai/Mixtral-8x7B-Instruct-v0.1 \
+    --model /home/fangkai/pretrained-models/Mistral-7B-v0.1 \
+    --tokenizer /home/fangkai/pretrained-models/Mistral-7B-v0.1 \
     --gpu-memory-utilization=0.9 \
     --max-num-seqs=200 \
     --disable-log-requests \
-    --host 127.0.0.1 --tensor-parallel-size 4 \
-    --download-dir /export/home/cache \
+    --host 127.0.0.1 --port 6001 --tensor-parallel-size 4 \
+    --download-dir /export/home/cache 
