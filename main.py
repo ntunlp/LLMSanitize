@@ -7,6 +7,7 @@ import argparse
 from llmsanitize import DataContaminationChecker, ModelContaminationChecker
 from llmsanitize.configs.config import supported_methods
 from llmsanitize.utils.utils import seed_everything
+from llmsanitize.utils.logger import setting_logger, get_child_logger
 
 
 def parse_args():
@@ -15,11 +16,11 @@ def parse_args():
     parser.add_argument("--seed", type=int, default=42,
                         help="random seed")
     parser.add_argument("--dataset_name", type=str, default="",
-                        help="if this field is set, we set train_set and eval_set to it") # ["Rowan/hellaswag"]
+                        help="if this field is set, we set train_set and eval_set to it")  # ["Rowan/hellaswag"]
     parser.add_argument("--train_data_name", type=str, default="",
-                        help="training dataset name") # ["Rowan/hellaswag"]
+                        help="training dataset name")  # ["Rowan/hellaswag"]
     parser.add_argument("--eval_data_name", type=str, default="",
-                        help="eval dataset name") # ["Rowan/hellaswag"]
+                        help="eval dataset name")  # ["Rowan/hellaswag"]
     parser.add_argument("--eval_set_key", type=str, default="test",
                         help="eval set key")
     parser.add_argument("--text_key", type=str, default="ctx",
@@ -40,6 +41,8 @@ def parse_args():
                         help="you must pass a method name within the list supported_methods")
     parser.add_argument("--log_file_path", type=str, default="log.txt",
                         help="log file path")
+    parser.add_argument("--output_dir", type=str, default="output",
+                        help="output directory for logging if necessary")
 
     # Method specific-arguments
     parser.add_argument("--openai_creds_key_file", type=str, default=None,
@@ -86,17 +89,23 @@ def parse_args():
                         help="model name for service based inference.")
 
     args = parser.parse_args()
+
+    # Setting global logger
+    logger = setting_logger(args.log_file_path.replace(".txt", ".{}.txt".format(args.method_name)))  # TODO: We may need more detailed log file name.
+
     # if dataset name is set, set train_set and eval_set to dataset_name
     if len(args.dataset_name) > 0:
         args.train_data_name = args.dataset_name
         args.eval_data_name = args.dataset_name
     args.text_keys = args.text_keys.split("+")
-    print(args)
+    logger.warning(args)
     return args
+
 
 def check_args(args):
     assert args.method_name in supported_methods, f"Error, {args.method_name} not in supported methods: {list(supported_methods.keys())}"
     assert args.text_key != "" or args.text_key != [], f"Error, specify some text key"
+
 
 def main():
     args = parse_args()

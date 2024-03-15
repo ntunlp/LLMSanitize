@@ -9,4 +9,6 @@ python main.py \
 --eval_data_name swj0419/WikiMIA \
 --eval_set_key WikiMIA_length32 \
 --text_key input \
---max_request_time 5
+--max_request_time 5 \
+--num_proc 64 \
+--output_dir ./output_dir/min_prob

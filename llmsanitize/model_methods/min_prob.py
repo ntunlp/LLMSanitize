@@ -1,86 +1,94 @@
 """
 This file implements the model contamination detection through the min-K-prob approach.
 """
-
-# TODO: Add the inherited copyright here.
 # Most codes are copied from https://github.com/swj0419/detect-pretrain-code/blob/main/src/run.py
 import copy
-import logging
-logging.basicConfig(level='ERROR')
-import zlib
+import os.path
+from collections import defaultdict
+from multiprocessing import Pool
+
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
-from transformers import AutoTokenizer, AutoModelForCausalLM
+import zlib
+from sklearn.metrics import auc, roc_curve
 from tqdm import tqdm
+
 from llmsanitize.model_methods.llm import LLM
+from llmsanitize.utils.logger import get_child_logger
+
+logger = get_child_logger("min_prob")
+
+LLM1: LLM
+LLM2: LLM
+
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
 
 
-def load_model(name1, name2):
-    if "davinci" in name1:
-        model1 = None
-        tokenizer1 = None
-    else:
-        model1 = AutoModelForCausalLM.from_pretrained(name1, return_dict=True, device_map='auto')
-        model1.eval()
-        tokenizer1 = AutoTokenizer.from_pretrained(name1)
-
-    if "davinci" in name2:
-        model2 = None
-        tokenizer2 = None
-    else:
-        model2 = AutoModelForCausalLM.from_pretrained(name2, return_dict=True, device_map='auto')
-        model2.eval()
-        tokenizer2 = AutoTokenizer.from_pretrained(name2)
-    return model1, model2, tokenizer1, tokenizer2
+# plot data
+def sweep(score, x):
+    """
+    Compute a ROC curve and then return the FPR, TPR, AUC, and ACC.
+    """
+    fpr, tpr, _ = roc_curve(x, -score)
+    acc = np.max(1 - (fpr + (1 - tpr)) / 2)
+    return fpr, tpr, auc(fpr, tpr), acc
 
 
-# def calculatePerplexity_gpt3(prompt, modelname):
-#     prompt = prompt.replace('\x00', '')
-#     responses = None
-#     # Put your API key here
-#     openai.api_key = "YOUR_API_KEY"  # YOUR_API_KEY
-#     while responses is None:
-#         try:
-#             responses = openai.Completion.create(
-#                 engine=modelname,
-#                 prompt=prompt,
-#                 max_tokens=0,
-#                 temperature=1.0,
-#                 logprobs=5,
-#                 echo=True)
-#         except openai.error.InvalidRequestError:
-#             print("too long for openai API")
-#     data = responses["choices"][0]["logprobs"]
-#     all_prob = [d for d in data["token_logprobs"] if d is not None]
-#     p1 = np.exp(-np.mean(all_prob))
-#     return p1, all_prob, np.mean(all_prob)
-#
-#
-# def calculatePerplexity(sentence, model, tokenizer, gpu):
-#     """
-#     exp(loss)
-#     """
-#     input_ids = torch.tensor(tokenizer.encode(sentence)).unsqueeze(0)
-#     input_ids = input_ids.to(gpu)
-#     with torch.no_grad():
-#         outputs = model(input_ids, labels=input_ids)
-#     loss, logits = outputs[:2]
-#
-#     '''
-#     extract logits:
-#     '''
-#     # Apply softmax to the logits to get probabilities
-#     probabilities = torch.nn.functional.log_softmax(logits, dim=-1)
-#     # probabilities = torch.nn.functional.softmax(logits, dim=-1)
-#     all_prob = []
-#     input_ids_processed = input_ids[0][1:]
-#     for i, token_id in enumerate(input_ids_processed):
-#         probability = probabilities[0, i, token_id].item()
-#         all_prob.append(probability)
-#     return torch.exp(loss).item(), all_prob, loss.item()
+def do_plot(prediction, answers, sweep_fn=sweep, metric='auc', legend="", output_dir=None):
+    """
+    Generate the ROC curves by using ntest models as test models and the rest to train.
+    """
+    fpr, tpr, auc, acc = sweep_fn(np.array(prediction), np.array(answers, dtype=bool))
+
+    low = tpr[np.where(fpr < .05)[0][-1]]
+    # bp()
+    logger.info('Attack %s   AUC %.4f, Accuracy %.4f, TPR@5%%FPR of %.4f\n' % (legend, auc, acc, low))
+
+    metric_text = ''
+    if metric == 'auc':
+        metric_text = 'auc=%.3f' % auc
+    elif metric == 'acc':
+        metric_text = 'acc=%.3f' % acc
+
+    plt.plot(fpr, tpr, label=legend + metric_text)
+    return legend, auc, acc, low
+
+
+def fig_fpr_tpr(all_output, output_dir):
+    logger.info("Min-Prob method output_dir", output_dir)
+    answers = []
+    metric2predictions = defaultdict(list)
+    for ex in all_output:
+        answers.append(ex["label"])
+        for metric in ex["pred"].keys():
+            if ("raw" in metric) and ("clf" not in metric):
+                continue
+            metric2predictions[metric].append(ex["pred"][metric])
+
+    plt.figure(figsize=(4, 3))
+    with open(f"{output_dir}/auc.txt", "w") as f:
+        for metric, predictions in metric2predictions.items():
+            legend, auc, acc, low = do_plot(predictions, answers, legend=metric, metric='auc', output_dir=output_dir)
+            f.write('%s   AUC %.4f, Accuracy %.4f, TPR@0.1%%FPR of %.4f\n' % (legend, auc, acc, low))
+
+    plt.semilogx()
+    plt.semilogy()
+    plt.xlim(1e-5, 1)
+    plt.ylim(1e-5, 1)
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.plot([0, 1], [0, 1], ls='--', color='gray')
+    plt.subplots_adjust(bottom=.18, left=.18, top=.96, right=.96)
+    plt.legend(fontsize=8)
+    plt.savefig(f"{output_dir}/auc.png")
 
 
 def calculate_perplexity(prompt, llm: LLM):
-    # TODO: This can be moved to LLM class as a internal function.
     prompt = prompt.replace('\x00', '')
     _, responses, _ = llm.query(prompt, return_full_response=True)
     # print("Response", responses)
@@ -90,20 +98,13 @@ def calculate_perplexity(prompt, llm: LLM):
     return p1, all_prob, np.mean(all_prob)
 
 
-def inference(llm1: LLM, llm2: LLM, text):
+def inference(llm1: LLM, llm2: LLM, _input):
+    text = _input["text"]
     pred = {}
 
-    # if "davinci" in modelname1:
-    #     p1, all_prob, p1_likelihood = calculatePerplexity_gpt3(text, modelname1)
-    #     p_lower, _, p_lower_likelihood = calculatePerplexity_gpt3(text.lower(), modelname1)
-    # else:
     p1, all_prob, p1_likelihood = calculate_perplexity(text, llm1)
     p_lower, _, p_lower_likelihood = calculate_perplexity(text.lower(), llm1)
 
-    # if "davinci" in modelname2:
-    #     p_ref, all_prob_ref, p_ref_likelihood = calculatePerplexity_gpt3(text, modelname2)
-    # else:
-    #     p_ref, all_prob_ref, p_ref_likelihood = calculatePerplexity(text, model2, tokenizer2, gpu=model2.device)
     p_ref, all_prob_ref, p_ref_likelihood = calculate_perplexity(text, llm2)
 
     # ppl
@@ -122,13 +123,27 @@ def inference(llm1: LLM, llm2: LLM, text):
         topk_prob = np.sort(all_prob)[:k_length]
         pred[f"Min_{ratio * 100}% Prob"] = -np.mean(topk_prob).item()
 
-    return pred
+    _input["pred"] = pred
+
+    return _input
+
+
+def _client_init(llm1, llm2):
+    global LLM1, LLM2
+    LLM1 = llm1
+    LLM2 = llm2
+
+
+def _process_fn(x):
+    return inference(LLM1, LLM2, x)
+
 
 # Following the logic from this paper: https://arxiv.org/pdf/2310.16789.pdf
 def main_min_prob(
-    args,
-    test_data
+        args,
+        test_data
 ):
+    num_proc = args.num_proc
     llm1 = LLM.from_args(args=args)
 
     tmp_args = copy.deepcopy(args)
@@ -137,34 +152,24 @@ def main_min_prob(
     tmp_args.local_port = args.local_port_2
     llm2 = LLM.from_args(args=tmp_args)
 
-    print(f"all data size: {len(test_data)}")
-    all_output = []
-    test_data = test_data
-    debug = 0  # TODO: This is for debug, remove `debug` variable when finished.
-    for text in tqdm(test_data):  # TODO: Use multiprocessing to accelerate here.
-        print(text)
-        new_ex = inference(llm1, llm2, text["text"])  # Here, `test_data` is Dataset, and `text` is a dictionary.
-        all_output.append(new_ex)
-        debug += 1
-        if debug > 5:
-            break
-    return all_output
+    logger.info(f"all data size: {len(test_data)}")
 
-#
-# if __name__ == '__main__':
-#     args = Options()
-#     args = args.parser.parse_args()
-#     args.output_dir = f"{args.output_dir}/{args.target_model}_{args.ref_model}/{args.key_name}"
-#     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
-#
-#     # load model and data
-#     model1, model2, tokenizer1, tokenizer2 = load_model(args.target_model, args.ref_model)
-#     if "jsonl" in args.data:
-#         data = load_jsonl(f"{args.data}")
-#     else:  # load data from huggingface
-#         dataset = load_dataset(args.data, split=f"WikiMIA_length{args.length}")
-#         data = convert_huggingface_data_to_list_dic(dataset)
-#
-#     all_output = evaluate_data(data, model1, model2, tokenizer1, tokenizer2, args.key_name, args.target_model, args.ref_model)
-#     # TODO: Implement this line:
-#     fig_fpr_tpr(all_output, args.output_dir)
+    if num_proc <= 1:
+        all_output = []
+        for text in tqdm(test_data):
+            # logger.info(text)
+            new_ex = inference(llm1, llm2, text)  # Here, `test_data` is Dataset, and `text` is a dictionary.
+            all_output.append(new_ex)
+    else:
+        with Pool(num_proc, initializer=_client_init, initargs=(llm1, llm2,)) as p:
+            all_output = list(tqdm(
+                p.imap(_process_fn, test_data, chunksize=32),
+                total=len(test_data),
+                desc="Sending requests to local service"
+            ))
+
+    if not os.path.exists(args.output_dir):
+        os.makedirs(args.output_dir)
+    fig_fpr_tpr(all_output, args.output_dir)
+
+    return []
