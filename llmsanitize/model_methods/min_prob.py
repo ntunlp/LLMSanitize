@@ -2,15 +2,15 @@
 This file implements the model contamination detection through the min-K-prob approach.
 """
 # Most codes are copied from https://github.com/swj0419/detect-pretrain-code/blob/main/src/run.py
+
 import copy
 import os.path
-from collections import defaultdict
-from multiprocessing import Pool
-
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import zlib
+from collections import defaultdict
+from multiprocessing import Pool
 from sklearn.metrics import auc, roc_curve
 from tqdm import tqdm
 
@@ -34,10 +34,11 @@ def sweep(score, x):
     """
     Compute a ROC curve and then return the FPR, TPR, AUC, and ACC.
     """
+    score = np.nan_to_num(score)
     fpr, tpr, _ = roc_curve(x, -score)
     acc = np.max(1 - (fpr + (1 - tpr)) / 2)
+    
     return fpr, tpr, auc(fpr, tpr), acc
-
 
 def do_plot(prediction, answers, sweep_fn=sweep, metric='auc', legend="", output_dir=None):
     """
@@ -56,11 +57,11 @@ def do_plot(prediction, answers, sweep_fn=sweep, metric='auc', legend="", output
         metric_text = 'acc=%.3f' % acc
 
     plt.plot(fpr, tpr, label=legend + metric_text)
+    
     return legend, auc, acc, low
 
-
 def fig_fpr_tpr(all_output, output_dir):
-    logger.info("Min-Prob method output_dir", output_dir)
+    logger.info(f"Min-Prob method output_dir: {output_dir}")
     answers = []
     metric2predictions = defaultdict(list)
     for ex in all_output:
@@ -87,7 +88,6 @@ def fig_fpr_tpr(all_output, output_dir):
     plt.legend(fontsize=8)
     plt.savefig(f"{output_dir}/auc.png")
 
-
 def calculate_perplexity(prompt, llm: LLM):
     prompt = prompt.replace('\x00', '')
     _, responses, _ = llm.query(prompt, return_full_response=True)
@@ -95,8 +95,8 @@ def calculate_perplexity(prompt, llm: LLM):
     data = responses["choices"][0]["logprobs"]
     all_prob = [d for d in data["token_logprobs"] if d is not None]
     p1 = np.exp(-np.mean(all_prob))
+    
     return p1, all_prob, np.mean(all_prob)
-
 
 def inference(llm1: LLM, llm2: LLM, _input):
     text = _input["text"]
@@ -127,21 +127,18 @@ def inference(llm1: LLM, llm2: LLM, _input):
 
     return _input
 
-
 def _client_init(llm1, llm2):
     global LLM1, LLM2
     LLM1 = llm1
     LLM2 = llm2
 
-
 def _process_fn(x):
     return inference(LLM1, LLM2, x)
 
-
 # Following the logic from this paper: https://arxiv.org/pdf/2310.16789.pdf
 def main_min_prob(
-        args,
-        test_data
+    args,
+    test_data
 ):
     num_proc = args.num_proc
     llm1 = LLM.from_args(args=args)
@@ -171,5 +168,3 @@ def main_min_prob(
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
     fig_fpr_tpr(all_output, args.output_dir)
-
-    return []

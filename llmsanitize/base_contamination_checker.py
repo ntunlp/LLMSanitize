@@ -10,6 +10,9 @@ from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
 
 from llmsanitize.configs.config import supported_methods, config
+from llmsanitize.utils.logger import get_child_logger
+
+logger = get_child_logger("base")
 
 
 class BaseContaminationChecker:
@@ -46,8 +49,7 @@ class BaseContaminationChecker:
         else:
             self.eval_data = []
 
-        message = f"There are {len(self.train_data)} train data points and {len(self.eval_data)} eval data points"
-        print(message)
+        logger.info(f"There are {len(self.train_data)} train data points and {len(self.eval_data)} eval data points")
 
     def subsample_eval_data(self):
         if len(self.eval_data) > 0 and self.n_eval_data_points > 0:
@@ -55,8 +57,7 @@ class BaseContaminationChecker:
             p = p[:self.n_eval_data_points]
             p = list(p)
             self.eval_data = self.eval_data.select(p)
-            message = f"After sub-sampling, there are now {len(self.eval_data)} eval data points"
-            print(message)
+            logger.info(f"After sub-sampling, there are now {len(self.eval_data)} eval data points")
 
     def combine_text_keys(self):
         for key in self.text_keys:
@@ -96,5 +97,5 @@ class BaseContaminationChecker:
         return subset
 
     def run_contamination(self, method):
-        print("run_contamination not implemented")
+        logger.info("run_contamination not implemented")
         pass

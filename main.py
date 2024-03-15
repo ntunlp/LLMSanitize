@@ -4,6 +4,7 @@ Main file, to be called to run contamination
 
 import multiprocessing as mp
 import argparse
+from datetime import datetime
 from llmsanitize import DataContaminationChecker, ModelContaminationChecker
 from llmsanitize.configs.config import supported_methods
 from llmsanitize.utils.utils import seed_everything
@@ -90,8 +91,12 @@ def parse_args():
 
     args = parser.parse_args()
 
-    # Setting global logger
-    logger = setting_logger(args.log_file_path.replace(".txt", ".{}.txt".format(args.method_name)))  # TODO: We may need more detailed log file name.
+    # Setting global logger name
+    current_date = datetime.now().strftime('%Y%m%d_%H%M%S')
+    data = args.dataset_name if args.dataset_name != "" else args.eval_data_name
+    data = data.replace("/", "_")
+    log_file_name = f"log_{current_date}_{args.method_name}_{data}_{args.n_eval_data_points}.txt"
+    logger = setting_logger(log_file_name) 
 
     # if dataset name is set, set train_set and eval_set to dataset_name
     if len(args.dataset_name) > 0:

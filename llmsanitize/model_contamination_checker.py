@@ -52,8 +52,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
         )
 
     def contamination_min_prob(self):
-        results = main_min_prob(
+        main_min_prob(
             args=self,
             test_data=self.eval_data
         )
-        print(results)

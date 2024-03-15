@@ -6,6 +6,10 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from llmsanitize.utils.logger import get_child_logger
+
+logger = get_child_logger("platypus")
+
 
 # Following the logic in Platypus paper: https://arxiv.org/pdf/2308.07317.pdf section 2.2
 def main_platypus(
@@ -29,7 +33,6 @@ def main_platypus(
     contaminated = (np.max(cos, axis=1) >= thresh).astype(int)
     frac = 100 * np.mean(contaminated)
     n_contaminated = np.sum(contaminated)
-    message = f"\nData contamination: checking {eval_data_name}/{eval_set_key} against {train_data_name} (train)"
-    message += f"\nMethod: Sentence-Transformers embeddings cosine above {thresh} (Platypus style)"
-    message += f"\n# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%"
-    print(message)
+    logger.info(f"Data contamination: checking {eval_data_name}/{eval_set_key} against {train_data_name} (train)")
+    logger.info(f"Method: Sentence-Transformers embeddings cosine above {thresh} (Platypus style)")
+    logger.info(f"# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%")

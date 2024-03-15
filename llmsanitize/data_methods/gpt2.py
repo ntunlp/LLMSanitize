@@ -4,7 +4,11 @@ This file implements the string-matching done for data contamination as in GPT-2
 
 import re
 import numpy as np
+
 from llmsanitize.utils.string_utils import *
+from llmsanitize.utils.logger import get_child_logger
+
+logger = get_child_logger("gpt2")
 
 
 def clean_text_gpt2(text):
@@ -29,8 +33,7 @@ def main_gpt2(
 
     ngram_size = 8
     train_ngrams = build_ngrams(train_data, ngram_size, clean_text_gpt2)
-    message = f"There are {len(train_ngrams.keys())} {ngram_size}-grams in the training set"
-    print(message)
+    logger.info(f"There are {len(train_ngrams.keys())} {ngram_size}-grams in the training set")
 
     ngram_overlaps = overlap_ngrams(eval_data, train_ngrams, ngram_size, clean_text_gpt2)
     contaminated = np.array([int(x[0] > 0) for x in ngram_overlaps])
@@ -38,8 +41,7 @@ def main_gpt2(
     n_contaminated = np.sum(contaminated)
     overlaps = np.array([100 * x[0]/x[1] for x in ngram_overlaps])
     mean_overlap = np.mean(overlaps)
-    message = f"\nData contamination: checking {eval_data_name}/{eval_set_key} against {train_data_name} (train)"
-    message += f"\nMethod: matching of {ngram_size}-grams (GPT-2 style data contamination)"
-    message += f"\n# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%"
-    message += f"\nMean {ngram_size}-grams overlap: {mean_overlap:.4f}%"
-    print(message)
+    logger.info(f"Data contamination: checking {eval_data_name}/{eval_set_key} against {train_data_name} (train)")
+    logger.info(f"Method: matching of {ngram_size}-grams (GPT-2 style data contamination)")
+    logger.info(f"# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%")
+    logger.info(f"Mean {ngram_size}-grams overlap: {mean_overlap:.4f}%")
