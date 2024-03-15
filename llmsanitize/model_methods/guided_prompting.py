@@ -9,9 +9,12 @@ from rouge_score import rouge_scorer
 from datasets import Value
 from functools import partial
 from llmsanitize.utils.utils import seed_everything, fill_template
+from llmsanitize.utils.logger import get_child_logger
 from llmsanitize.model_methods.llm import LLM
 import llmsanitize.prompts.guided_prompting.general_instructions as gi_prompts
 import llmsanitize.prompts.guided_prompting.guided_instructions as gui_prompts
+
+logger = get_child_logger("guided_prompting")
 
 
 def guided_prompt_filter_fn(example, text_key):
@@ -114,8 +117,7 @@ def main_guided_prompting(
         .filter(lambda example: len(example['general_response']) > 0 and len(example['guided_response']) > 0)
 
     scores_diff = [example['guided_score'] - example['general_score'] for example in processed_examples]
-    print(f"Tested {len(processed_examples)} examples with guided-prompting for model {model_name}")
-    print(
-        f"guided_score - general_score (RougeL)\nmean: {np.mean(scores_diff):.2f}, std: {np.std(scores_diff):.2f}")
+    logger.info(f"Tested {len(processed_examples)} examples with guided-prompting for model {model_name}")
+    logger.info(f"guided_score - general_score (RougeL)\nmean: {np.mean(scores_diff):.2f}, std: {np.std(scores_diff):.2f}")
     # TODO: add significance measure and bootstrap resampling
-    print("skipping the bootstrap resampling and significance measure for now")
+    logger.info("skipping the bootstrap resampling and significance measure for now")

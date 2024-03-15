@@ -13,6 +13,10 @@ from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from multiprocessing import Process, Queue
 
+from llmsanitize.utils.logger import get_child_logger
+
+logger = get_child_logger("sharded_likelihood")
+
 
 ###### Code for Sharded Likelihood ######
 def _load_dataset(dataset_path):
@@ -88,11 +92,13 @@ def _worker(
             break
 
         # Compute logprob of tokens.
-        logprob = _compute_logprob_of_token_sequence(tokens,
-                                                    m,
-                                                    context_len,
-                                                    stride,
-                                                    device=device)
+        logprob = _compute_logprob_of_token_sequence(
+            tokens,
+            m,
+            context_len,
+            stride,
+            device=device
+        )
 
         # Send result to main process.
         main_queue.put((logprob, shard_id, is_canonical))
@@ -118,28 +124,19 @@ def main_sharded_likelihood(
     # Load the dataset.
     examples = _load_dataset(dataset_path)
     examples = examples[:max_examples]
-    print(examples[:2])
+    logger.info(examples[:2])
     num_examples = len(examples)
-    print(f"Loaded {num_examples} examples from {dataset_path}")
+    logger.info(f"Loaded {num_examples} examples from {dataset_path}")
 
     # Load tokenizer and tokenize the examples.
     t = AutoTokenizer.from_pretrained(model_name_or_path)
     tokenized_examples = [t.encode(ex) for ex in examples]
 
     # Launch a Process for each GPU.
-    # gpus = GPUtil.getGPUs()
-    # num_workers = len(gpus)
     num_workers = torch.cuda.device_count()
     processes = []
     main_queue = Queue()
     worker_queues = [Queue() for _ in range(num_workers)]
-    # for i, gpu in enumerate(gpus):
-    #     p = Process(target=worker, args=(model_name_or_path,
-    #                                      context_len,
-    #                                      stride,
-    #                                      gpu.id,
-    #                                      main_queue,
-    #                                      worker_queues[i]))
     for i in range(num_workers):
         p = Process(target=_worker, args=(model_name_or_path,
                                          context_len,
@@ -154,7 +151,7 @@ def main_sharded_likelihood(
     num_ready = 0
     while num_ready < num_workers:
         gpu_id, is_ready = main_queue.get()
-        print(f"GPU {gpu_id} loaded model.")
+        logger.info(f"GPU {gpu_id} loaded model.")
         num_ready += 1
 
     # Issue requests to all worker queues, round-robin style.
@@ -219,11 +216,11 @@ def main_sharded_likelihood(
     diffs = canonical_logprobs - shuffled_logprobs.mean(axis=1)
     z = np.mean(diffs) / np.std(diffs) * np.sqrt(len(diffs))
     pval = 1 - tdist.cdf(z, df=len(diffs)-1)
-    print(f"{pval=}")
+    logger.info(f"{pval=}")
 
     # Log.
     if log_file_path is not None:
-        print(f"Writing logprobs to: {log_file_path}")
+        logger.info(f"Writing logprobs to: {log_file_path}")
         with open(f"{log_file_path}", 'w') as f:
             f.write(json.dumps({
                 'pval': pval,

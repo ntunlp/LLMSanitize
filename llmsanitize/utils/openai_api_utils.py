@@ -1,8 +1,13 @@
 # GPT-J
+
 import openai
 import time
 import random
 from pathlib import Path
+
+from llmsanitize.utils.logger import get_child_logger
+
+logger = get_child_logger("openai_utils")
 
 
 def calculate_openai_cost(engine_name, usage_dict):
@@ -20,21 +25,19 @@ def calculate_openai_cost(engine_name, usage_dict):
     if engine_name not in pricing_json.keys():
         return 0
     input_price, output_price = pricing_json[engine_name]
+    
     return input_price * (usage_dict['prompt_tokens'] / 1000.) + output_price * (usage_dict['completion_tokens'] / 1000.)
-
 
 def initialize_openai(config):
     with open(config.openai.creds_key_file, 'r') as rf:
         api_key = rf.read()
     openai.api_key = api_key
 
-
 def initialize_openai_local(config):
     ''' initialize openai lib to query local served model
     '''
     openai.api_key = "EMPTY"
     openai.api_base = f"http://127.0.0.1:{config.local.port}/v1"
-
 
 def query_llm_api(config, prompt):
     output_strs = []
@@ -64,9 +67,7 @@ def query_llm_api(config, prompt):
             total_cost += calculate_openai_cost(engine['name'], response['usage'])
             break
         except Exception as e:
-            print(
-                f"Unexpected exception in generating solution. Sleeping again: {e}"
-            )
+            logger.info(f"Unexpected exception in generating solution. Sleeping again: {e}")
             time.sleep(config.query.sleep_time)
 
     if not output_strs:

@@ -3,7 +3,11 @@ This file implements the string-matching done for data contamination as in PaLM'
 """
 
 import numpy as np
+
 from llmsanitize.utils.string_utils import *
+from llmsanitize.utils.logger import get_child_logger
+
+logger = get_child_logger("palm")
 
 
 # Following the logic in PaLM's paper: https://arxiv.org/pdf/2204.02311.pdf section 8
@@ -20,8 +24,7 @@ def main_palm(
 
     ngram_size = 8
     train_ngrams = build_ngrams(train_data, ngram_size, None)
-    message = f"There are {len(train_ngrams.keys())} {ngram_size}-grams strings in the training set"
-    print(message)
+    logger.info(f"There are {len(train_ngrams.keys())} {ngram_size}-grams strings in the training set")
 
     overlap_thresh = 70
     ngram_overlaps = overlap_ngrams(eval_data, train_ngrams, ngram_size, None)
@@ -29,7 +32,6 @@ def main_palm(
     contaminated = np.array([int(x >= overlap_thresh) for x in overlaps])
     frac = 100 * np.mean(contaminated)
     n_contaminated = np.sum(contaminated)
-    message = f"\nData contamination: checking {eval_data_name}/{eval_set_key} against {train_data_name} (train)"
-    message += f"\nMethod: ratio of contaminated {ngram_size}-grams is above {overlap_thresh}% (PaLM style data contamination)"
-    message += f"\n# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%"
-    print(message)
+    logger.info(f"Data contamination: checking {eval_data_name}/{eval_set_key} against {train_data_name} (train)")
+    logger.info(f"Method: ratio of contaminated {ngram_size}-grams is above {overlap_thresh}% (PaLM style data contamination)")
+    logger.info(f"# Contaminated points: {n_contaminated}/{len(contaminated)} or {frac:.4f}%")
