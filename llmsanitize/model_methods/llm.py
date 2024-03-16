@@ -106,18 +106,3 @@ class LLM:
         #   Maybe we could also add online inference for better speed.
         outputs, cost = self.query_fn(self._query_config, prompts)
         return outputs, cost
-
-    @classmethod
-    def from_args(cls, args: Namespace):
-        return cls(
-            openai_creds_key_file=getattr(args, "openai_creds_key_file", config.openai.creds_key_file),
-            local_port=args.local_port,
-            local_model_path=args.local_model_path,
-            local_tokenizer_path=getattr(args, "local_tokenizer_path", args.local_model_path),
-            model_name=args.model_name,
-            num_samples=args.num_samples,
-            max_tokens=args.max_tokens,
-            top_logprobs=args.top_logprobs,
-            max_request_time=args.max_request_time,
-            sleep_time=args.sleep_time
-        )

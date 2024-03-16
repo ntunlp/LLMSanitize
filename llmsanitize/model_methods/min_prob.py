@@ -37,7 +37,7 @@ def sweep(score, x):
     score = np.nan_to_num(score)
     fpr, tpr, _ = roc_curve(x, -score)
     acc = np.max(1 - (fpr + (1 - tpr)) / 2)
-    
+
     return fpr, tpr, auc(fpr, tpr), acc
 
 def do_plot(prediction, answers, sweep_fn=sweep, metric='auc', legend="", output_dir=None):
@@ -57,7 +57,7 @@ def do_plot(prediction, answers, sweep_fn=sweep, metric='auc', legend="", output
         metric_text = 'acc=%.3f' % acc
 
     plt.plot(fpr, tpr, label=legend + metric_text)
-    
+
     return legend, auc, acc, low
 
 def fig_fpr_tpr(all_output, output_dir):
@@ -95,7 +95,7 @@ def calculate_perplexity(prompt, llm: LLM):
     data = responses["choices"][0]["logprobs"]
     all_prob = [d for d in data["token_logprobs"] if d is not None]
     p1 = np.exp(-np.mean(all_prob))
-    
+
     return p1, all_prob, np.mean(all_prob)
 
 def inference(llm1: LLM, llm2: LLM, _input):
@@ -137,17 +137,50 @@ def _process_fn(x):
 
 # Following the logic from this paper: https://arxiv.org/pdf/2310.16789.pdf
 def main_min_prob(
-    args,
-    test_data
+        test_data,
+        openai_creds_key_file: str = None,
+        openai_creds_key_file_2: str = None,
+        local_port: str = None,
+        local_port_2: str = None,
+        local_model_path: str = None,
+        local_model_path_2: str = None,
+        local_tokenizer_path: str = None,
+        local_tokenizer_path_2: str = None,
+        model_name: str = None,
+        model_name_2: str = None,
+        num_samples: int = 1,
+        max_tokens: int = 128,
+        top_logprobs: int = 0,
+        max_request_time: int = 600,
+        sleep_time: int = 1,
+        num_proc: int = 8,
+        output_dir: str = "output",
 ):
-    num_proc = args.num_proc
-    llm1 = LLM.from_args(args=args)
+    llm1 = LLM(
+        openai_creds_key_file=openai_creds_key_file,
+        local_port=local_port,
+        local_model_path=local_model_path,
+        local_tokenizer_path=local_tokenizer_path,
+        model_name=model_name,
+        num_samples=num_samples,
+        max_tokens=max_tokens,
+        top_logprobs=top_logprobs,
+        max_request_time=max_request_time,
+        sleep_time=sleep_time,
+    )
 
-    tmp_args = copy.deepcopy(args)
-    tmp_args.model_name = args.model_name_2
-    tmp_args.openai_creds_key_file = args.openai_creds_key_file_2
-    tmp_args.local_port = args.local_port_2
-    llm2 = LLM.from_args(args=tmp_args)
+    llm2 = LLM(
+        openai_creds_key_file=openai_creds_key_file_2,
+        local_port=local_port_2,
+        local_model_path=local_model_path_2,
+        local_tokenizer_path=local_tokenizer_path_2,
+        model_name=model_name_2,
+        num_samples=num_samples,
+        max_tokens=max_tokens,
+        top_logprobs=top_logprobs,
+        max_request_time=max_request_time,
+        sleep_time=sleep_time,
+    )
 
     logger.info(f"all data size: {len(test_data)}")
 
@@ -165,6 +198,6 @@ def main_min_prob(
                 desc="Sending requests to local service"
             ))
 
-    if not os.path.exists(args.output_dir):
-        os.makedirs(args.output_dir)
-    fig_fpr_tpr(all_output, args.output_dir)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    fig_fpr_tpr(all_output, output_dir)
