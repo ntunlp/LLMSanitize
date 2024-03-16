@@ -53,6 +53,22 @@ class ModelContaminationChecker(BaseContaminationChecker):
 
     def contamination_min_prob(self):
         main_min_prob(
-            args=self,
-            test_data=self.eval_data
+            test_data=self.eval_data,
+            openai_creds_key_file=self.openai_creds_key_file,
+            openai_creds_key_file_2=self.openai_creds_key_file_2,
+            local_port=self.local_port,
+            local_port_2=self.local_port_2,
+            local_model_path=self.local_model_path,
+            # local_model_path_2=self.local_model_path_2,  # Currently it is not contained in argument list. Uncomment this when you need it.
+            local_tokenizer_path=self.local_tokenizer_path,
+            # local_tokenizer_path_2=self.local_tokenizer_path_2,
+            model_name=self.model_name,
+            model_name_2=self.model_name_2,
+            num_samples=self.num_samples,
+            max_tokens=self.max_tokens,
+            top_logprobs=self.top_logprobs,
+            max_request_time=self.max_request_time,
+            sleep_time=self.sleep_time,
+            num_proc=self.num_proc,
+            output_dir=self.output_dir
         )
