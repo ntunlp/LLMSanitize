@@ -3,14 +3,14 @@ This file implements the model contamination detection through the min-K-prob ap
 """
 # Most codes are copied from https://github.com/swj0419/detect-pretrain-code/blob/main/src/run.py
 
-import copy
 import os.path
+from collections import defaultdict
+from multiprocessing import Pool
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import zlib
-from collections import defaultdict
-from multiprocessing import Pool
 from sklearn.metrics import auc, roc_curve
 from tqdm import tqdm
 
@@ -65,7 +65,8 @@ def fig_fpr_tpr(all_output, output_dir):
     answers = []
     metric2predictions = defaultdict(list)
     for ex in all_output:
-        answers.append(ex["label"])
+        if "label" in ex:
+            answers.append(ex["label"])
         for metric in ex["pred"].keys():
             if ("raw" in metric) and ("clf" not in metric):
                 continue
@@ -74,8 +75,13 @@ def fig_fpr_tpr(all_output, output_dir):
     plt.figure(figsize=(4, 3))
     with open(f"{output_dir}/auc.txt", "w") as f:
         for metric, predictions in metric2predictions.items():
-            legend, auc, acc, low = do_plot(predictions, answers, legend=metric, metric='auc', output_dir=output_dir)
-            f.write('%s   AUC %.4f, Accuracy %.4f, TPR@0.1%%FPR of %.4f\n' % (legend, auc, acc, low))
+            if answers:
+                legend, auc, acc, low = do_plot(predictions, answers, legend=metric, metric='auc', output_dir=output_dir)
+                f.write('%s   AUC %.4f, Accuracy %.4f, TPR@0.1%%FPR of %.4f\n' % (legend, auc, acc, low))
+
+            scores = np.nan_to_num(predictions)
+            logger.info(f"=================== {metric} {np.mean(scores):.4f}")
+            f.write(f"{metric} {np.mean(scores):.4f}\n")
 
     plt.semilogx()
     plt.semilogy()
@@ -91,9 +97,8 @@ def fig_fpr_tpr(all_output, output_dir):
 def calculate_perplexity(prompt, llm: LLM):
     prompt = prompt.replace('\x00', '')
     _, responses, _ = llm.query(prompt, return_full_response=True)
-    # print("Response", responses)
     data = responses["choices"][0]["logprobs"]
-    all_prob = [d for d in data["token_logprobs"] if d is not None]
+    all_prob = [d for d in data["token_logprobs"][:-llm.query_config.query.max_tokens] if d is not None]
     p1 = np.exp(-np.mean(all_prob))
 
     return p1, all_prob, np.mean(all_prob)
@@ -153,6 +158,7 @@ def main_min_prob(
         top_logprobs: int = 0,
         max_request_time: int = 600,
         sleep_time: int = 1,
+        echo: bool = False,
         num_proc: int = 8,
         output_dir: str = "output",
 ):
@@ -167,6 +173,7 @@ def main_min_prob(
         top_logprobs=top_logprobs,
         max_request_time=max_request_time,
         sleep_time=sleep_time,
+        echo=echo,
     )
 
     llm2 = LLM(
@@ -180,6 +187,7 @@ def main_min_prob(
         top_logprobs=top_logprobs,
         max_request_time=max_request_time,
         sleep_time=sleep_time,
+        echo=echo,
     )
 
     logger.info(f"all data size: {len(test_data)}")

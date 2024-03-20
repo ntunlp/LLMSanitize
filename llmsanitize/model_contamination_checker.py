@@ -69,6 +69,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
             top_logprobs=self.top_logprobs,
             max_request_time=self.max_request_time,
             sleep_time=self.sleep_time,
+            echo=self.echo,
             num_proc=self.num_proc,
             output_dir=self.output_dir
         )

@@ -32,7 +32,8 @@ class LLM:
             max_tokens: int = 128,
             top_logprobs: int = 0,
             max_request_time: int = 600,
-            sleep_time: int = 1
+            sleep_time: int = 1,
+            echo: bool = False,
     ):
         """
         :param config: config object
@@ -52,18 +53,18 @@ class LLM:
                     - query.sleep_time
         """
         if local_model_path:
-            print(f"Loading local model from {local_model_path} and tokenizer from {local_tokenizer_path}.")
+            logger.info(f"Loading local model from {local_model_path} and tokenizer from {local_tokenizer_path}.")
             self.model = AutoModelForCausalLM.from_pretrained(local_model_path, torch_dtype="auto").to(device)
             self.tokenizer = AutoTokenizer.from_pretrained(local_tokenizer_path)
             self.api_base = False
         elif local_port:
-            print(f"Initializing vllm service from port {local_port}.")
+            logger.info(f"Initializing vllm service from port {local_port}.")
             _config = dict_to_object({"local": {"port": local_port}})
             initialize_openai_local(_config)
             self.query_fn = query_llm_api
             self.api_base = True
         else:
-            print("Initializing OpenAI API.")
+            logger.info("Initializing OpenAI API.")
             _config = dict_to_object({"openai": {"creds_key_file": openai_creds_key_file}})
             initialize_openai(_config)
             self.query_fn = query_llm_api
@@ -83,15 +84,16 @@ class LLM:
                 "top_logprobs": top_logprobs,
                 "max_request_time": max_request_time,
                 "sleep_time": sleep_time,
+                "echo": echo,
             }
         }
-        self._query_config = dict_to_object(_query_config)
+        self.query_config = dict_to_object(_query_config)
         logger.info("====================== Query Config =======================")
         logger.info(_query_config)
 
     def query(self, prompt, return_full_response: bool = False):
         if self.api_base:
-            outputs, full_response, cost = self.query_fn(self._query_config, prompt)
+            outputs, full_response, cost = self.query_fn(self.query_config, prompt)
             assert len(outputs) == 1
             if return_full_response:
                 return outputs[0], full_response, cost
@@ -104,5 +106,5 @@ class LLM:
     def batch_query(self, prompts):
         # TODO: Current implementation requires deploy a vllm service first?
         #   Maybe we could also add online inference for better speed.
-        outputs, cost = self.query_fn(self._query_config, prompts)
+        outputs, cost = self.query_fn(self.query_config, prompts)
         return outputs, cost

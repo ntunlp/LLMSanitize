@@ -44,8 +44,9 @@ class BaseContaminationChecker:
             self.train_data = []
 
         if self.eval_data_name:
-            self.eval_data = load_dataset(self.eval_data_name)
-            self.eval_data = self.eval_data[self.eval_set_key]
+            self.eval_data = load_dataset(self.eval_data_name, self.eval_data_config_name)
+            if self.eval_set_key:
+                self.eval_data = self.eval_data[self.eval_set_key]
         else:
             self.eval_data = []
 
@@ -60,10 +61,14 @@ class BaseContaminationChecker:
             logger.info(f"After sub-sampling, there are now {len(self.eval_data)} eval data points")
 
     def combine_text_keys(self):
-        for key in self.text_keys:
-            assert key in self.train_data.features, "Error - please provide a text key that is in this dataset"
-        self.train_data = self.combine_text_keys_subset_(self.train_data)
-        self.eval_data = self.combine_text_keys_subset_(self.eval_data)
+        if self.train_data:
+            for key in self.text_keys:
+                assert key in self.train_data.features, "Error - please provide a text key that is in this dataset"
+            self.train_data = self.combine_text_keys_subset_(self.train_data)
+        if self.eval_data:
+            for key in self.text_keys:
+                assert key in self.eval_data.features, "Error - please provide a text key that is in this dataset"
+            self.eval_data = self.combine_text_keys_subset_(self.eval_data)
 
     def combine_text_keys_subset_(self, subset):
         texts = []
@@ -74,13 +79,19 @@ class BaseContaminationChecker:
             text = ""
             for j in range(len(self.text_keys)):
                 key = self.text_keys[j]
+
+                if isinstance(vals[key][i], list):
+                    _content = " ".join([f"({k}) {vals[key][i][k]}" for k in range(len(vals[key][i]))])
+                else:
+                    _content = str(vals[key][i])
+
                 if j == 0:
                     text += str(vals[key][i])
                 else:
                     text += " | " + str(vals[key][i])
             texts.append(text)
         subset = subset.add_column("text", texts)
-        
+
         return subset
 
     def normalize_text_key(self):
@@ -93,7 +104,7 @@ class BaseContaminationChecker:
         if self.text_key != "text":
             assert self.text_key in subset.features, "Error - please provide a text key that is in this dataset"
             subset = subset.add_column("text", subset[self.text_key])
-        
+
         return subset
 
     def run_contamination(self, method):

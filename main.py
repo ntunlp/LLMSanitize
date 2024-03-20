@@ -22,6 +22,8 @@ def parse_args():
                         help="training dataset name")  # ["Rowan/hellaswag"]
     parser.add_argument("--eval_data_name", type=str, default="",
                         help="eval dataset name")  # ["Rowan/hellaswag"]
+    parser.add_argument("--eval_data_config_name", type=str, default=None,
+                        help="eval dataset config name")  # datasets.load_dataset("cais/mmlu", "all")
     parser.add_argument("--eval_set_key", type=str, default="test",
                         help="eval set key")
     parser.add_argument("--text_key", type=str, default="ctx",
@@ -63,6 +65,8 @@ def parse_args():
                         help="max request time for each sample")
     parser.add_argument("--sleep_time", type=int, default=1,
                         help="sleep time for each sample")
+    parser.add_argument("--echo", default=False, action="store_true",
+                        help="Echo back the prompt in addition to the completion")
     ### Guided prompting
     parser.add_argument("--guided_prompting_task_type", choices=["CLS", "NLI", "SUM", "XSUM"],
                         help="For guided-prompting: set task type to either {classification, NLI, summarization, extreme-summarization}")
