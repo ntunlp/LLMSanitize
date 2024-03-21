@@ -7,15 +7,18 @@ from nltk.util import ngrams
 def build_ngrams(data, ngram_size, text_processing_method=None):
     set_ngrams = {}
     for i in tqdm(range(len(data))):
-        text_i = data[i]
-        clean_text_i = text_i
+        doc_i = data[i]
+        clean_text_i = doc_i
         if text_processing_method != None:
-            clean_text_i = text_processing_method(text_i)
+            clean_text_i = text_processing_method(doc_i)
         ngrams_i = ngrams(sequence=word_tokenize(clean_text_i), n=ngram_size)
+        seen_in_doc = {}
         for ngram in ngrams_i:
-            if not(ngram in set_ngrams.keys()):
-                set_ngrams[ngram] = 0
-            set_ngrams[ngram] += 1
+            if not(ngram in seen_in_doc.keys()):
+                if not(ngram in set_ngrams.keys()):
+                    set_ngrams[ngram] = 0
+                set_ngrams[ngram] += 1
+                seen_in_doc[ngram] = 0
 
     return set_ngrams
 
