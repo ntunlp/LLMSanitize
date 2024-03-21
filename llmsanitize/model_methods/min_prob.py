@@ -60,12 +60,12 @@ def do_plot(prediction, answers, sweep_fn=sweep, metric='auc', legend="", output
 
     return legend, auc, acc, low
 
-def fig_fpr_tpr(all_output, output_dir):
+def fig_fpr_tpr(all_output, output_dir, do_infer: bool = False):
     logger.info(f"Min-Prob method output_dir: {output_dir}")
     answers = []
     metric2predictions = defaultdict(list)
     for ex in all_output:
-        if "label" in ex:
+        if "label" in ex and ex["label"] and not do_infer:
             answers.append(ex["label"])
         for metric in ex["pred"].keys():
             if ("raw" in metric) and ("clf" not in metric):
@@ -161,6 +161,7 @@ def main_min_prob(
         echo: bool = False,
         num_proc: int = 8,
         output_dir: str = "output",
+        do_infer: bool = False,
 ):
     llm1 = LLM(
         openai_creds_key_file=openai_creds_key_file,
@@ -208,4 +209,4 @@ def main_min_prob(
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    fig_fpr_tpr(all_output, output_dir)
+    fig_fpr_tpr(all_output, output_dir, do_infer)

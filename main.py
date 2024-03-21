@@ -92,6 +92,8 @@ def parse_args():
                         help="Local model port for service based inference.")  # TODO: If there is better way to initialize two models.
     parser.add_argument("--model_name_2", type=str, default=None,
                         help="model name for service based inference.")
+    parser.add_argument("--do_infer", action='store_true', default=False,
+                        help="Add --do_infer if the eval dataset is not used for evaluating the contamination method itself, e.g., WikiMIA.")
 
     args = parser.parse_args()
 

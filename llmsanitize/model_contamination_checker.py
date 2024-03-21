@@ -71,5 +71,6 @@ class ModelContaminationChecker(BaseContaminationChecker):
             sleep_time=self.sleep_time,
             echo=self.echo,
             num_proc=self.num_proc,
-            output_dir=self.output_dir
+            output_dir=self.output_dir,
+            do_infer=self.do_infer,
         )
