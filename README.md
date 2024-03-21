@@ -20,7 +20,6 @@ Then:
 
 ### to-do list
 - Standardize the outputs from each method
-- Standardize the logging, with one dedicated log file at each call of the library
 - Make data contamination support large pre-training files not fitting in memory 
 - Implement exact string matching data contamination, from there: https://arxiv.org/abs/2104.08758
 - Implement According To prompting model contamination, from there: https://arxiv.org/abs/2305.13252
