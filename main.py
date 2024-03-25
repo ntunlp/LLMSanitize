@@ -68,7 +68,7 @@ def parse_args():
     parser.add_argument("--echo", default=False, action="store_true",
                         help="Echo back the prompt in addition to the completion")
     ### Guided prompting
-    parser.add_argument("--guided_prompting_task_type", choices=["CLS", "QA", "NLI", "SUM", "XSUM"],
+    parser.add_argument("--guided_prompting_task_type", choices=["CLS", "QA", "FIM", "NLI", "SUM", "XSUM"],
                         help="For guided-prompting: set task type to either {classification, open-QA, NLI, summarization, extreme-summarization}")
     parser.add_argument("--use_local_model", action='store_true', default=False)
     ### Sharded likelihood

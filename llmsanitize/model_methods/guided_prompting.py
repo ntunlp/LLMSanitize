@@ -45,6 +45,13 @@ def guided_prompt_split_fn(example, idx, dataset_name, text_key):
     elif dataset_name in ['Rowan/hellaswag']:
         splits['guided_prompt_part_1'] = example[text_key]
         splits['guided_prompt_part_2'] = example['endings'][int(example['label'])] 
+    elif dataset_name in ['truthful_qa']:
+        splits['guided_prompt_part_1'] = example[text_key]
+        splits['guided_prompt_part_2'] = example['best_answer']
+    elif dataset_name == "winogrande":
+        sents = example[text_key].split('_')
+        splits['guided_prompt_part_1'] = sents[0]
+        splits['guided_prompt_part_2'] = sents[1]
     else:
         raise(f"Error! guided_prompt_split_fn not found processing for dataset_name: {dataset_name}")
     return splits
@@ -52,6 +59,8 @@ def guided_prompt_split_fn(example, idx, dataset_name, text_key):
 def guided_prompt_process_label(example, dataset_name):
     if dataset_name == 'cais/mmlu':
         example['answer_text'] = example['choices'][int(example['answer'])]
+    elif dataset_name == 'winogrande':
+        example['answer_token'] = example['option1'] + '/' + example['option2']
     
     return example
 

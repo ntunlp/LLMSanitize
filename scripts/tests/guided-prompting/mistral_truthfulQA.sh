@@ -1,11 +1,11 @@
 # test guided prompting model contamination method
 echo "this method might require running vllm serving locally"
 python main.py \
---eval_data_name cais/mmlu \
---eval_data_config_name all \
---eval_set_key test \
+--eval_data_name truthful_qa \
+--eval_data_config_name generation \
+--eval_set_key validation \
 --text_key question \
---label_key answer_text \
+--label_key category \
 --method guided-prompting \
 --num_proc 40 \
 --local_port 8008 \
