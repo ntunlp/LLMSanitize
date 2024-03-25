@@ -8,7 +8,6 @@ from llmsanitize.data_methods.gpt3 import main_gpt3
 from llmsanitize.data_methods.exact import main_exact
 from llmsanitize.data_methods.palm import main_palm
 from llmsanitize.data_methods.gpt4 import main_gpt4
-from llmsanitize.data_methods.meteor import main_meteor
 from llmsanitize.data_methods.platypus import main_platypus
 
 
@@ -31,8 +30,6 @@ class DataContaminationChecker(BaseContaminationChecker):
             self.contamination_palm()
         elif method == "gpt-4":
             self.contamination_gpt4()
-        elif method == "meteor":
-            self.contamination_meteor()
         elif method == "platypus":
             self.contamination_platypus()
 
@@ -74,15 +71,6 @@ class DataContaminationChecker(BaseContaminationChecker):
 
     def contamination_gpt4(self):
         main_gpt4(
-            train_data=self.train_data,
-            eval_data=self.eval_data,
-            train_data_name=self.train_data_name,
-            eval_data_name=self.eval_data_name,
-            eval_set_key=self.eval_set_key
-        )
-
-    def contamination_meteor(self):
-        main_meteor(
             train_data=self.train_data,
             eval_data=self.eval_data,
             train_data_name=self.train_data_name,
