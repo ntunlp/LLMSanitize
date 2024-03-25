@@ -10,7 +10,7 @@ So far we support the following contamination detection methods:
 | gpt-2 | data contamination | 8-gram matching | 
 | gpt-3 | data contamination | 13-gram matching |
 | exact | data contamination | exact substring matching |
-| palm | data contamination | 8-gram matching | 
+| palm | data contamination | 70% overlap in 8-gram matching | 
 | gpt-4 | data contamination | 50-chars substring matching |
 | platypus | data contamination | SentenceTransformers cosine similarity |
 | guided-prompting | model contamination | https://arxiv.org/abs/2308.08493 | 
