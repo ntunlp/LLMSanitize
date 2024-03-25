@@ -6,6 +6,7 @@ Relies on Python 3.9.
 So far we support the following contamination detection methods:
 
 | **Method** | **Use Case** |  
+|:-:|:-:|
 | gpt-2 | data contamination |
 | gpt-3 | data contamination |
 | exact | data contamination |
