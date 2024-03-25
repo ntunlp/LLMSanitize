@@ -2,6 +2,16 @@
     @Author: Shahriar Golchin
     @Links: https://github.com/shahriargolchin/time-travel-in-llms/blob/main/src/prompts/general_instructions.py
 """
+# general instruction for Open QA task
+GI_QA = """INSTRUCTION:
+Finish the SECOND PIECE based on the FIRST PIECE, such that these two pieces become a single question with the following ANSWER.
+
+ANSWER: {label}
+
+FIRST PIECE:
+{first_piece}
+
+SECOND PIECE:"""
 
 # general instruction for classification task
 GI_CLS = """INSTRUCTION:

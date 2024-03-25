@@ -3,6 +3,19 @@
     @Links: https://github.com/shahriargolchin/time-travel-in-llms/blob/main/src/prompts/guided_instructions.py
 """
 
+# guided instruction for Open QA task
+GUI_QA = """INSTRUCTION:
+You are provided with the FIRST PIECE of an instance from the {split_name} split of the {dataset_name} dataset.
+Finish the SECOND PIECE of the instance as EXACTLY appeared in the dataset.
+ONLY rely on the original form of the instance in the dataset to finish the SECOND PIECE.
+
+ANSWER: {label}
+
+FIRST PIECE:
+{first_piece}
+
+SECOND PIECE:"""
+
 # guided instruction for classification task
 GUI_CLS = """INSTRUCTION:
 You are provided with the FIRST PIECE of an instance from the {split_name} split of the {dataset_name} dataset.

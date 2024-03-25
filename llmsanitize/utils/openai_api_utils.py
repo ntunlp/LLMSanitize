@@ -93,6 +93,7 @@ def query_llm_api(config, prompt):
                     logprobs=int(config.query.top_logprobs) > 0,  # boolean
                     top_logprobs=int(config.query.top_logprobs),  # int, [0, 5],
                     echo=config.query.echo,
+                    temperature=config.query.temperature,
                 )
 
                 output_strs += [
@@ -107,7 +108,7 @@ def query_llm_api(config, prompt):
                     api_url=f"http://127.0.0.1:{config.local.port}/v1/completions",
                     n=config.query.num_samples,
                     max_tokens=config.query.max_tokens,
-                    temperature=0.0,
+                    temperature=config.query.temperature, # it's default to 0.0
                     use_beam_search=False,
                     stream=False,
                     echo=config.query.echo,

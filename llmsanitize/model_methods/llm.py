@@ -34,6 +34,7 @@ class LLM:
             max_request_time: int = 600,
             sleep_time: int = 1,
             echo: bool = False,
+            temperature: float = 0.0,
     ):
         """
         :param config: config object
@@ -85,6 +86,7 @@ class LLM:
                 "max_request_time": max_request_time,
                 "sleep_time": sleep_time,
                 "echo": echo,
+                "temperature": temperature
             }
         }
         self.query_config = dict_to_object(_query_config)
