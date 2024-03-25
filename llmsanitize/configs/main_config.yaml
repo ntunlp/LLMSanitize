@@ -35,7 +35,7 @@ methods:
   - name: "gpt-4"
     type: "data"
     help: "Method in the paper 'GPT-4 technical report'
-    -> string matching (50-chars)""
+    -> string matching (50-chars)"
 
   - name: "platypus"
     type: "data"
