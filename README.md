@@ -5,17 +5,17 @@ Relies on Python 3.9.
 ## Supported Methods
 So far we support the following contamination detection methods:
 
-| **Method** | **Use Case** |  
-|---|---|
-| gpt-2 | data contamination |
-| gpt-3 | data contamination |
-| exact | data contamination |
-| palmn | data contamination |
-| gpt-4 | data contamination |
-| platypus | data contamination |
-| guided-prompting | model contamination |
-| sharded-lieklihood | model contamination |
-| min-prob | model contamination |
+| **Method** | **Use Case** | **Short description** |  
+|---|---|---|
+| gpt-2 | data contamination | 8-gram matching | 
+| gpt-3 | data contamination | 13-gram matching |
+| exact | data contamination | exact substring matching |
+| palm | data contamination | 8-gram matching | 
+| gpt-4 | data contamination | 50-chars substring matching |
+| platypus | data contamination | SentenceTransformers cosine similarity |
+| guided-prompting | model contamination | https://arxiv.org/abs/2308.08493 | 
+| sharded-lieklihood | model contamination | https://arxiv.org/abs/2310.17623 |
+| min-prob | model contamination | Min-K% Prob: https://arxiv.org/abs/2310.16789 | 
 
 
 ## Installation
