@@ -1,5 +1,6 @@
 """
 This file implements the model contamination detection through the min-K-prob approach.
+https://arxiv.org/pdf/2310.16789.pdf
 """
 # Most codes are copied from https://github.com/swj0419/detect-pretrain-code/blob/main/src/run.py
 
@@ -140,28 +141,27 @@ def _client_init(llm1, llm2):
 def _process_fn(x):
     return inference(LLM1, LLM2, x)
 
-# Following the logic from this paper: https://arxiv.org/pdf/2310.16789.pdf
 def main_min_prob(
-        test_data,
-        openai_creds_key_file: str = None,
-        openai_creds_key_file_2: str = None,
-        local_port: str = None,
-        local_port_2: str = None,
-        local_model_path: str = None,
-        local_model_path_2: str = None,
-        local_tokenizer_path: str = None,
-        local_tokenizer_path_2: str = None,
-        model_name: str = None,
-        model_name_2: str = None,
-        num_samples: int = 1,
-        max_tokens: int = 128,
-        top_logprobs: int = 0,
-        max_request_time: int = 600,
-        sleep_time: int = 1,
-        echo: bool = False,
-        num_proc: int = 8,
-        output_dir: str = "output",
-        do_infer: bool = False,
+    test_data,
+    openai_creds_key_file: str = None,
+    openai_creds_key_file_2: str = None,
+    local_port: str = None,
+    local_port_2: str = None,
+    local_model_path: str = None,
+    local_model_path_2: str = None,
+    local_tokenizer_path: str = None,
+    local_tokenizer_path_2: str = None,
+    model_name: str = None,
+    model_name_2: str = None,
+    num_samples: int = 1,
+    max_tokens: int = 128,
+    top_logprobs: int = 0,
+    max_request_time: int = 600,
+    sleep_time: int = 1,
+    echo: bool = False,
+    num_proc: int = 8,
+    output_dir: str = "output",
+    do_infer: bool = False,
 ):
     llm1 = LLM(
         openai_creds_key_file=openai_creds_key_file,

@@ -1,5 +1,6 @@
 """
 This file implements the string-matching done for data contamination as in GPT-4's paper.
+https://arxiv.org/pdf/2303.08774.pdf
 """
 
 from llmsanitize.utils.string_utils import *
@@ -13,7 +14,6 @@ def clean_text_gpt4(text):
 
     return text
 
-# Following the logic in GPT-4's report: https://arxiv.org/pdf/2303.08774.pdf appendix C
 def main_gpt4(
     train_data,
     eval_data,
@@ -21,7 +21,6 @@ def main_gpt4(
     eval_data_name,
     eval_set_key
 ):
-    ## only keep the content per data example, discard labels
     train_data = train_data["text"]
     eval_data = eval_data["text"]
 

@@ -52,14 +52,15 @@ def build_strings(data, string_size, text_processing_method=None):
         clean_text_i = text_i
         if text_processing_method != None:
             clean_text_i = text_processing_method(text_i)
+
         if len(clean_text_i) < string_size:
-            strings = [clean_text_i]
+            strings_i = {clean_text_i: 0}
         else:
-            strings = []
+            strings_i = {}
             for j in range(len(clean_text_i)-string_size):
                 string = clean_text_i[j:(j+string_size)]
-                strings.append(string)
-        for string in strings:
+                strings_i[string] = 0
+        for string in strings_i.keys():
             if not(string in set_strings.keys()):
                 set_strings[string] = 0
             set_strings[string] += 1
@@ -74,15 +75,20 @@ def overlap_strings_sample(data, strings_set, string_size, n_samples, text_proce
         clean_text_i = text_i
         if text_processing_method != None:
             clean_text_i = text_processing_method(text_i)
-        if len(clean_text_i) <= string_size:
-            continue
 
         tagged = 0
-        for _ in range(n_samples):
-            start_idx = np.random.randint(0, len(clean_text_i)-string_size, 1)[0]
-            string = clean_text_i[start_idx:(start_idx+string_size)]
-            if string in strings_set.keys():
-                tagged += 1
+        if len(clean_text_i) <= string_size:
+            for k in strings_set.keys():
+                if k.startswith(clean_text_i):
+                    tagged = 1
+                    break
+        else:
+            for _ in range(n_samples):
+                start_idx = np.random.randint(0, len(clean_text_i)-string_size, 1)[0]
+                string = clean_text_i[start_idx:(start_idx+string_size)]
+                if string in strings_set.keys():
+                    tagged = 1
+                    break
         all_tagged.append(int(tagged > 0))
 
     return all_tagged

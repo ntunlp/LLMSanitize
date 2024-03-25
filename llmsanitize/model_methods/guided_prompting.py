@@ -1,5 +1,6 @@
 """
 This file implements the model contamination detection through guided prompting.
+https://arxiv.org/pdf/2308.08493.pdf
 """
 
 import nltk
@@ -65,7 +66,6 @@ def guided_prompt_process_fn(
     example['second_part'] = second_part
     return example
 
-# Following the logic from this paper: https://arxiv.org/pdf/2308.08493.pdf
 def main_guided_prompting(
     guided_prompting_task_type,
     eval_data,

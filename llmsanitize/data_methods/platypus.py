@@ -1,5 +1,6 @@
 """
 This file implements the embeddings similarity done for data contamination as in Platypus paper.
+https://arxiv.org/pdf/2308.07317.pdf
 """
 
 import numpy as np
@@ -11,7 +12,6 @@ from llmsanitize.utils.logger import get_child_logger
 logger = get_child_logger("platypus")
 
 
-# Following the logic in Platypus paper: https://arxiv.org/pdf/2308.07317.pdf section 2.2
 def main_platypus(
     train_data,
     eval_data,
@@ -19,7 +19,6 @@ def main_platypus(
     eval_data_name,
     eval_set_key
 ):
-    ## only keep the content per data example, discard labels
     train_data = train_data["text"]
     eval_data = eval_data["text"]
 

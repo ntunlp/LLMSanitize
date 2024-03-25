@@ -1,5 +1,6 @@
 """
 This file implements model contamination detection through the sharded likelihood approach.
+https://arxiv.org/pdf/2310.17623.pdf
 """
 
 import os
@@ -33,7 +34,6 @@ def _load_dataset(dataset_path):
         lines.append(tmp_str)
 
     return lines
-
 
 def _compute_logprob_of_token_sequence(tokens, model, context_len=2048, stride=1024, device=0):
     """
@@ -69,7 +69,6 @@ def _compute_logprob_of_token_sequence(tokens, model, context_len=2048, stride=1
 
     return logp.item()
 
-
 def _worker(
     model_name_or_path,
     context_len,
@@ -78,7 +77,6 @@ def _worker(
     main_queue,
     worker_queue
 ):
-
     # Load model.
     m = AutoModelForCausalLM.from_pretrained(model_name_or_path)
     m.cuda(device)
@@ -105,7 +103,6 @@ def _worker(
 
     del m
 
-# Following the logic from this paper: https://arxiv.org/pdf/2310.17623.pdf
 def main_sharded_likelihood(
     model_name_or_path,
     dataset_path,
@@ -164,7 +161,6 @@ def main_sharded_likelihood(
     # Compute the starting index (into the list of examples) for each shard.
     shard_example_indices = [0] + np.cumsum(shard_counts).tolist()
     for i, (start, end) in enumerate(zip(shard_example_indices, shard_example_indices[1:])):
-
         shard = tokenized_examples[start:end]
 
         # Logprobs in canonical order.
@@ -190,7 +186,6 @@ def main_sharded_likelihood(
 
     completed = 0
     while completed < total_work:
-
         logprob, shard_id, is_canonical = main_queue.get()
 
         if is_canonical:

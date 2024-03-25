@@ -5,8 +5,10 @@ Contamination detection class for data contamination use cases: func(data1, data
 from llmsanitize.base_contamination_checker import BaseContaminationChecker
 from llmsanitize.data_methods.gpt2 import main_gpt2
 from llmsanitize.data_methods.gpt3 import main_gpt3
+from llmsanitize.data_methods.exact import main_exact
 from llmsanitize.data_methods.palm import main_palm
 from llmsanitize.data_methods.gpt4 import main_gpt4
+from llmsanitize.data_methods.meteor import main_meteor
 from llmsanitize.data_methods.platypus import main_platypus
 
 
@@ -23,11 +25,15 @@ class DataContaminationChecker(BaseContaminationChecker):
             self.contamination_gpt2()
         elif method == "gpt-3":
             self.contamination_gpt3()
+        elif method == "exact":
+            self.contamination_exact()
         elif method == "palm":
             self.contamination_palm()
         elif method == "gpt-4":
             self.contamination_gpt4()
-        elif method =="platypus":
+        elif method == "meteor":
+            self.contamination_meteor()
+        elif method == "platypus":
             self.contamination_platypus()
 
     def contamination_gpt2(self):
@@ -41,6 +47,15 @@ class DataContaminationChecker(BaseContaminationChecker):
 
     def contamination_gpt3(self):
         main_gpt3(
+            train_data=self.train_data,
+            eval_data=self.eval_data,
+            train_data_name=self.train_data_name,
+            eval_data_name=self.eval_data_name,
+            eval_set_key=self.eval_set_key
+        )
+
+    def contamination_exact(self):
+        main_exact(
             train_data=self.train_data,
             eval_data=self.eval_data,
             train_data_name=self.train_data_name,
@@ -66,6 +81,15 @@ class DataContaminationChecker(BaseContaminationChecker):
             eval_set_key=self.eval_set_key
         )
 
+    def contamination_meteor(self):
+        main_meteor(
+            train_data=self.train_data,
+            eval_data=self.eval_data,
+            train_data_name=self.train_data_name,
+            eval_data_name=self.eval_data_name,
+            eval_set_key=self.eval_set_key
+        )
+
     def contamination_platypus(self):
         main_platypus(
             train_data=self.train_data,
@@ -74,4 +98,3 @@ class DataContaminationChecker(BaseContaminationChecker):
             eval_data_name=self.eval_data_name,
             eval_set_key=self.eval_set_key
         )
-

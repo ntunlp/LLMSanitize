@@ -1,5 +1,6 @@
 """
 This file implements the string-matching done for data contamination as in PaLM's paper.
+https://arxiv.org/pdf/2204.02311.pdf
 """
 
 import numpy as np
@@ -10,7 +11,6 @@ from llmsanitize.utils.logger import get_child_logger
 logger = get_child_logger("palm")
 
 
-# Following the logic in PaLM's paper: https://arxiv.org/pdf/2204.02311.pdf section 8
 def main_palm(
     train_data,
     eval_data,
@@ -18,7 +18,6 @@ def main_palm(
     eval_data_name,
     eval_set_key
 ):
-    ## only keep the content per data example, discard labels
     train_data = train_data["text"]
     eval_data = eval_data["text"]
 

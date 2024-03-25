@@ -14,23 +14,38 @@ methods:
   ### Data contamination methods
   - name: "gpt-2"
     type: "data" # choices: ["data", "model"], whether it's a data-contamination method or model-contamination method
-    help: "Method in GPT-2 paper -> string matching (8-gram)"
+    help: "Method in the paper 'Language models are unsupervised multi-task learners (GPT-2)'
+    -> string matching (8-gram)"
 
   - name: "gpt-3"
     type: "data"
-    help: "Method in GPT-3 paper -> string matching (13-gram)"
+    help: "Method in the paper 'Language models are few-shot learners (GPT-3)'
+    -> string matching (13-gram)"
+
+  - name: "exact"
+    type: "data"
+    help: "Method in the paper 'Documenting Large Webtext Corpora: A Case Study on the Colossal Clean Crawled Corpus'
+    -> string matching (exact match)"
 
   - name: "palm"
     type: "data"
-    help: "Method in PaLM paper -> string matching (8-grams)"
+    help: "Method in the paper 'PALM: Scaling language modeling with pathways'
+    -> string matching (8-grams)"
 
   - name: "gpt-4"
     type: "data"
-    help: "Method in GPT-4 technical report -> string matching (50-chars)"
+    help: "Method in the paper 'GPT-4 technical report'
+    -> string matching (50-chars)"
+
+  - name: "meteor"
+    type: "data"
+    help: "Method in the paper 'An Open-Source Data Contamination Report for Large Language Models'
+    -> string matching (METEOR recall)"
 
   - name: "platypus"
     type: "data"
-    help: "Method in Platypus paper -> cosine similarity between Sentence Transformers embeddings"
+    help: "Method in the paper 'Platypus: Quick, Cheap, and Powerful Refinement of LLMs'
+    -> cosine similarity between Sentence Transformers embeddings"
 
   ### Model contamination methods
   - name: "guided-prompting"

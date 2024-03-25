@@ -1,5 +1,6 @@
 """
 This file implements the string-matching done for data contamination as in GPT-3's paper.
+https://arxiv.org/pdf/2005.14165.pdf
 """
 
 import string
@@ -17,7 +18,6 @@ def clean_text_gpt3(text):
 
     return text
 
-# Following the logic in GPT-3's paper: https://arxiv.org/pdf/2005.14165.pdf section C
 def main_gpt3(
     train_data,
     eval_data,

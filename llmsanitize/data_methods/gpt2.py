@@ -1,5 +1,6 @@
 """
 This file implements the string-matching done for data contamination as in GPT-2's paper.
+https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf
 """
 
 import re
@@ -19,7 +20,6 @@ def clean_text_gpt2(text):
 
     return text
 
-# Following the logic in GPT-2's paper: https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf section 4
 def main_gpt2(
     train_data,
     eval_data,
@@ -27,7 +27,6 @@ def main_gpt2(
     eval_data_name,
     eval_set_key
 ):
-    ## only keep the content per data example, discard labels
     train_data = train_data["text"]
     eval_data = eval_data["text"]
 
