@@ -31,10 +31,3 @@ sh scripts/vllm_hosting.sh
 ```
 Then: 
 1. `sh scripts/run_contamination.sh`
-
-
-### to-do list
-- Standardize the outputs from each method
-- Make data contamination support large pre-training files not fitting in memory 
-- Implement According To prompting model contamination, from there: https://arxiv.org/abs/2305.13252
-- Implement LLMDecontaminator model contamination, from there: https://arxiv.org/abs/2311.04850
