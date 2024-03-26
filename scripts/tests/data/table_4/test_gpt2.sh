@@ -1,7 +1,7 @@
 # ARC-Challenge / validation
 python main.py \
 --dataset_name allenai/ai2_arc \
---eval_data_config_name "ARC-Challenge" \
+--train_data_config_name "ARC-Challenge" \
 --eval_set_key validation \
 --text_keys "question+choices+answerKey" \
 --n_eval_data_points 100 \
@@ -10,7 +10,7 @@ python main.py \
 # ARC-Challenge / test
 python main.py \
 --dataset_name allenai/ai2_arc \
---eval_data_config_name "ARC-Challenge" \
+--train_data_config_name "ARC-Challenge" \
 --eval_set_key test \
 --text_keys "question+choices+answerKey" \
 --n_eval_data_points 100 \
@@ -35,7 +35,7 @@ python main.py \
 # Winogrande / validation
 python main.py \
 --dataset_name winogrande \
---eval_data_config_name "winogrande_debiased" \
+--train_data_config_name "winogrande_debiased" \
 --eval_set_key validation \
 --text_keys "sentence+option1+option2+answer" \
 --n_eval_data_points 100 \
@@ -44,7 +44,7 @@ python main.py \
 # Winogrande / test
 python main.py \
 --dataset_name winogrande \
---eval_data_config_name "winogrande_debiased" \
+--train_data_config_name "winogrande_debiased" \
 --eval_set_key test \
 --text_keys "sentence+option1+option2+answer" \
 --n_eval_data_points 100 \
@@ -53,7 +53,7 @@ python main.py \
 # GSM8K / test
 python main.py \
 --dataset_name gsm8k \
---eval_data_config_name "main" \
+--train_data_config_name "main" \
 --eval_set_key test \
 --text_keys "question+answer" \
 --n_eval_data_points 100 \

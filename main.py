@@ -20,6 +20,8 @@ def parse_args():
                         help="if this field is set, we set train_set and eval_set to it")  # ["Rowan/hellaswag"]
     parser.add_argument("--train_data_name", type=str, default="",
                         help="training dataset name")  # ["Rowan/hellaswag"]
+    parser.add_argument("--train_data_config_name", type=str, default=None,
+                        help="training dataset config name")  # datasets.load_dataset("cais/mmlu", "all")
     parser.add_argument("--eval_data_name", type=str, default="",
                         help="eval dataset name")  # ["Rowan/hellaswag"]
     parser.add_argument("--eval_data_config_name", type=str, default=None,
@@ -108,12 +110,23 @@ def parse_args():
     log_file_name = f"log_{current_date}_{args.method_name}_{data}_{args.n_eval_data_points}.txt"
     logger = setting_logger(log_file_name) 
 
+    args = postprocess_args(args)
+
+    logger.warning(args)
+
+    return args
+
+def postprocess_args(args):
     # if dataset name is set, set train_set and eval_set to dataset_name
-    if len(args.dataset_name) > 0:
+    if args.dataset_name != "":
         args.train_data_name = args.dataset_name
         args.eval_data_name = args.dataset_name
+    if not (args.train_data_config_name is None) and (args.eval_data_config_name is None):
+        args.eval_data_config_name = args.train_data_config_name
+    if (args.train_data_config_name is None) and not (args.eval_data_config_name is None):
+        args.train_data_config_name = args.eval_data_config_name
     args.text_keys = args.text_keys.split("+")
-    logger.warning(args)
+
     return args
 
 def check_args(args):

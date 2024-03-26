@@ -39,7 +39,7 @@ class BaseContaminationChecker:
     def download_data(self):
         if self.train_data_name:
             streaming = self.stream_train_data
-            self.train_data = load_dataset(self.train_data_name, streaming=streaming)
+            self.train_data = load_dataset(self.train_data_name, self.train_data_config_name, streaming=streaming)
             self.train_data = self.train_data['train']
             if not(streaming):
                 self.train_data = self.train_data.shuffle(seed=self.seed)
