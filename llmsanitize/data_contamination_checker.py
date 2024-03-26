@@ -41,6 +41,7 @@ class DataContaminationChecker(BaseContaminationChecker):
             eval_data_name=self.eval_data_name,
             eval_set_key=self.eval_set_key,
             stream_train_data=self.stream_train_data,
+            text_key=self.text_key,
             text_keys=self.text_keys
         )
 

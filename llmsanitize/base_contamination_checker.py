@@ -54,8 +54,12 @@ class BaseContaminationChecker:
                 self.eval_data = self.eval_data[self.eval_set_key]
         else:
             self.eval_data = []
-
-        logger.info(f"There are {len(self.train_data)} train data points and {len(self.eval_data)} eval data points")
+        
+        if not(self.stream_train_data):
+            train_size = len(self.train_data)
+        else:
+            train_size = "<streaming>"
+        logger.info(f"There are {train_size} train data points and {len(self.eval_data)} eval data points")
 
     def subsample_eval_data(self):
         if len(self.eval_data) > 0 and self.n_eval_data_points > 0:
@@ -102,7 +106,8 @@ class BaseContaminationChecker:
 
     def normalize_text_key(self):
         if self.train_data:
-            self.train_data = self.normalize_text_key_(self.train_data)
+            if not(self.stream_train_data):
+                self.train_data = self.normalize_text_key_(self.train_data)
         if self.eval_data:
             self.eval_data = self.normalize_text_key_(self.eval_data)
 

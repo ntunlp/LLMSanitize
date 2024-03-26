@@ -5,11 +5,11 @@ from nltk.util import ngrams
 
 
 # collect all unique n-grams of size ngram_size, streaming over the dataset
-def build_ngrams_streaming(data, ngram_size, text_processing_method=None, text_keys=None):
+def build_ngrams_streaming(data, ngram_size, text_processing_method=None, text_key=None, text_keys=None):
     set_ngrams = {}
 
     for data_point in tqdm(data):
-        if text_keys != None:
+        if not(text_keys in [[], ['']]):
             text = ""
             for j in range(len(text_keys)):
                 key = text_keys[j]
@@ -18,7 +18,7 @@ def build_ngrams_streaming(data, ngram_size, text_processing_method=None, text_k
                 else:
                     text += " | " + str(data_point[key])
         else:
-            text = data_point["text"]
+            text = data_point[text_key]
 
         clean_text = text
         if text_processing_method != None:
