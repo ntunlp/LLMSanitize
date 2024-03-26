@@ -4,6 +4,7 @@ https://arxiv.org/pdf/2303.08774.pdf
 """
 
 from llmsanitize.utils.string_utils import *
+from llmsanitize.utils.string_utils_streaming import *
 from llmsanitize.utils.logger import get_child_logger
 
 logger = get_child_logger("gpt4")
@@ -19,17 +20,24 @@ def main_gpt4(
     eval_data,
     train_data_name,
     eval_data_name,
-    eval_set_key
+    eval_set_key,
+    stream_train_data=False,
+    text_key=None,
+    text_keys=None
 ):
-    train_data = train_data["text"]
     eval_data = eval_data["text"]
 
     string_size = 50
-    train_strings = build_strings(train_data, string_size, clean_text_gpt4)
-    logger.info(f"There are {len(train_strings.keys())} {string_size}-chars strings in the training set")
+    if not (stream_train_data):
+        train_data = train_data["text"]
+        train_substrings = build_substrings(train_data, string_size, clean_text_gpt4)
+    else:
+        train_substrings = build_substrings_streaming(train_data, string_size, clean_text_gpt4, text_key, text_keys)
+    logger.info(f"There are {len(train_substrings.keys())} {string_size}-chars strings in the training set")
 
     n_samples = 3
-    contaminated = overlap_strings_sample(eval_data, train_strings, string_size, n_samples, clean_text_gpt4)
+    contaminated = overlap_substrings_sample(eval_data, train_substrings, string_size, n_samples, clean_text_gpt4)
+
     frac = 100 * np.mean(contaminated)
     n_contaminated = np.sum(contaminated)
     logger.info(f"Data contamination: checking {eval_data_name}/{eval_set_key} against {train_data_name} (train)")

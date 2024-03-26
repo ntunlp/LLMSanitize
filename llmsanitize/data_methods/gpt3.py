@@ -7,6 +7,7 @@ import string
 import numpy as np
 
 from llmsanitize.utils.string_utils import *
+from llmsanitize.utils.string_utils_streaming import *
 from llmsanitize.utils.logger import get_child_logger
 
 logger = get_child_logger("gpt3")
@@ -23,13 +24,19 @@ def main_gpt3(
     eval_data,
     train_data_name,
     eval_data_name,
-    eval_set_key
+    eval_set_key,
+    stream_train_data=False,
+    text_key=None,
+    text_keys=None
 ):
-    train_data = train_data["text"]
     eval_data = eval_data["text"]
 
     ngram_size = 13
-    train_ngrams = build_ngrams(train_data, ngram_size, clean_text_gpt3)
+    if not (stream_train_data):
+        train_data = train_data["text"]
+        train_ngrams = build_ngrams(train_data, ngram_size, clean_text_gpt3)
+    else:
+        train_ngrams = build_ngrams_streaming(train_data, ngram_size, clean_text_gpt3, text_key, text_keys)
     logger.info(f"There are {len(train_ngrams.keys())} {ngram_size}-grams in the training set")
 
     max_count = 10
@@ -42,6 +49,7 @@ def main_gpt3(
 
     n_collisions = 1
     ngram_overlaps = overlap_ngrams(eval_data, train_ngrams, ngram_size, clean_text_gpt3)
+
     contaminated = np.array([int(x[0] >= n_collisions) for x in ngram_overlaps])
     frac = 100 * np.mean(contaminated)
     n_contaminated = np.sum(contaminated)

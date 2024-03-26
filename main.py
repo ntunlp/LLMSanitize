@@ -116,11 +116,9 @@ def parse_args():
     logger.warning(args)
     return args
 
-
 def check_args(args):
     assert args.method_name in supported_methods, f"Error, {args.method_name} not in supported methods: {list(supported_methods.keys())}"
-    assert args.text_key != "" or args.text_key != [], f"Error, specify some text key"
-
+    assert args.text_key != "" or args.text_keys != [], f"Error, specify some text key"
 
 def main():
     args = parse_args()

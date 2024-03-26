@@ -7,6 +7,7 @@ import re
 import numpy as np
 
 from llmsanitize.utils.string_utils import *
+from llmsanitize.utils.string_utils_streaming import *
 from llmsanitize.utils.logger import get_child_logger
 
 logger = get_child_logger("exact")
@@ -25,20 +26,24 @@ def main_exact(
     eval_data,
     train_data_name,
     eval_data_name,
-    eval_set_key
+    eval_set_key,
+    stream_train_data=False,
+    text_key=None,
+    text_keys=None
 ):
-    train_data = train_data["text"]
     eval_data = eval_data["text"]
 
-    train_items = {}
-    for x in train_data:
-        train_items[clean_text_exact(x)] = 0
+    if not (stream_train_data):
+        train_data = train_data["text"]
+        train_strings = build_full_strings(train_data, clean_text_exact)
+    else:
+        train_strings = build_full_strings_streaming(train_data, clean_text_exact, text_key, text_keys)
 
     contaminated = []
     for i in tqdm(range(len(eval_data))):
         eval_data_point = clean_text_exact(eval_data[i])
         tagged = 0
-        for k in train_items.keys():
+        for k in train_strings.keys():
             if eval_data_point in k:
                 tagged = 1
                 break

@@ -51,7 +51,10 @@ class DataContaminationChecker(BaseContaminationChecker):
             eval_data=self.eval_data,
             train_data_name=self.train_data_name,
             eval_data_name=self.eval_data_name,
-            eval_set_key=self.eval_set_key
+            eval_set_key=self.eval_set_key,
+            stream_train_data=self.stream_train_data,
+            text_key=self.text_key,
+            text_keys=self.text_keys
         )
 
     def contamination_exact(self):
@@ -60,7 +63,10 @@ class DataContaminationChecker(BaseContaminationChecker):
             eval_data=self.eval_data,
             train_data_name=self.train_data_name,
             eval_data_name=self.eval_data_name,
-            eval_set_key=self.eval_set_key
+            eval_set_key=self.eval_set_key,
+            stream_train_data=self.stream_train_data,
+            text_key=self.text_key,
+            text_keys=self.text_keys
         )
 
     def contamination_palm(self):
@@ -69,7 +75,10 @@ class DataContaminationChecker(BaseContaminationChecker):
             eval_data=self.eval_data,
             train_data_name=self.train_data_name,
             eval_data_name=self.eval_data_name,
-            eval_set_key=self.eval_set_key
+            eval_set_key=self.eval_set_key,
+            stream_train_data=self.stream_train_data,
+            text_key=self.text_key,
+            text_keys=self.text_keys
         )
 
     def contamination_gpt4(self):
@@ -78,7 +87,10 @@ class DataContaminationChecker(BaseContaminationChecker):
             eval_data=self.eval_data,
             train_data_name=self.train_data_name,
             eval_data_name=self.eval_data_name,
-            eval_set_key=self.eval_set_key
+            eval_set_key=self.eval_set_key,
+            stream_train_data=self.stream_train_data,
+            text_key=self.text_key,
+            text_keys=self.text_keys
         )
 
     def contamination_platypus(self):
@@ -87,5 +99,8 @@ class DataContaminationChecker(BaseContaminationChecker):
             eval_data=self.eval_data,
             train_data_name=self.train_data_name,
             eval_data_name=self.eval_data_name,
-            eval_set_key=self.eval_set_key
+            eval_set_key=self.eval_set_key,
+            stream_train_data=self.stream_train_data,
+            text_key=self.text_key,
+            text_keys=self.text_keys
         )

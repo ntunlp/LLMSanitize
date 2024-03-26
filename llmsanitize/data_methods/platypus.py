@@ -7,6 +7,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from llmsanitize.utils.string_utils_streaming import *
 from llmsanitize.utils.logger import get_child_logger
 
 logger = get_child_logger("platypus")
@@ -17,15 +18,29 @@ def main_platypus(
     eval_data,
     train_data_name,
     eval_data_name,
-    eval_set_key
+    eval_set_key,
+    stream_train_data=False,
+    text_key=None,
+    text_keys=None
 ):
-    train_data = train_data["text"]
     eval_data = eval_data["text"]
 
     model_name = "all-MiniLM-L6-v2"
     model = SentenceTransformer(model_name)
-    train_embeddings = model.encode(train_data)
     eval_embeddings = model.encode(eval_data)
+    if not (stream_train_data):
+        train_data = train_data["text"]
+        train_embeddings = model.encode(train_data)
+    else:
+        train_embeddings = build_embeddings_streaming(
+            train_data,
+            model,
+            bufer_size=1000,
+            text_processing_method=None,
+            text_key=text_key,
+            text_keys=text_keys
+        )
+
     cos = cosine_similarity(eval_embeddings, train_embeddings)
 
     thresh = 0.8

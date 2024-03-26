@@ -45,8 +45,21 @@ def overlap_ngrams(data, ngrams_set, ngram_size, text_processing_method=None):
 
     return overlaps
 
+# collect all full string samples
+def build_full_strings(data, text_processing_method=None):
+    set_strings = {}
+    for i in tqdm(range(len(data))):
+        doc_i = data[i]
+        clean_text_i = doc_i
+        if text_processing_method != None:
+            clean_text_i = text_processing_method(doc_i)
+
+        set_strings[clean_text_i] = 0
+
+    return set_strings
+
 # collect all unique strings of size string_size
-def build_strings(data, string_size, text_processing_method=None):
+def build_substrings(data, string_size, text_processing_method=None):
     set_strings = {}
     for i in tqdm(range(len(data))):
         text_i = data[i]
@@ -69,7 +82,7 @@ def build_strings(data, string_size, text_processing_method=None):
     return set_strings
 
 # compute the fraction of strings which have been seen before
-def overlap_strings_sample(data, strings_set, string_size, n_samples, text_processing_method=None):
+def overlap_substrings_sample(data, strings_set, string_size, n_samples, text_processing_method=None):
     all_tagged = []
     for i in tqdm(range(len(data))):
         text_i = data[i]
