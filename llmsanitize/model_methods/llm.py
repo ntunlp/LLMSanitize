@@ -35,6 +35,7 @@ class LLM:
             sleep_time: int = 1,
             echo: bool = False,
             temperature: float = 0.0,
+            local_api_type: str = "post",
     ):
         """
         :param config: config object
@@ -74,6 +75,7 @@ class LLM:
         _query_config = {
             "local": {
                 "port": local_port,
+                "api_type": local_api_type,
             },
             "openai": {
                 "creds_key_file": openai_creds_key_file,

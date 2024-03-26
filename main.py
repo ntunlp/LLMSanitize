@@ -52,6 +52,8 @@ def parse_args():
                         help="OpenAI API key file path.")
     parser.add_argument("--local_port", type=str, default=None,
                         help="Local model port for service based inference.")
+    parser.add_argument("--local_api_type", type=str, default="post",
+                        choices=['openai', 'post'], help="the type of local API call")
     parser.add_argument("--model_name", type=str, default=None,
                         help="model name for service based inference.")
     ### OpenAI API or vLLM

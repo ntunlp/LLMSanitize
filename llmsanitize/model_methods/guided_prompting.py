@@ -121,7 +121,8 @@ def main_guided_prompting(
     label_key,
     local_port,
     model_name,
-    num_proc
+    num_proc,
+    local_api_type
 ):
     # based on task type, choose prompt template
     type_str = guided_prompting_task_type
@@ -139,7 +140,7 @@ def main_guided_prompting(
     random_examples = eval_data.shuffle(seed=42).filter(lambda _, idx: idx < num_examples_to_test, with_indices=True)
     print(f"random samples: {random_examples}")
     
-    llm = LLM(local_port=local_port, model_name=model_name)
+    llm = LLM(local_port=local_port, model_name=model_name, local_api_type=local_api_type)
     process_fn = partial(
         guided_prompt_process_fn,
         llm=llm,
@@ -166,7 +167,7 @@ def main_guided_prompting(
 
     scores_diff = [example['guided_score'] - example['general_score'] for example in processed_examples]
     logger.info(f"Tested {len(processed_examples)} examples with guided-prompting for model {model_name}")
-    logger.info(f"guided_score - general_score (RougeL)\nmean: {np.mean(scores_diff):.2f}, std: {np.std(scores_diff):.2f}")
     # TODO: add significance measure and bootstrap resampling
     p_value = bootstrap_test(scores_diff)
-    logger.info(f"p-value of diff <= 0 by bootstrap resampling: {p_value:.2f}")
+    logger.info(f"dataset: {eval_data_name}, guided_score - general_score (RougeL)")
+    logger.info(f"mean: {np.mean(scores_diff):.3f}, std: {np.std(scores_diff):.3f}, p-value of diff <= 0: {p_value:.3f}")

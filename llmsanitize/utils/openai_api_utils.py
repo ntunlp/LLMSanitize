@@ -78,13 +78,13 @@ def query_llm_api(config, prompt):
     engine = {'name': config.openai.model_name}
 
     # if prompt is not a list, assign prompt to user_msg
-    if type(prompt) == str and not config.local.port:  # Fixed: This should only be used for OpenAI models or vllm chat completions API.
+    if type(prompt) == str and config.local.api_type == 'openai':  # Fixed: This should only be used for OpenAI models or vllm chat completions API.
         prompt = [{"role": "user", "content": prompt}]
 
     response = {}
     while time.time() - start < config.query.max_request_time:
         try:
-            if not config.local.port:
+            if config.local.api_type == 'openai':
                 response = openai.ChatCompletion.create(  # Currently `echo` option is deprecated in OpenAI's ChatCompletion API.
                     model=engine['name'],
                     messages=prompt,
@@ -101,7 +101,7 @@ def query_llm_api(config, prompt):
                 ]
                 total_cost += calculate_openai_cost(engine['name'], response['usage'])
                 break
-            else:
+            elif config.local.api_type == 'post':
                 response = post_http_request(
                     prompt=prompt,
                     model=engine['name'],
