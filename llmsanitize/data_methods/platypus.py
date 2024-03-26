@@ -35,7 +35,7 @@ def main_platypus(
         train_embeddings = build_embeddings_streaming(
             train_data,
             model,
-            bufer_size=1000,
+            bufer_size=10000,
             text_processing_method=None,
             text_key=text_key,
             text_keys=text_keys

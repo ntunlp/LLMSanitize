@@ -61,7 +61,7 @@ def build_substrings_streaming(data, string_size, text_processing_method=None, t
     return set_strings
 
 # collect embeddings from specified model
-def build_embeddings_streaming(data, model, bufer_size=1000, text_processing_method=None, text_key=None, text_keys=None):
+def build_embeddings_streaming(data, model, bufer_size=10000, text_processing_method=None, text_key=None, text_keys=None):
     set_embeddings = []
     current_texts = []
     for data_point in tqdm(data):
@@ -75,6 +75,9 @@ def build_embeddings_streaming(data, model, bufer_size=1000, text_processing_met
             current_embeddings = model.encode(current_texts)
             set_embeddings.append(current_embeddings)
             current_texts = []
+    if len(current_texts) > 0:
+        current_embeddings = model.encode(current_texts)
+        set_embeddings.append(current_embeddings)
     set_embeddings = np.concatenate(set_embeddings)
 
     return set_embeddings
