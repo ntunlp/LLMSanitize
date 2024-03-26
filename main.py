@@ -34,6 +34,10 @@ def parse_args():
                         help="the key to label content of each data instance.")
     parser.add_argument("--n_eval_data_points", type=int, default=100,
                         help="the number of (val/test) data points to keep for evaluating contamination")
+    parser.add_argument("--stream_train_data", default=False, action="store_true",
+                        help="Whether to stream over the training dataset (helpful for large datasets like C4)")
+    parser.add_argument("--stream_buffer_size", type = int, default=1000,
+                        help="Buffer size for streaming over training set. Only used if --stream_train_data is passed.")
     parser.add_argument("--local_model_path", default=None,
                         help="local model path for non-service based inference.")
     parser.add_argument("--local_tokenizer_path", default=None,

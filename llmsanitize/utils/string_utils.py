@@ -3,6 +3,7 @@ from tqdm import tqdm
 from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
 
+
 # collect all unique n-grams of size ngram_size
 def build_ngrams(data, ngram_size, text_processing_method=None):
     set_ngrams = {}

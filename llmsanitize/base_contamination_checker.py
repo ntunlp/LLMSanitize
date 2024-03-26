@@ -31,15 +31,20 @@ class BaseContaminationChecker:
         self.subsample_eval_data()
 
         # standardize the text field
-        if self.text_keys != [] and self.text_keys != ['']:
+        if not(self.text_keys in [[], ['']]):
             self.combine_text_keys()
         else:
             self.normalize_text_key()
 
     def download_data(self):
         if self.train_data_name:
-            self.train_data = load_dataset(self.train_data_name)
+            streaming = self.stream_train_data
+            self.train_data = load_dataset(self.train_data_name, streaming=streaming)
             self.train_data = self.train_data['train']
+            if not(streaming):
+                self.train_data = self.train_data.shuffle(seed=self.seed)
+            else:
+                self.train_data = self.train_data.shuffle(seed=self.seed, buffer_size=self.stream_buffer_size)
         else:
             self.train_data = []
 
@@ -64,7 +69,8 @@ class BaseContaminationChecker:
         if self.train_data:
             for key in self.text_keys:
                 assert key in self.train_data.features, "Error - please provide a text key that is in this dataset"
-            self.train_data = self.combine_text_keys_subset_(self.train_data)
+            if not(self.stream_train_data):
+                self.train_data = self.combine_text_keys_subset_(self.train_data)
         if self.eval_data:
             for key in self.text_keys:
                 assert key in self.eval_data.features, "Error - please provide a text key that is in this dataset"

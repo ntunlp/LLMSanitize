@@ -7,6 +7,7 @@ import re
 import numpy as np
 
 from llmsanitize.utils.string_utils import *
+from llmsanitize.utils.string_utils_streaming import *
 from llmsanitize.utils.logger import get_child_logger
 
 logger = get_child_logger("gpt2")
@@ -25,13 +26,18 @@ def main_gpt2(
     eval_data,
     train_data_name,
     eval_data_name,
-    eval_set_key
+    eval_set_key,
+    stream_train_data=False,
+    text_keys=None
 ):
     train_data = train_data["text"]
     eval_data = eval_data["text"]
 
     ngram_size = 8
-    train_ngrams = build_ngrams(train_data, ngram_size, clean_text_gpt2)
+    if not(stream_train_data):
+        train_ngrams = build_ngrams(train_data, ngram_size, clean_text_gpt2)
+    else:
+        train_ngrams = build_ngrams_streaming(train_data, ngram_size, clean_text_gpt2, text_keys=text_keys)
     logger.info(f"There are {len(train_ngrams.keys())} {ngram_size}-grams in the training set")
 
     ngram_overlaps = overlap_ngrams(eval_data, train_ngrams, ngram_size, clean_text_gpt2)
