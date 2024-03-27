@@ -4,3 +4,4 @@ __pycache__/
 log_dir/*
 output_dir/*
 openai_creds/*
+output/*
