@@ -21,7 +21,6 @@ python main.py \
 --text_keys "question+choices+answerKey" \
 --n_eval_data_points 100 \
 --num_proc 0 \
---output_dir ./output_dir/min_prob/llama2/arc \
 --method min-prob \
 --local_port $port \
 --model_name $model_name \

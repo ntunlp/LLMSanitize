@@ -15,10 +15,10 @@ echo "local port: ", $port
 
 # test min-K-prob model contamination method
 python main.py \
---eval_data_name cais/mmlu \
---eval_data_config_name all \
---eval_set_key test \
---text_keys "question+choices+answer" \
+--eval_data_name "RealTimeData/bbc_news_alltime" \
+--eval_data_config_name "2024-02" \
+--eval_set_key train \
+--text_keys "description+section+content" \
 --n_eval_data_points 100 \
 --num_proc 0 \
 --method min-prob \

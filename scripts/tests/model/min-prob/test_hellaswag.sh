@@ -15,10 +15,10 @@ echo "local port: ", $port
 
 # test min-K-prob model contamination method
 python main.py \
---eval_data_name cais/mmlu \
---eval_data_config_name all \
+--eval_data_name Rowan/hellaswag \
+--eval_data_config_name "main" \
 --eval_set_key test \
---text_keys "question+choices+answer" \
+--text_keys "ctx+endings+label" \
 --n_eval_data_points 100 \
 --num_proc 0 \
 --method min-prob \
