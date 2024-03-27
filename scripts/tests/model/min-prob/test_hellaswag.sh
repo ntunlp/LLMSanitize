@@ -16,7 +16,6 @@ echo "local port: ", $port
 # test min-K-prob model contamination method
 python main.py \
 --eval_data_name Rowan/hellaswag \
---eval_data_config_name "main" \
 --eval_set_key test \
 --text_keys "ctx+endings+label" \
 --n_eval_data_points 100 \
