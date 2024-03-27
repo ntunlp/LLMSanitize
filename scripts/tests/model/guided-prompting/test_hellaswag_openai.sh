@@ -1,6 +1,5 @@
 python main.py \
 --eval_data_name Rowan/hellaswag \
---eval_data_config_name "main" \
 --eval_set_key validation \
 --text_key "ctx" \
 --label_key activity_label \

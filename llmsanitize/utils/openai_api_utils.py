@@ -109,9 +109,9 @@ def query_llm_api(config, prompt):
                     temperature=config.query.temperature, # it's default to 0.0
                     use_beam_search=False,
                     stream=False,
-                    #echo=config.query.echo,
-                    #logprobs=int(config.query.top_logprobs),  # Note that vllm openai api uses different parameters of OpenAI's.
-                    #top_logprobs=int(config.query.top_logprobs),
+                    echo=config.query.echo,
+                    logprobs=int(config.query.top_logprobs),  # Note that vllm openai api uses different parameters of OpenAI's.
+                    top_logprobs=int(config.query.top_logprobs),
                 )
                 if response.status_code != 200:
                     raise Exception(json.loads(response.content))
