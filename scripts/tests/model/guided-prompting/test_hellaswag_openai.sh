@@ -1,0 +1,13 @@
+python main.py \
+--eval_data_name Rowan/hellaswag \
+--eval_data_config_name "main" \
+--eval_set_key validation \
+--text_key "ctx" \
+--label_key activity_label \
+--n_eval_data_points 1000 \
+--num_proc 1 \
+--method guided-prompting \
+--openai_creds_key_file "openai_creds/openai_api_key.txt" \
+--local_api_type "openai" \
+--guided_prompting_task_type NLI \
+--use_local_model

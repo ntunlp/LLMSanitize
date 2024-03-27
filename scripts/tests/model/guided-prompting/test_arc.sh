@@ -14,7 +14,6 @@ echo "model name ", $model_name
 echo "local port: ", $port
 
 # test guided prompting model contamination method
-echo "this method might require running vllm serving locally"
 python main.py \
 --eval_data_name allenai/ai2_arc \
 --eval_data_config_name "ARC-Challenge" \

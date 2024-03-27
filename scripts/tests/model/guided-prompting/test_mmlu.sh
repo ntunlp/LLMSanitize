@@ -14,7 +14,6 @@ echo "model name ", $model_name
 echo "local port: ", $port
 
 # test guided prompting model contamination method
-echo "this method might require running vllm serving locally"
 python main.py \
 --eval_data_name cais/mmlu \
 --eval_data_config_name all \

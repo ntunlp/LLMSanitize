@@ -1,0 +1,13 @@
+python main.py \
+--eval_data_name truthful_qa \
+--eval_data_config_name generation \
+--eval_set_key validation \
+--text_key question \
+--label_key category \
+--n_eval_data_points 1000 \
+--num_proc 1 \
+--method guided-prompting \
+--openai_creds_key_file "openai_creds/openai_api_key.txt" \
+--local_api_type "openai" \
+--guided_prompting_task_type QA \
+--use_local_model
