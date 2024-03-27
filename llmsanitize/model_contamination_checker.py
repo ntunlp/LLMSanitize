@@ -34,6 +34,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
             text_key=self.text_key,
             label_key=self.label_key,
             local_port=self.local_port,
+            openai_creds_key_file=self.openai_creds_key_file,
             model_name=self.model_name,
             num_proc=self.num_proc,
             local_api_type=self.local_api_type

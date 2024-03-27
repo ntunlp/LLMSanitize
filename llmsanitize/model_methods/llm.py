@@ -71,6 +71,8 @@ class LLM:
             initialize_openai(_config)
             self.query_fn = query_llm_api
             self.api_base = True
+            if model_name is None:
+                model_name = "gpt-3.5-turbo-0125"
 
         _query_config = {
             "local": {

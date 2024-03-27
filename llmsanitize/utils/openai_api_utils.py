@@ -30,12 +30,11 @@ def calculate_openai_cost(engine_name, usage_dict):
 
     return input_price * (usage_dict['prompt_tokens'] / 1000.) + output_price * (usage_dict['completion_tokens'] / 1000.)
 
-
 def initialize_openai(config):
     with open(config.openai.creds_key_file, 'r') as rf:
         api_key = rf.read()
+    api_key = api_key.strip()
     openai.api_key = api_key
-
 
 def initialize_openai_local(config):
     """
@@ -43,7 +42,6 @@ def initialize_openai_local(config):
     """
     openai.api_key = "EMPTY"
     openai.api_base = f"http://127.0.0.1:{config.local.port}/v1"
-
 
 def post_http_request(prompt: str,
                       api_url: str,
@@ -68,8 +66,8 @@ def post_http_request(prompt: str,
     }
     p_load.update(kwargs)
     response = requests.post(api_url, headers=headers, json=p_load, stream=True)
+    
     return response
-
 
 def query_llm_api(config, prompt):
     output_strs = []
@@ -90,9 +88,9 @@ def query_llm_api(config, prompt):
                     messages=prompt,
                     n=config.query.num_samples,
                     max_tokens=config.query.max_tokens,
-                    logprobs=int(config.query.top_logprobs) > 0,  # boolean
-                    top_logprobs=int(config.query.top_logprobs),  # int, [0, 5],
-                    echo=config.query.echo,
+                    #logprobs=int(config.query.top_logprobs) > 0,  # boolean
+                    #top_logprobs=int(config.query.top_logprobs),  # int, [0, 5],
+                    #echo=config.query.echo,
                     temperature=config.query.temperature,
                 )
 
@@ -111,9 +109,9 @@ def query_llm_api(config, prompt):
                     temperature=config.query.temperature, # it's default to 0.0
                     use_beam_search=False,
                     stream=False,
-                    echo=config.query.echo,
-                    logprobs=int(config.query.top_logprobs),  # Note that vllm openai api uses different parameters of OpenAI's.
-                    top_logprobs=int(config.query.top_logprobs),
+                    #echo=config.query.echo,
+                    #logprobs=int(config.query.top_logprobs),  # Note that vllm openai api uses different parameters of OpenAI's.
+                    #top_logprobs=int(config.query.top_logprobs),
                 )
                 if response.status_code != 200:
                     raise Exception(json.loads(response.content))

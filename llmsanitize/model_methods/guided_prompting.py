@@ -120,6 +120,7 @@ def main_guided_prompting(
     text_key,
     label_key,
     local_port,
+    openai_creds_key_file,
     model_name,
     num_proc,
     local_api_type
@@ -140,7 +141,13 @@ def main_guided_prompting(
     random_examples = eval_data.shuffle(seed=42).filter(lambda _, idx: idx < num_examples_to_test, with_indices=True)
     print(f"random samples: {random_examples}")
     
-    llm = LLM(local_port=local_port, model_name=model_name, local_api_type=local_api_type)
+    llm = LLM(
+        openai_creds_key_file=openai_creds_key_file,
+        local_port=local_port, 
+        model_name=model_name, 
+        local_api_type=local_api_type
+    )
+
     process_fn = partial(
         guided_prompt_process_fn,
         llm=llm,
