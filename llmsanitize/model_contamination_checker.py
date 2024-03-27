@@ -35,7 +35,8 @@ class ModelContaminationChecker(BaseContaminationChecker):
             label_key=self.label_key,
             local_port=self.local_port,
             model_name=self.model_name,
-            num_proc=self.num_proc
+            num_proc=self.num_proc,
+            local_api_type=self.local_api_type
         )
 
     def contamination_sharded_likelihood(self):

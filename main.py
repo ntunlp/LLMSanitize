@@ -59,6 +59,8 @@ def parse_args():
                         help="OpenAI API key file path.")
     parser.add_argument("--local_port", type=str, default=None,
                         help="Local model port for service based inference.")
+    parser.add_argument("--local_api_type", type=str, default="post",
+                        choices=['openai', 'post'], help="the type of local API call")
     parser.add_argument("--model_name", type=str, default=None,
                         help="model name for service based inference.")
     ### OpenAI API or vLLM
@@ -75,8 +77,8 @@ def parse_args():
     parser.add_argument("--echo", default=False, action="store_true",
                         help="Echo back the prompt in addition to the completion")
     ### Guided prompting
-    parser.add_argument("--guided_prompting_task_type", choices=["CLS", "NLI", "SUM", "XSUM"],
-                        help="For guided-prompting: set task type to either {classification, NLI, summarization, extreme-summarization}")
+    parser.add_argument("--guided_prompting_task_type", choices=["CLS", "QA", "FIM", "NLI", "SUM", "XSUM"],
+                        help="For guided-prompting: set task type to either {classification, open-QA, NLI, summarization, extreme-summarization}")
     parser.add_argument("--use_local_model", action='store_true', default=False)
     ### Sharded likelihood
     parser.add_argument("--sharded_likelihood_context_len", type=int, default=1024,

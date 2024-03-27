@@ -44,3 +44,17 @@ def setting_logger(log_file: str, local_rank: int = -1):
         logger.addHandler(f_handler)
 
     return logger
+
+from functools import wraps
+
+def suspend_logging(func):
+    ''' decorator to supress logging for a code block (https://stackoverflow.com/questions/7341064/disable-logging-per-method-function)
+    '''
+    @wraps(func)
+    def inner(*args, **kwargs):
+        logging.disable(logging.FATAL)
+        try:
+            return func(*args, **kwargs)
+        finally:
+            logging.disable(logging.NOTSET)
+    return inner
