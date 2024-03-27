@@ -3,3 +3,4 @@ lmsanitize.egg-info/
 __pycache__/
 log_dir/*
 output_dir/*
+openai_creds/*
