@@ -17,7 +17,7 @@ echo "local port: ", $port
 python main.py \
 --eval_data_name truthful_qa \
 --eval_data_config_name generation \
---eval_set_key test \
+--eval_set_key "validation" \
 --text_keys "question+best_answer" \
 --n_eval_data_points 100 \
 --num_proc 0 \
