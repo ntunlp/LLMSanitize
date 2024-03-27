@@ -106,7 +106,7 @@ def parse_args():
     current_date = datetime.now().strftime('%Y%m%d_%H%M%S')
     data = args.dataset_name if args.dataset_name != "" else args.eval_data_name
     data = data.replace("/", "_")
-    log_file_name = f"log_{current_date}_{args.method_name}_{data}_{args.n_eval_data_points}.txt"
+    log_file_name = f"log_{current_date}_{args.method}_{data}_{args.n_eval_data_points}.txt"
     logger = setting_logger(log_file_name) 
 
     args = postprocess_args(args)
@@ -129,7 +129,7 @@ def postprocess_args(args):
     return args
 
 def check_args(args):
-    assert args.method_name in supported_methods, f"Error, {args.method_name} not in supported methods: {list(supported_methods.keys())}"
+    assert args.method in supported_methods, f"Error, {args.method} not in supported methods: {list(supported_methods.keys())}"
     assert args.text_key != "" or args.text_keys != [], f"Error, specify some text key"
 
 def main():
@@ -142,14 +142,13 @@ def main():
         mp.set_start_method('spawn')
 
     # assign data / model contamination checker based on method type
-    assert args.method_name in supported_methods, f"Error, {args.method_name} not in supported methods: {list(supported_methods.keys())}"
-    if supported_methods[args.method_name]['type'] == 'data':
+    if supported_methods[args.method]['type'] == 'data':
         ContaminationChecker = DataContaminationChecker
-    elif supported_methods[args.method_name]['type'] == 'model':
+    elif supported_methods[args.method]['type'] == 'model':
         ContaminationChecker = ModelContaminationChecker
 
     contamination_checker = ContaminationChecker(args)
-    contamination_checker.run_contamination(args.method_name)
+    contamination_checker.run_contamination(args.method)
 
 
 if __name__ == '__main__':
