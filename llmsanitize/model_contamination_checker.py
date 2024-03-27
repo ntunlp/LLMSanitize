@@ -20,9 +20,9 @@ class ModelContaminationChecker(BaseContaminationChecker):
 
         if method == "guided-prompting":
             self.contamination_guided_prompting()
-        if method == "sharded-likelihood":
+        elif method == "sharded-likelihood":
             self.contamination_sharded_likelihood()
-        if method == "min-prob":
+        elif method == "min-prob":
             self.contamination_min_prob()
 
     def contamination_guided_prompting(self):
@@ -52,7 +52,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
 
     def contamination_min_prob(self):
         main_min_prob(
-            test_data=self.eval_data,
+            eval_data=self.eval_data,
             openai_creds_key_file=self.openai_creds_key_file,
             openai_creds_key_file_2=self.openai_creds_key_file_2,
             local_port=self.local_port,

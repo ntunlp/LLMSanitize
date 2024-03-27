@@ -142,7 +142,7 @@ def _process_fn(x):
     return inference(LLM1, LLM2, x)
 
 def main_min_prob(
-    test_data,
+    eval_data,
     openai_creds_key_file: str = None,
     openai_creds_key_file_2: str = None,
     local_port: str = None,
@@ -191,19 +191,19 @@ def main_min_prob(
         echo=echo,
     )
 
-    logger.info(f"all data size: {len(test_data)}")
+    logger.info(f"all data size: {len(eval_data)}")
 
     if num_proc <= 1:
         all_output = []
-        for text in tqdm(test_data):
+        for text in tqdm(eval_data):
             # logger.info(text)
             new_ex = inference(llm1, llm2, text)  # Here, `test_data` is Dataset, and `text` is a dictionary.
             all_output.append(new_ex)
     else:
         with Pool(num_proc, initializer=_client_init, initargs=(llm1, llm2,)) as p:
             all_output = list(tqdm(
-                p.imap(_process_fn, test_data, chunksize=32),
-                total=len(test_data),
+                p.imap(_process_fn, eval_data, chunksize=32),
+                total=len(eval_data),
                 desc="Sending requests to local service"
             ))
 

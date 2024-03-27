@@ -21,21 +21,21 @@ logger = get_child_logger("LLM")
 
 class LLM:
     def __init__(
-            self,
-            openai_creds_key_file: str = None,
-            local_port: str = None,
-            local_model_path: str = None,
-            local_tokenizer_path: str = None,
-            device: str = "cuda" if torch.cuda.is_available() else "cpu",
-            model_name: str = None,
-            num_samples: int = 1,
-            max_tokens: int = 128,
-            top_logprobs: int = 0,
-            max_request_time: int = 600,
-            sleep_time: int = 1,
-            echo: bool = False,
-            temperature: float = 0.0,
-            local_api_type: str = "post",
+        self,
+        openai_creds_key_file: str = None,
+        local_port: str = None,
+        local_model_path: str = None,
+        local_tokenizer_path: str = None,
+        device: str = "cuda" if torch.cuda.is_available() else "cpu",
+        model_name: str = None,
+        num_samples: int = 1,
+        max_tokens: int = 128,
+        top_logprobs: int = 0,
+        max_request_time: int = 600,
+        sleep_time: int = 1,
+        echo: bool = False,
+        temperature: float = 0.0,
+        local_api_type: str = "post",
     ):
         """
         :param config: config object
