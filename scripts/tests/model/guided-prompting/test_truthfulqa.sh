@@ -21,11 +21,11 @@ python main.py \
 --eval_set_key validation \
 --text_key question \
 --label_key category \
---method guided-prompting \
---num_proc 40 \
---local_port $port \
---guided_prompting_task_type QA \
---use_local_model \
 --n_eval_data_points 1000 \
+--num_proc 40 \
+--method guided-prompting \
+--local_port $port \
+--local_api_type $local_api_type \
 --model_name $model_name \
---local_api_type $local_api_type
+--guided_prompting_task_type QA \
+--use_local_model

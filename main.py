@@ -47,7 +47,7 @@ def parse_args():
                         help="local tokenizer path for non-service based inference.")
     parser.add_argument("--num_proc", type=int, default=20,
                         help="recommend: 20 for openai calls, 80 for local calls")
-    parser.add_argument("--method_name", type=str, choices=supported_methods.keys(),
+    parser.add_argument("--method", type=str, choices=supported_methods.keys(),
                         help="you must pass a method name within the list supported_methods")
     parser.add_argument("--log_file_path", type=str, default="log.txt",
                         help="log file path")

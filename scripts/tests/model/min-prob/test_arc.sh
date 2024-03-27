@@ -13,19 +13,21 @@ done
 echo "model name ", $model_name
 echo "local port: ", $port
 
-# test guided prompting model contamination method
-echo "this method might require running vllm serving locally"
+# test min-K-prob model contamination method
 python main.py \
---eval_data_name winogrande \
---eval_data_config_name winogrande_debiased \
+--eval_data_name allenai/ai2_arc \
+--eval_data_config_name "ARC-Challenge" \
 --eval_set_key test \
---text_key sentence \
---label_key answer_token \
---n_eval_data_points 1000 \
---num_proc 40 \
---method guided-prompting \
---local_api_type $local_api_type \
+--text_keys "question+choices+answerKey" \
+--n_eval_data_points 100 \
+--num_proc 0 \
+--output_dir ./output_dir/min_prob/llama2/arc \
+--method min-prob \
 --local_port $port \
 --model_name $model_name \
---guided_prompting_task_type FIM \
---use_local_model
+--max_tokens 1 \
+--top_logprobs 5 \
+--max_request_time 10 \
+--echo \
+--local_port_2 $port \
+--model_name_2 $model_name
