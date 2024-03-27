@@ -1,4 +1,5 @@
-qwen="/home/fangkai/pretrained-models/Qwen1.5-7B-Chat"
+#qwen="/home/fangkai/pretrained-models/Qwen1.5-7B-Chat"
+qwen="qwen-1.5"
 
 python main.py \
 --method min-prob \
@@ -15,5 +16,5 @@ python main.py \
 --text_keys "description+section+content" \
 --n_eval_data_points 100 \
 --max_request_time 10 \
---num_proc 4 \
+--num_proc 0 \
 --output_dir ./output_dir/min_prob/qwen/bbc-2024
