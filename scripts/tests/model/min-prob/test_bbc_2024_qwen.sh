@@ -15,5 +15,5 @@ python main.py \
 --text_keys "description+section+content" \
 --n_eval_data_points 100 \
 --max_request_time 10 \
---num_proc 64 \
+--num_proc 4 \
 --output_dir ./output_dir/min_prob/qwen/bbc-2024

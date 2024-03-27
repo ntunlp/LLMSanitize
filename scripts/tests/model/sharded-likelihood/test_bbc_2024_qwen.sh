@@ -1,4 +1,4 @@
-llama="/home/fangkai/pretrained-models/Llama-2-7b-chat-hf"
+qwen="/home/fangkai/pretrained-models/Qwen1.5-7B-Chat"
 
 python main.py \
 --eval_data_name "RealTimeData/bbc_news_alltime" \
@@ -7,7 +7,7 @@ python main.py \
 --text_keys "description+section+content" \
 --n_eval_data_points 100 \
 --method sharded-likelihood \
---model_name $llama \
+--model_name $qwen \
 --sharded_likelihood_context_len 1024 \
 --sharded_likelihood_stride 512 \
 --sharded_likelihood_num_shards 15 \

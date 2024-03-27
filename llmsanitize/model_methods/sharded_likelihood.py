@@ -70,7 +70,7 @@ def _compute_logprob_of_token_sequence(tokens, model, context_len=2048, stride=1
     return logp.item()
 
 def _worker(
-    model_name_or_path,
+    model_name,
     context_len,
     stride,
     device,
@@ -78,7 +78,7 @@ def _worker(
     worker_queue
 ):
     # Load model.
-    m = AutoModelForCausalLM.from_pretrained(model_name_or_path)
+    m = AutoModelForCausalLM.from_pretrained(model_name)
     m.cuda(device)
     main_queue.put((device, True))
 
@@ -104,29 +104,25 @@ def _worker(
     del m
 
 def main_sharded_likelihood(
-    model_name_or_path,
-    dataset_path,
+    eval_data,
+    model_name,
     context_len=2048,
     stride=1024,
     num_shards=50,
     permutations_per_shard=250,
-    random_seed=0,
     log_file_path=None,
-    max_examples=5000
 ):
     os.environ['TOKENIZERS_PARALLELISM'] = "True"
     flatten = lambda l : [x for s in l for x in s]
     shuffle = lambda l : random.sample(l, k=len(l))
 
     # Load the dataset.
-    examples = _load_dataset(dataset_path)
-    examples = examples[:max_examples]
-    logger.info(examples[:2])
+    examples = _load_dataset(eval_data)
     num_examples = len(examples)
-    logger.info(f"Loaded {num_examples} examples from {dataset_path}")
+    logger.info(f"Loaded {num_examples} examples")
 
     # Load tokenizer and tokenize the examples.
-    t = AutoTokenizer.from_pretrained(model_name_or_path)
+    t = AutoTokenizer.from_pretrained(model_name)
     tokenized_examples = [t.encode(ex) for ex in examples]
 
     # Launch a Process for each GPU.
@@ -135,7 +131,7 @@ def main_sharded_likelihood(
     main_queue = Queue()
     worker_queues = [Queue() for _ in range(num_workers)]
     for i in range(num_workers):
-        p = Process(target=_worker, args=(model_name_or_path,
+        p = Process(target=_worker, args=(model_name,
                                          context_len,
                                          stride,
                                          i,

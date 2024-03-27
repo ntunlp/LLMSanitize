@@ -4,6 +4,7 @@ Main file, to be called to run contamination
 
 import multiprocessing as mp
 import argparse
+import time
 from datetime import datetime
 from llmsanitize import DataContaminationChecker, ModelContaminationChecker
 from llmsanitize.configs.config import supported_methods
@@ -78,8 +79,6 @@ def parse_args():
                         help="For guided-prompting: set task type to either {classification, NLI, summarization, extreme-summarization}")
     parser.add_argument("--use_local_model", action='store_true', default=False)
     ### Sharded likelihood
-    parser.add_argument("--sharded_likelihood_model", type=str, default="gpt2-xl",
-                        help="For sharded-likelihood: set model name or path")
     parser.add_argument("--sharded_likelihood_context_len", type=int, default=1024,
                         help="For sharded-likelihood: set context length")
     parser.add_argument("--sharded_likelihood_stride", type=int, default=512,
@@ -88,8 +87,6 @@ def parse_args():
                         help="For sharded-likelihood: set number of shards")
     parser.add_argument("--sharded_likelihood_permutations_per_shard", type=int, default=25,
                         help="For sharded-likelihood: set number of permutations per shard")
-    parser.add_argument("--sharded_likelihood_max_examples", type=int, default=5000,
-                        help="For sharded-likelihood: set max examples")
     parser.add_argument("--sharded_likelihood_mp_prawn", action='store_true', default=False)
     ### Min-K-Prob
     parser.add_argument("--openai_creds_key_file_2", type=str, default=None,

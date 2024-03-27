@@ -40,14 +40,12 @@ class ModelContaminationChecker(BaseContaminationChecker):
 
     def contamination_sharded_likelihood(self):
         main_sharded_likelihood(
-            model_name_or_path=self.sharded_likelihood_model,
-            dataset_path=self.eval_data,
+            eval_data=self.eval_data,
+            model_name=self.model_name,
             context_len=self.sharded_likelihood_context_len,
             stride=self.sharded_likelihood_stride,
             num_shards=self.sharded_likelihood_num_shards,
             permutations_per_shard=self.sharded_likelihood_permutations_per_shard,
-            random_seed=self.seed,
-            max_examples=self.sharded_likelihood_max_examples,
             log_file_path=self.log_file_path
         )
 

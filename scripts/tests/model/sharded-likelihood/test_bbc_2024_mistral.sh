@@ -1,4 +1,4 @@
-llama="/home/fangkai/pretrained-models/Llama-2-7b-chat-hf"
+mistral="/home/fangkai/pretrained-models/Mistral-7B-Instruct-v0.2"
 
 python main.py \
 --eval_data_name "RealTimeData/bbc_news_alltime" \
@@ -7,7 +7,7 @@ python main.py \
 --text_keys "description+section+content" \
 --n_eval_data_points 100 \
 --method sharded-likelihood \
---model_name $llama \
+--model_name $mistral \
 --sharded_likelihood_context_len 1024 \
 --sharded_likelihood_stride 512 \
 --sharded_likelihood_num_shards 15 \
