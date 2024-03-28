@@ -32,7 +32,7 @@ Notably, we use the following important libraries:
 So far we support the following contamination detection methods:
 
 | **Method** | **Use Case** | **Short description** | **White-box access?** |  
-|---|---|---|
+|---|---|---|---|
 | gpt-2 | data contamination | String matching | _ |
 | gpt-3 | data contamination | String matching | _ |
 | exact | data contamination | String matching | _ |
