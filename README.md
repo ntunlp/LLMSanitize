@@ -2,10 +2,31 @@
 An open-source library for contamination detection in NLP datasets and Large Language Models (LLMs).  
 
 ## Installation
-- To query OpenAI models, put OpenAI key to `openai_creds/openai_api_key.txt`
-- Install python environment (using conda)
-    1. install cuda 12.1
-    2. run `sh scripts/install.sh`
+The library has been designed and tested with **Python 3.9** and **CUDA 11.8**.  
+
+First create a conda environment with Python 3.9: 
+```bash
+conda create -name llmsanitize python=3.9
+```
+
+Next activate the environment:
+```bash
+conda activate llmsanitize
+```
+
+Then install all the dependencies for LLMSanitize:
+```bash
+pip install -r requirements.txt
+```
+
+Notably, we use the following important libraries:
+- datasets 2.17.1
+- einops 0.7.0
+- huggingfac-hub 0.20.3
+- openai 0.27.8
+- torch 2.1.2
+- transformers 4.38.0
+- vllm 0.3.3
 
 ## Supported Methods
 So far we support the following contamination detection methods:
