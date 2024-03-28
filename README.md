@@ -4,7 +4,7 @@ An open-source library for contamination detection in NLP datasets and Large Lan
 ## Installation
 The library has been designed and tested with **Python 3.9** and **CUDA 11.8**.  
 
-First create a conda environment with Python 3.9: 
+First make sure you have CUDA 11.8 installed, and create a conda environment with Python 3.9: 
 ```bash
 conda create -name llmsanitize python=3.9
 ```
@@ -22,7 +22,7 @@ pip install -r requirements.txt
 Notably, we use the following important libraries:
 - datasets 2.17.1
 - einops 0.7.0
-- huggingfac-hub 0.20.3
+- huggingface-hub 0.20.3
 - openai 0.27.8
 - torch 2.1.2
 - transformers 4.38.0
