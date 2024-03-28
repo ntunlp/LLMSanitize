@@ -57,8 +57,9 @@ sh scripts/vllm_hosting.sh
 ```
 You are required to specify a **port number** and **model name** in this shell script. 
 
-## Run Contamination Check
+## Run Contamination Detection
 To run contamination detection, follow the multiple test scripts in scripts/tests/ folder.  
+
 For instance, to run sharded-likelihood on Hellaswag with Llama-2-7B:
 ```bash
 sh scripts/tests/model/sharded-likelihood/test_hellaswag.sh -m <path_to_your_llama-2-7b_folder> 
