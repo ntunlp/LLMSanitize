@@ -24,6 +24,9 @@ So far we support the following contamination detection methods:
 
 ## vLLM
 The following methods require to launch a vLLM instance which will handle model inference:
+
+| **Method** | 
+|---|
 | guided-prompting |
 | min-prob |
 
