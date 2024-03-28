@@ -30,11 +30,12 @@ The following methods require to launch a vLLM instance which will handle model 
 | guided-prompting |
 | min-prob |
 
-
-## Run Contamination Check
-(pre-requisite) If the method requires local model inference, run vllm serving in a separate bash/zsh window:
+To launch the instance, first run the following command in a terminal: 
 ```bash
 sh scripts/vllm_hosting.sh
 ```
-Then: 
+You are required to specify a **port number** and **model name** in this shell script. 
+
+## Run Contamination Check
+
 1. `sh scripts/run_contamination.sh`
