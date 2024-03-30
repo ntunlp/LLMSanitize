@@ -31,17 +31,17 @@ Notably, we use the following important libraries:
 ## Supported Methods
 So far we support the following contamination detection methods:
 
-| **Method** | **Use Case** | **Short description** |  
-|---|---|---|
-| gpt-2 | data contamination | 8-gram matching | 
-| gpt-3 | data contamination | 13-gram matching |
-| exact | data contamination | exact substring matching |
-| palm | data contamination | 70% overlap in 8-gram matching | 
-| gpt-4 | data contamination | 50-chars substring matching |
-| platypus | data contamination | SentenceTransformers cosine similarity |
-| guided-prompting | model contamination | https://arxiv.org/abs/2308.08493 | 
-| sharded-likelihood | model contamination | https://arxiv.org/abs/2310.17623 |
-| min-prob | model contamination | Min-K% Prob: https://arxiv.org/abs/2310.16789 | 
+| **Method** | **Use Case** | **Short description** | **White-box access?** |  
+|---|---|---|---|
+| gpt-2 | data contamination | String matching | _ |
+| gpt-3 | data contamination | String matching | _ |
+| exact | data contamination | String matching | _ |
+| palm | data contamination | String matching | _ |
+| gpt-4 | data contamination | String matching | _ |
+| platypus | data contamination | Embeddings similarity | _ |
+| guided-prompting | model contamination | Likelihood | yes |
+| sharded-likelihood | model contamination | Likelihood | yes |
+| min-prob | model contamination | LLM-based method | no |
 
 ## vLLM
 The following methods require to launch a vLLM instance which will handle model inference:
