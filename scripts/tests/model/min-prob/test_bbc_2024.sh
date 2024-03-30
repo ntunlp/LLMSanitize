@@ -15,8 +15,7 @@ echo "local port: ", $port
 
 # test min-K-prob model contamination method
 python main.py \
---eval_data_name "RealTimeData/bbc_news_alltime" \
---eval_data_config_name "2024-02" \
+--eval_data_name "RealTimeData/bbc_latest" \
 --eval_set_key train \
 --text_keys "description+section+content" \
 --n_eval_data_points 100 \
