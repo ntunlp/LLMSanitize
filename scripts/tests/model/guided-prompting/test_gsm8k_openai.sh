@@ -1,6 +1,6 @@
 python main.py \
 --eval_data_name gsm8k \
---eval_data_config_name "main" \
+--eval_data_config_name main \
 --eval_set_key test \
 --text_key question \
 --label_key answer \

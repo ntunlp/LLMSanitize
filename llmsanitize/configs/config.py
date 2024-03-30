@@ -21,7 +21,7 @@ supported_methods = {dic['name']: dic for dic in config_dict['methods']}
 FAILURE_TOLERANCE = 2
 
 
-# Commented by Fangkai: We need a config class here to specify all default values of parameters and hide them from the config file,
+# Commented: We need a config class here to specify all default values of parameters and hide them from the config file,
 #  so that the user does not feel it complex.
 @dataclass
 class QueryArguments:

@@ -11,7 +11,7 @@ echo "model name ", $model_name
 # test min-K-prob model contamination method
 python main.py \
 --eval_data_name gsm8k \
---eval_data_config_name "main" \
+--eval_data_config_name main \
 --eval_set_key test \
 --text_key question \
 --n_eval_data_points 100 \

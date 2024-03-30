@@ -1,4 +1,4 @@
-model_name=/home/fangkai/pretrained-models/Llama-2-7b-chat-hf
+model_name="<path_to_your_local_model>"
 port=8008
 api_type=openai # [openai, post]
 

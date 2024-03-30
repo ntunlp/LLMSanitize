@@ -11,7 +11,7 @@ echo "model name ", $model_name
 # test min-K-prob model contamination method
 python main.py \
 --eval_data_name allenai/ai2_arc \
---eval_data_config_name "ARC-Challenge" \
+--eval_data_config_name ARC-Challenge \
 --eval_set_key test \
 --text_keys "question+choices+answerKey" \
 --n_eval_data_points 100 \

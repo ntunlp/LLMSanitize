@@ -11,7 +11,7 @@ echo "model name ", $model_name
 # test min-K-prob model contamination method
 python main.py \
 --eval_data_name winogrande \
---eval_data_config_name "winogrande_debiased" \
+--eval_data_config_name winogrande_debiased \
 --eval_set_key test \
 --text_keys "sentence+option1+option2+answer" \
 --n_eval_data_points 100 \

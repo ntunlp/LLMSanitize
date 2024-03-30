@@ -6,8 +6,8 @@ annotated-types==0.6.0
 anyio==4.3.0
 async-timeout==4.0.3
 attrs==23.2.0
-Brotli @ file:///tmp/abs_ecyw11_7ze/croots/recipe/brotli-split_1659616059936/work
-certifi @ file:///croot/certifi_1707229174982/work/certifi
+Brotli==1.0.9
+certifi==2024.2.2
 chardet==5.2.0
 charset-normalizer==3.3.2
 click==8.1.7
@@ -25,11 +25,11 @@ evaluate==0.4.1
 exceptiongroup==1.2.0
 fastapi==0.109.2
 fastrlock==0.8.2
-filelock @ file:///croot/filelock_1700591183607/work
+filelock==3.13.1
 fonttools==4.49.0
 frozenlist==1.4.1
 fsspec==2023.10.0
-gmpy2 @ file:///tmp/build/80754af9/gmpy2_1645438755360/work
+gmpy2==2.1.2
 GPUtil==1.4.0
 h11==0.14.0
 httpcore==1.0.4
@@ -39,7 +39,7 @@ huggingface-hub==0.20.3
 idna==3.6
 importlib_resources==6.3.0
 interegular==0.3.3
-Jinja2 @ file:///croot/jinja2_1706733616596/work
+Jinja2==3.1.3
 joblib==1.3.2
 jsonschema==4.21.1
 jsonschema-specifications==2023.12.1
@@ -50,19 +50,19 @@ llvmlite==0.42.0
 MarkupSafe==2.1.5
 matplotlib==3.8.3
 megablocks==0.5.1
-mkl-fft @ file:///croot/mkl_fft_1695058164594/work
-mkl-random @ file:///croot/mkl_random_1695059800811/work
+mkl-fft==1.3.8
+mkl-random==1.2.4
 mkl-service==2.4.0
-mpmath @ file:///croot/mpmath_1690848262763/work
+mpmath==1.3.0
 msgpack==1.0.7
 multidict==6.0.5
 multiprocess==0.70.16
 nest-asyncio==1.6.0
-networkx @ file:///croot/networkx_1690561992265/work
+networkx==3.1
 ninja==1.11.1.1
 nltk==3.8.1
 numba==0.59.0
-numpy @ file:///croot/numpy_and_numpy_base_1708638617955/work/dist/numpy-1.26.4-cp39-cp39-linux_x86_64.whl#sha256=6094eeedd869502faa0fd0a8c5ad3a70c5779be06ddd1feb7627e5c212fac420
+numpy==1.26.4
 nvidia-cublas-cu11==11.11.3.6
 nvidia-cuda-cupti-cu11==11.8.87
 nvidia-cuda-nvrtc-cu11==11.8.89
@@ -79,7 +79,7 @@ orjson==3.9.14
 outlines==0.0.34
 packaging==23.2
 pandas==2.2.1
-pillow @ file:///croot/pillow_1707233021655/work
+pillow==10.2.0
 prometheus_client==0.20.0
 protobuf==4.25.3
 psutil==5.9.8
@@ -89,16 +89,16 @@ pydantic==2.6.1
 pydantic_core==2.16.2
 pynvml==11.5.0
 pyparsing==3.1.2
-PySocks @ file:///tmp/build/80754af9/pysocks_1605305812635/work
+PySocks==1.7.1
 python-dateutil==2.8.2
 python-dotenv==1.0.1
 pytz==2024.1
-PyYAML @ file:///croot/pyyaml_1698096049011/work
+PyYAML==6.0.1
 quantile-python==1.1
 ray==2.9.2
 referencing==0.33.0
 regex==2023.12.25
-requests @ file:///croot/requests_1707355572290/work
+requests==2.31.0
 responses==0.18.0
 rouge-score==0.1.2
 rpds-py==0.18.0
@@ -111,19 +111,19 @@ six==1.16.0
 sniffio==1.3.0
 stanford-stk==0.7.0
 starlette==0.36.3
-sympy @ file:///croot/sympy_1701397643339/work
+sympy==1.12
 threadpoolctl==3.3.0
 tokenizers==0.15.2
 torch==2.1.2+cu118
 tqdm==4.66.2
 transformers==4.38.0
 triton==2.1.0
-typing_extensions @ file:///croot/typing_extensions_1705599297034/work
+typing_extensions==4.9.0
 tzdata==2024.1
 urllib3==2.2.1
 uvicorn==0.27.1
 uvloop==0.19.0
-vllm @ file:///home/mathieu/vllm-0.3.3%2Bcu118-cp39-cp39-manylinux1_x86_64.whl#sha256=d272f3ada92f6ed3bf63d628b7eaf8869b95153575ec459228ce7ea654888efd
+vllm==0.3.3+cu118
 watchfiles==0.21.0
 websockets==12.0
 xformers==0.0.23.post1+cu118

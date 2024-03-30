@@ -1,7 +1,7 @@
 # test guided prompting model contamination method
 python main.py \
 --eval_data_name allenai/ai2_arc \
---eval_data_config_name "ARC-Challenge" \
+--eval_data_config_name ARC-Challenge \
 --eval_set_key test \
 --text_key question \
 --label_key answerKey \

@@ -19,6 +19,11 @@ Then install all the dependencies for LLMSanitize:
 pip install -r requirements.txt
 ```
 
+Alternatively, you can combine the three steps above by just running:  
+```bash
+sh scripts/install.sh
+```
+
 Notably, we use the following important libraries:
 - datasets 2.17.1
 - einops 0.7.0
