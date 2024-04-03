@@ -14,22 +14,22 @@ methods:
   ### Data contamination methods
   - name: "gpt-2"
     type: "data" # choices: ["data", "model"], whether it's a data-contamination method or model-contamination method
-    help: "Method in the paper 'Language models are unsupervised multi-task learners (GPT-2)'
+    help: "Method in the paper 'Language Models are Unsupervised Multi-Task Learners (GPT-2)'
     -> string matching (8-gram)"
 
   - name: "gpt-3"
     type: "data"
-    help: "Method in the paper 'Language models are few-shot learners (GPT-3)'
+    help: "Method in the paper 'Language Models are Few-Shot Learners (GPT-3)'
     -> string matching (13-gram)"
 
   - name: "exact"
     type: "data"
-    help: "Method in the paper 'Documenting Large Webtext Corpora: A Case Study on the Colossal Clean Crawled Corpus'
+    help: "Method in the paper 'Documenting Large Webtext corpora: A Case Study on the Colossal Clean Crawled Corpus'
     -> string matching (exact match)"
 
   - name: "palm"
     type: "data"
-    help: "Method in the paper 'PALM: Scaling language modeling with pathways'
+    help: "Method in the paper 'PALM: Scaling Language Modeling With Pathways'
     -> string matching (8-grams)"
 
   - name: "gpt-4"
@@ -45,13 +45,17 @@ methods:
   ### Model contamination methods
   - name: "guided-prompting"
     type: "model"
-    help: "Method in TIME TRAVEL IN LLMS: TRACING DATA CONTAMINATION IN LARGE LANGUAGE MODELS"
+    help: "Method in the paper: 'Time travel in LLMs: Tracing Data Contamination in Large Language Models'"
 
   - name: "sharded-likelihood"
     type: "model"
-    help: "Method in PROVING TEST SET CONTAMINATION IN BLACK BOX LANGUAGE MODELS"
+    help: "Method in the paper 'Proving Test Set Contamination in Black Box Language Models'"
 
   - name: "min-prob"
     type: "model"
-    help: "Detecting Pretraining Data from Large Language Models."
+    help: "Method in the paper 'Detecting Pretraining Data from Large Language Models'."
+
+  - name: "cdd"
+    type: "model"
+    help: "Method in the paper 'Generalization or Memorization: Data Contamination and Trustworthy Evaluation for Large Language Models'"
   
