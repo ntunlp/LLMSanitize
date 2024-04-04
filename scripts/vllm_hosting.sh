@@ -13,5 +13,5 @@ python -m $server_type \
     --gpu-memory-utilization=0.9 \
     --max-num-seqs=200 \
     --disable-log-requests \
-    --host 127.0.0.1 --port 6001 --tensor-parallel-size 2 \
+    --host 127.0.0.1 --port 6000 --tensor-parallel-size 2 \
     --download-dir /export/home/cache 

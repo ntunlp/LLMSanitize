@@ -100,7 +100,6 @@ class LLM:
     def query(self, prompt, return_full_response: bool = False):
         if self.api_base:
             outputs, full_response, cost = self.query_fn(self.query_config, prompt)
-            assert len(outputs) == 1
             if return_full_response:
                 return outputs[0], full_response, cost
             return outputs[0], cost

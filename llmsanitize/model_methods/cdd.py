@@ -51,15 +51,17 @@ def main_cdd(
         local_model_path=local_model_path,
         local_tokenizer_path=local_tokenizer_path,
         model_name=model_name,
-        num_samples=num_samples,
-        temperature=0.0
+        num_samples=20,
+        temperature=0.8
     )
 
     logger.info(f"all data size: {len(eval_data)}")
 
-    for text in tqdm(eval_data):
-        prompt = text
+    for data_point in tqdm(eval_data):
+        prompt = data_point["text"]
         prompt = prompt.replace('\x00', '')
         _, responses, _ = llm.query(prompt, return_full_response=True)
-        print(responses)
+        print("*"*50)
+        for j in range(len(responses["choices"])):
+            print(j, responses["choices"][j]["text"])
 
