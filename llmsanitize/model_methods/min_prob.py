@@ -143,24 +143,26 @@ def _process_fn(x):
 
 def main_min_prob(
     eval_data,
-    openai_creds_key_file: str = None,
-    openai_creds_key_file_2: str = None,
-    local_port: str = None,
-    local_port_2: str = None,
-    local_model_path: str = None,
-    local_model_path_2: str = None,
-    local_tokenizer_path: str = None,
-    local_tokenizer_path_2: str = None,
+    num_proc: int = 8,
+    output_dir: str = "output",
     model_name: str = None,
-    model_name_2: str = None,
+    # vLLM parameters
+    local_model_path: str = None,
+    local_tokenizer_path: str = None,
+    openai_creds_key_file: str = None,
+    local_port: str = None,
     num_samples: int = 1,
     max_tokens: int = 128,
     top_logprobs: int = 0,
     max_request_time: int = 600,
     sleep_time: int = 1,
     echo: bool = False,
-    num_proc: int = 8,
-    output_dir: str = "output",
+    # method-specific parameters
+    openai_creds_key_file_2: str = None,
+    local_port_2: str = None,
+    model_name_2: str = None,
+    local_model_path_2: str = None,
+    local_tokenizer_path_2: str = None,
     do_infer: bool = False,
 ):
     llm1 = LLM(

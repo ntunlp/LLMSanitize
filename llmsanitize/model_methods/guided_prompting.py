@@ -18,6 +18,7 @@ from scipy.stats import bootstrap
 
 logger = get_child_logger("guided_prompting")
 
+
 def guided_prompt_split_fn(example, idx, dataset_name, text_key):
     ''' split content per example to part 1 and part 2
         For AGnews: split ['text'] into 2 parts
@@ -55,6 +56,7 @@ def guided_prompt_split_fn(example, idx, dataset_name, text_key):
         splits['guided_prompt_part_2'] = sents[1]
     else:
         raise(f"Error! guided_prompt_split_fn not found processing for dataset_name: {dataset_name}")
+
     return splits
 
 def guided_prompt_process_label(example, dataset_name):
@@ -74,6 +76,7 @@ def bootstrap_test(data):
         p-value of diff <= 0
     '''
     res = bootstrap((data,), np.mean, n_resamples=10000)
+
     return (res.bootstrap_distribution <= 0.).sum() / 10000.
 
 @suspend_logging
@@ -110,20 +113,23 @@ def guided_prompt_process_fn(
     example['guided_response'] = guided_response
     example['first_part'] = first_part
     example['second_part'] = second_part
+
     return example
 
 def main_guided_prompting(
-    guided_prompting_task_type,
     eval_data,
     eval_data_name,
     eval_set_key,
     text_key,
     label_key,
-    local_port,
-    openai_creds_key_file,
-    model_name,
     num_proc,
-    local_api_type
+    model_name,
+    # vLLM parameters
+    openai_creds_key_file,
+    local_port,
+    local_api_type,
+    # method-specific parameters
+    guided_prompting_task_type,
 ):
     # based on task type, choose prompt template
     type_str = guided_prompting_task_type

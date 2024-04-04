@@ -105,12 +105,13 @@ def _worker(
 
 def main_sharded_likelihood(
     eval_data,
-    model_name,
+    log_file_path=None,
+    model_name="",
+    # method-specific parameters
     context_len=2048,
     stride=1024,
     num_shards=50,
     permutations_per_shard=250,
-    log_file_path=None,
 ):
     os.environ['TOKENIZERS_PARALLELISM'] = "True"
     flatten = lambda l : [x for s in l for x in s]
