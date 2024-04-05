@@ -20,8 +20,7 @@ python main.py \
 --eval_set_key test \
 --text_key question \
 --label_key answerKey \
---n_eval_data_points 1000 \
---num_proc 40 \
+--n_eval_data_points 10 \
 --method cdd \
 --model_name $model_name \
 --local_port $port \

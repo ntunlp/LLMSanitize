@@ -102,14 +102,17 @@ class LLM:
             outputs, full_response, cost = self.query_fn(self.query_config, prompt)
             if return_full_response:
                 return outputs[0], full_response, cost
+            
             return outputs[0], cost
         else:
             inputs = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=512)
             outputs = self.model.generate(**inputs, max_length=512, num_return_sequences=1)
+            
             return self.tokenizer.decode(outputs[0], skip_special_tokens=True), 0
 
     def batch_query(self, prompts):
         # TODO: Current implementation requires deploy a vllm service first?
         #   Maybe we could also add online inference for better speed.
         outputs, cost = self.query_fn(self.query_config, prompts)
+        
         return outputs, cost

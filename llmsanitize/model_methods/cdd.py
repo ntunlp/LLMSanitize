@@ -18,22 +18,24 @@ def get_ed(a, b):
     elif len(a) == 0:
         return len(b)
     else:
-        if a[0] == b[0]:
-            return get_ed(a[1:], b[1:])
-        else:
-            return 1 + min(get_ed(a[1:], b), get_ed(a, b[1:]), get_ed(a[1:], b[1:]))
-
-def get_rho(samples, s_0, d):
-    distances = [get_ed(s, s_0) for s in samples]
-    rho = len([x for x in distances if x == d]) / len(samples)
-
-    return rho
+        dist = np.zeros((len(a)+1, len(b)+1))
+        for i in range(len(a)):
+            for j in range(len(b)):
+                if a[i] == b[j]:
+                    dist[i+1, j+1] = dist[i, j]
+                else:
+                    dist[i+1, j+1] = 1 + min(dist[i, j], dist[i+1, j], dist[i, j+1])
+        
+        return int(dist[-1, -1])
 
 def get_peak(samples, s_0, alpha):
-    l = min([len(x) for x in samples])
+    lengths = [len(x) for x in samples]
+    l = min(lengths)
     l = min(l, 100)
-    thresh = int(alpha * l)
-    peak = sum([get_rho(samples, s_0, d) for d in range(0, thresh+1)])
+    thresh = int(np.ceil(alpha * l))
+    distances = [get_ed(s, s_0) for s in samples]
+    rhos = [len([x for x in distances if x == d]) for d in range(0, thresh+1)]
+    peak = sum(rhos)
 
     return peak
 
