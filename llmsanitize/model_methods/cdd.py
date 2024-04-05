@@ -59,34 +59,57 @@ def inference(eval_data, llm0, llm, num_samples, alpha, xi):
 
 def main_cdd(
     eval_data,
-    local_port: str = None,
+    # model parameters
     local_model_path: str = None,
     local_tokenizer_path: str = None,
     model_name: str = None,
+    openai_creds_key_file: str = None,
+    local_port: str = None,
+    local_api_type: str = None,
     num_samples: int = 20,
-    max_tokens: int = 128,
+    max_input_tokens: int = 512,
+    max_output_tokens: int = 128,
     temperature: float = 0.8,
+    top_logprobs: int = 0,
+    max_request_time: int = 600,
+    sleep_time: int = 1,
+    echo: bool = False,
+    # method-specific parameters
     alpha: float = 0.05,
     xi: float = 0.01,
 ):
     llm0 = LLM(
-        local_port=local_port,
         local_model_path=local_model_path,
         local_tokenizer_path=local_tokenizer_path,
         model_name=model_name,
+        openai_creds_key_file=openai_creds_key_file,
+        local_port=local_port,
+        local_api_type=local_api_type,
         num_samples=1,
-        max_tokens=max_tokens,
-        temperature=0.0
+        max_input_tokens=max_input_tokens,
+        max_output_tokens=max_output_tokens,
+        temperature=0.0,
+        top_logprobs=top_logprobs,
+        max_request_time=max_request_time,
+        sleep_time=sleep_time,
+        echo=echo
     )
 
     llm = LLM(
-        local_port=local_port,
         local_model_path=local_model_path,
         local_tokenizer_path=local_tokenizer_path,
         model_name=model_name,
+        openai_creds_key_file=openai_creds_key_file,
+        local_port=local_port,
+        local_api_type=local_api_type,
         num_samples=num_samples,
-        max_tokens=max_tokens,
-        temperature=temperature
+        max_input_tokens=max_input_tokens,
+        max_output_tokens=max_output_tokens,
+        temperature=temperature,
+        top_logprobs=top_logprobs,
+        max_request_time=max_request_time,
+        sleep_time=sleep_time,
+        echo=echo
     )
 
     logger.info(f"all data size: {len(eval_data)}")

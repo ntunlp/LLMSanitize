@@ -13,20 +13,19 @@ done
 echo "model name ", $model_name
 echo "local port: ", $port
 
-# test min-K-prob model contamination method
+# test guided prompting model contamination method
 python main.py \
---eval_data_name cais/mmlu \
---eval_data_config_name all \
+--eval_data_name gsm8k \
+--eval_data_config_name main \
 --eval_set_key test \
---text_keys "question+choices+answer" \
+--text_key question \
+--label_key answer \
 --n_eval_data_points 100 \
---num_proc 0 \
---method min-prob \
---local_port $port \
+--method cdd \
 --model_name $model_name \
---max_output_tokens 1 \
---top_logprobs 5 \
---max_request_time 10 \
---echo \
---local_port_2 $port \
---model_name_2 $model_name
+--local_port $port \
+--local_api_type $local_api_type \
+--num_samples 20 \
+--temperature 0.8 \
+--cdd_alpha 0.05 \
+--cdd_xi 0.01

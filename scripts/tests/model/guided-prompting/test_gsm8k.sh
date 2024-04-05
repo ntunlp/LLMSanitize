@@ -21,7 +21,7 @@ python main.py \
 --eval_set_key test \
 --text_key question \
 --label_key answer \
---n_eval_data_points 1000 \
+--n_eval_data_points 100 \
 --num_proc 40 \
 --method guided-prompting \
 --local_port $port \

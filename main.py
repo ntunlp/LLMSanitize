@@ -50,14 +50,13 @@ def parse_args():
                         help="output directory for logging if necessary")
 
     # Method specific-arguments for model contamination detection
-    ### Shared among all methods
-    parser.add_argument("--model_name", type=str, default=None,
-                        help="model name for service based inference.")
-    ### Generation parameters for OpenAI API or vLLM - only used for some methods
+    ### Shared across methods
     parser.add_argument("--local_model_path", default=None,
                         help="local model path for non-service based inference.")
     parser.add_argument("--local_tokenizer_path", default=None,
                         help="local tokenizer path for non-service based inference.")
+    parser.add_argument("--model_name", type=str, default=None,
+                        help="model name for service based inference.")
     parser.add_argument("--openai_creds_key_file", type=str, default=None,
                         help="OpenAI API key file path.")
     parser.add_argument("--local_port", type=str, default=None,
@@ -66,13 +65,15 @@ def parse_args():
                         choices=['openai', 'post'], help="the type of local API call")
     parser.add_argument("--num_samples", type=int, default=1,
                         help="number of samples to generate")
-    parser.add_argument("--max_tokens", type=int, default=128,
-                        help="max tokens for each sample")
-    parser.add_argument("--temperature", type=float, default=0.7,
+    parser.add_argument("--max_input_tokens", type=int, default=512,
+                        help="max number of input tokens")
+    parser.add_argument("--max_output_tokens", type=int, default=128,
+                        help="max number of output tokens")
+    parser.add_argument("--temperature", type=float, default=0.0,
                         help="temperature when sampling each sample")
     parser.add_argument("--top_logprobs", type=int, default=0,
                         help="top logprobs for each sample")
-    parser.add_argument("--max_request_time", type=int, default=180,
+    parser.add_argument("--max_request_time", type=int, default=600,
                         help="max request time for each sample")
     parser.add_argument("--sleep_time", type=int, default=1,
                         help="sleep time for each sample")

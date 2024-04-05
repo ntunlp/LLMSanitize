@@ -28,6 +28,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
         elif method == "cdd":
             self.contamination_cdd()
 
+    # to use with a vLLM instance
     def contamination_guided_prompting(self):
         main_guided_prompting(
             eval_data=self.eval_data,
@@ -36,11 +37,21 @@ class ModelContaminationChecker(BaseContaminationChecker):
             text_key=self.text_key,
             label_key=self.label_key,
             num_proc=self.num_proc,
+            # model parameters
+            local_model_path=self.local_model_path,
+            local_tokenizer_path=self.local_tokenizer_path,
             model_name=self.model_name,
-            # vLLM parameters
             openai_creds_key_file=self.openai_creds_key_file,
             local_port=self.local_port,
             local_api_type=self.local_api_type,
+            num_samples=self.num_samples,
+            max_input_tokens=self.max_input_tokens,
+            max_output_tokens=self.max_output_tokens,
+            temperature=self.temperature,
+            top_logprobs=self.top_logprobs,
+            max_request_time=self.max_request_time,
+            sleep_time=self.sleep_time,
+            echo=self.echo,
             # method-specific parameters
             guided_prompting_task_type=self.guided_prompting_task_type,
         )
@@ -49,6 +60,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
         main_sharded_likelihood(
             eval_data=self.eval_data,
             log_file_path=self.log_file_path,
+            # model parameters
             model_name=self.model_name,
             # method-specific parameters
             context_len=self.sharded_likelihood_context_len,
@@ -57,19 +69,23 @@ class ModelContaminationChecker(BaseContaminationChecker):
             permutations_per_shard=self.sharded_likelihood_permutations_per_shard,
         )
 
+    # to use with a vLLM instance
     def contamination_min_prob(self):
         main_min_prob(
             eval_data=self.eval_data,
             num_proc=self.num_proc,
             output_dir=self.output_dir,
-            model_name=self.model_name,
-            # vLLM parameters
+            # model parameters
             local_model_path=self.local_model_path,
             local_tokenizer_path=self.local_tokenizer_path,
+            model_name=self.model_name,
             openai_creds_key_file=self.openai_creds_key_file,
             local_port=self.local_port,
+            local_api_type=self.local_api_type,
             num_samples=self.num_samples,
-            max_tokens=self.max_tokens,
+            max_input_tokens=self.max_input_tokens,
+            max_output_tokens=self.max_output_tokens,
+            temperature=self.temperature,
             top_logprobs=self.top_logprobs,
             max_request_time=self.max_request_time,
             sleep_time=self.sleep_time,
@@ -83,17 +99,25 @@ class ModelContaminationChecker(BaseContaminationChecker):
             do_infer=self.minkprob_do_infer,
         )
 
+    # to use with a vLLM instance
     def contamination_cdd(self):
         main_cdd(
             eval_data=self.eval_data,
-            model_name=self.model_name,
-            # vLLM parameters
+            # model parameters
             local_model_path=self.local_model_path,
             local_tokenizer_path=self.local_tokenizer_path,
+            model_name=self.model_name,
+            openai_creds_key_file=self.openai_creds_key_file,
             local_port=self.local_port,
+            local_api_type=self.local_api_type,
             num_samples=self.num_samples,
-            max_tokens=self.max_tokens,
+            max_input_tokens=self.max_input_tokens,
+            max_output_tokens=self.max_output_tokens,
             temperature=self.temperature,
+            top_logprobs=self.top_logprobs,
+            max_request_time=self.max_request_time,
+            sleep_time=self.sleep_time,
+            echo=self.echo,
             # method-specific parameters
             alpha=self.cdd_alpha,
             xi=self.cdd_xi

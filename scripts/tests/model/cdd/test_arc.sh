@@ -20,12 +20,12 @@ python main.py \
 --eval_set_key test \
 --text_key question \
 --label_key answerKey \
---n_eval_data_points 10 \
+--n_eval_data_points 100 \
 --method cdd \
 --model_name $model_name \
 --local_port $port \
+--local_api_type $local_api_type \
 --num_samples 20 \
---max_tokens 128 \
 --temperature 0.8 \
 --cdd_alpha 0.05 \
 --cdd_xi 0.01

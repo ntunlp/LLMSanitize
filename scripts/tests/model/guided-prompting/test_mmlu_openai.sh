@@ -4,7 +4,7 @@ python main.py \
 --eval_set_key test \
 --text_key question \
 --label_key answer_text \
---n_eval_data_points 1000 \
+--n_eval_data_points 100 \
 --num_proc 1 \
 --method guided-prompting \
 --openai_creds_key_file "openai_creds/openai_api_key.txt" \

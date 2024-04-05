@@ -24,7 +24,7 @@ python main.py \
 --method min-prob \
 --local_port $port \
 --model_name $model_name \
---max_tokens 1 \
+--max_output_tokens 1 \
 --top_logprobs 5 \
 --max_request_time 10 \
 --echo \

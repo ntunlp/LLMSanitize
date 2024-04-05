@@ -20,7 +20,7 @@ python main.py \
 --eval_set_key validation \
 --text_key question \
 --label_key category \
---n_eval_data_points 1000 \
+--n_eval_data_points 100 \
 --num_proc 40 \
 --method guided-prompting \
 --local_port $port \

@@ -102,10 +102,12 @@ def guided_prompt_process_fn(
     guided_prompt = fill_template(guided_template, vars_map)
     general_response, cost = llm.query(general_prompt)
     guided_response, cost_ = llm.query(guided_prompt)
+
     # get scores
     scorer = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True)
     general_score = scorer.score(second_part, general_response)['rougeL'].fmeasure
     guided_score = scorer.score(second_part, guided_response)['rougeL'].fmeasure
+
     # return
     example['general_score'] = general_score
     example['guided_score'] = guided_score
@@ -123,13 +125,23 @@ def main_guided_prompting(
     text_key,
     label_key,
     num_proc,
-    model_name,
-    # vLLM parameters
-    openai_creds_key_file,
-    local_port,
-    local_api_type,
+    # model parameters
+    local_model_path: str = None,
+    local_tokenizer_path: str = None,
+    model_name: str = None,
+    openai_creds_key_file: str = None,
+    local_port: str = None,
+    local_api_type: str = None,
+    num_samples: int = 1,
+    max_input_tokens: int = 512,
+    max_output_tokens: int = 128,
+    temperature: float = 0.0,
+    top_logprobs: int = 0,
+    max_request_time: int = 600,
+    sleep_time: int = 1,
+    echo: bool = False,
     # method-specific parameters
-    guided_prompting_task_type,
+    guided_prompting_task_type: str = None,
 ):
     # based on task type, choose prompt template
     type_str = guided_prompting_task_type
@@ -148,10 +160,20 @@ def main_guided_prompting(
     print(f"random samples: {random_examples}")
     
     llm = LLM(
+        local_model_path=local_model_path,
+        local_tokenizer_path=local_tokenizer_path,
+        model_name=model_name,
         openai_creds_key_file=openai_creds_key_file,
-        local_port=local_port, 
-        model_name=model_name, 
-        local_api_type=local_api_type
+        local_port=local_port,
+        local_api_type=local_api_type,
+        num_samples=num_samples,
+        max_input_tokens=max_input_tokens,
+        max_output_tokens=max_output_tokens,
+        temperature=temperature,
+        top_logprobs=top_logprobs,
+        max_request_time=max_request_time,
+        sleep_time=sleep_time,
+        echo=echo,
     )
 
     process_fn = partial(
