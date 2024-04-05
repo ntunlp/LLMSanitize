@@ -23,6 +23,10 @@ python main.py \
 --n_eval_data_points 1000 \
 --num_proc 40 \
 --method cdd \
---local_port $port \
---local_api_type $local_api_type \
 --model_name $model_name \
+--local_port $port \
+--num_samples 20 \
+--max_tokens 128 \
+--temperature 0.8 \
+--cdd_alpha 0.05 \
+--cdd_xi 0.01
