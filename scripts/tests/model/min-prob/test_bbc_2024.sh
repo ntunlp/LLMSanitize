@@ -27,5 +27,5 @@ python main.py \
 --top_logprobs 5 \
 --max_request_time 10 \
 --echo \
---local_port_2 $port \
---model_name_2 $model_name
+--minkprob_local_port_2 $port \
+--minkprob_model_name_2 $model_name

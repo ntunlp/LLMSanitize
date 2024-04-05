@@ -47,6 +47,7 @@ So far we support the following contamination detection methods:
 | guided-prompting | model contamination | Likelihood | yes |
 | sharded-likelihood | model contamination | Likelihood | yes |
 | min-prob | model contamination | LLM-based method | no |
+| cdd | model contamination | Likelihood | no |
 
 ## vLLM
 The following methods require to launch a vLLM instance which will handle model inference:
@@ -55,6 +56,7 @@ The following methods require to launch a vLLM instance which will handle model 
 |---|
 | guided-prompting |
 | min-prob |
+| cdd |
 
 To launch the instance, first run the following command in a terminal: 
 ```bash

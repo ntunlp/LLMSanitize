@@ -155,7 +155,7 @@ def main_min_prob(
     num_samples: int = 1,
     max_input_tokens: int = 512,
     max_output_tokens: int = 128,
-    temperature: float = 0.7,
+    temperature: float = 0.0,
     top_logprobs: int = 0,
     max_request_time: int = 600,
     sleep_time: int = 1,
@@ -168,6 +168,7 @@ def main_min_prob(
     local_tokenizer_path_2: str = None,
     do_infer: bool = False,
 ):
+    
     llm1 = LLM(
         local_model_path=local_model_path,
         local_tokenizer_path=local_tokenizer_path,
