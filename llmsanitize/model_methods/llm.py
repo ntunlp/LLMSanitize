@@ -2,9 +2,7 @@
 This file implements an LLM class used for model-based contamination detection methods.
 """
 
-import copy
 import torch
-from argparse import Namespace
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from llmsanitize.utils.openai_api_utils import (
@@ -13,7 +11,6 @@ from llmsanitize.utils.openai_api_utils import (
     query_llm_api,
 )
 from llmsanitize.utils.utils import dict_to_object
-from llmsanitize.configs.config import config
 from llmsanitize.utils.logger import get_child_logger
 
 logger = get_child_logger("LLM")
@@ -22,20 +19,21 @@ logger = get_child_logger("LLM")
 class LLM:
     def __init__(
         self,
-        openai_creds_key_file: str = None,
-        local_port: str = None,
         local_model_path: str = None,
         local_tokenizer_path: str = None,
-        device: str = "cuda" if torch.cuda.is_available() else "cpu",
         model_name: str = None,
+        openai_creds_key_file: str = None,
+        local_port: str = None,
+        local_api_type: str = "post",
         num_samples: int = 1,
-        max_tokens: int = 128,
+        max_input_tokens: int = 512,
+        max_output_tokens: int = 128,
+        temperature: float = 0.0,
         top_logprobs: int = 0,
         max_request_time: int = 600,
         sleep_time: int = 1,
         echo: bool = False,
-        temperature: float = 0.0,
-        local_api_type: str = "post",
+        device: str = "cuda" if torch.cuda.is_available() else "cpu",
     ):
         """
         :param config: config object
@@ -85,7 +83,7 @@ class LLM:
             },
             "query": {
                 "num_samples": num_samples,
-                "max_tokens": max_tokens,
+                "max_tokens": max_output_tokens,
                 "top_logprobs": top_logprobs,
                 "max_request_time": max_request_time,
                 "sleep_time": sleep_time,
@@ -97,20 +95,37 @@ class LLM:
         logger.info("====================== Query Config =======================")
         logger.info(_query_config)
 
+        self.max_input_tokens = max_input_tokens
+        self.max_output_tokens = max_output_tokens
+        self.temperature = temperature
+
     def query(self, prompt, return_full_response: bool = False):
         if self.api_base:
             outputs, full_response, cost = self.query_fn(self.query_config, prompt)
-            assert len(outputs) == 1
             if return_full_response:
                 return outputs[0], full_response, cost
+            
             return outputs[0], cost
         else:
-            inputs = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=512)
-            outputs = self.model.generate(**inputs, max_length=512, num_return_sequences=1)
+            inputs = self.tokenizer(
+                prompt,
+                return_tensors="pt",
+                padding=True,
+                truncation=True,
+                max_length=self.max_input_tokens
+            )
+            outputs = self.model.generate(
+                **inputs,
+                num_return_sequences=1,
+                max_new_tokens=self.max_output_tokens,
+                temperature=self.temperature
+            )
+            
             return self.tokenizer.decode(outputs[0], skip_special_tokens=True), 0
 
     def batch_query(self, prompts):
         # TODO: Current implementation requires deploy a vllm service first?
         #   Maybe we could also add online inference for better speed.
         outputs, cost = self.query_fn(self.query_config, prompts)
+        
         return outputs, cost
