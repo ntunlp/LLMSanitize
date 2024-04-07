@@ -1,6 +1,6 @@
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 export RAY_memory_monitor_refresh_ms=0;
-export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7,8;
+export CUDA_VISIBLE_DEVICES=0,1;
 server_type=vllm.entrypoints.openai.api_server
 
 model=/home/fangkai/pretrained-models/Llama-2-7b-chat-hf # DEBUGGING
@@ -24,5 +24,5 @@ python -m $server_type \
     --gpu-memory-utilization=0.9 \
     --max-num-seqs=200 \
     --disable-log-requests \
-    --host 127.0.0.1 --port 6000 --tensor-parallel-size 8 \
+    --host 127.0.0.1 --port 6000 --tensor-parallel-size 2 \
     --download-dir $download_dir

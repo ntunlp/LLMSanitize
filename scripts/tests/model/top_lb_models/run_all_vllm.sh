@@ -22,18 +22,12 @@ datasets=(arc gsm8k hellaswag mmlu truthfulqa winogrande)
 vllm_methods=(guided-prompting min-prob cdd)
 other_methods=(sharded-likelihood)
 
-for name in $datasets;
+for name in "${datasets[@]}"
 do
-    # methods requiring the vLLM: {guided-prompting, min-k prob, cdd}
-    for method in $vllm_methods;
-    do
-        sh scripts/tests/$method/test_$name.sh -m $model -p $port -t $api_type
-    done
-
-    # method not requiring the vLLM: {sharded-likelihood}
-    for method in $other_methods;
-    do
-        sh scripts/tests/$method/test_$name.sh -m $model
+    echo "DATASET name", $name
+    for method in "${vllm_methods[@]}"
+    do	
+	echo "METHOD name", $method
+        sh scripts/tests/model/$method/test_$name.sh -m $model -p $port -t $api_type
     done
 done
-
