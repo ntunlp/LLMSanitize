@@ -1,8 +1,8 @@
 # Whenever you change model:
-# Select a model in start_vllm.sh
-# Run start_vllm.sh
 # Select the same model in this file
 # Run this file (in another tab)
+
+export CUDA_VISIBLE_DEVICES=0,1;
 
 model=/home/fangkai/pretrained-models/Llama-2-7b-chat-hf # DEBUGGING
 #model="davidkim205/Rhea-72b-v0.5" # n.1
@@ -15,18 +15,16 @@ model=/home/fangkai/pretrained-models/Llama-2-7b-chat-hf # DEBUGGING
 #model="moreh/MoMo-72B-lora-1.8.7-DPO" # n.9
 #model="cloudyu/TomGrc_FusionNet_34Bx2_MoE_v0.1_DPO_f16" # n.10
 #model="saltlux/luxia-21.4b-alignment-v1.0" # n.11
-port=6000
-api_type=post # [openai, post]
 
 datasets=(arc gsm8k hellaswag mmlu truthfulqa winogrande)
-vllm_methods=(guided-prompting min-prob cdd)
+other_methods=(sharded-likelihood)
 
 for name in "${datasets[@]}"
 do
     echo "DATASET name", $name
-    for method in "${vllm_methods[@]}"
-    do	
+    for method in "${other_methods[@]}"
+    do
 	      echo "METHOD name", $method
-        sh scripts/tests/model/$method/test_$name.sh -m $model -p $port -t $api_type
+        sh scripts/tests/model/$method/test_$name.sh -m $model
     done
 done
