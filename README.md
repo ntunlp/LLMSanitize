@@ -37,7 +37,7 @@ Notably, we use the following important libraries:
 So far we support the following contamination detection methods:
 
 | **Method** | **Use Case** | **Short description** | **White-box access?** | **Reference** |  
-|---|---|---|---|---|
+|---|---|---|---|-------------------|
 | gpt-2 | data contamination | String matching | _ | [Language Models are Unsupervised Multitask Learners](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) Section 4 |
 | gpt-3 | data contamination | String matching | _ |
 | exact | data contamination | String matching | _ |
