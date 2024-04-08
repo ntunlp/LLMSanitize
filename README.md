@@ -76,3 +76,18 @@ To run a method using vLLM like guided-prompting for instance, the only differen
 ```bash
 sh scripts/tests/model/guided-prompting/test_hellaswag.sh -m <path_to_your_llama-2-7b_folder> -p <port_number_from_your_vllm_instance>
 ```
+
+
+## Citation
+
+If you find our paper or this project helps your research, please kindly consider citing our paper in your publication.
+
+
+```
+@article{ravaut2024much,
+  title={How Much are LLMs Contaminated? A Comprehensive Survey and the LLMSanitize Library},
+  author={Ravaut, Mathieu and Ding, Bosheng and Jiao, Fangkai and Chen, Hailin and Li, Xingxuan and Zhao, Ruochen and Qin, Chengwei and Xiong, Caiming and Joty, Shafiq},
+  journal={arXiv preprint arXiv:2404.00699},
+  year={2024}
+}
+```
