@@ -13,7 +13,7 @@ python main.py \
 --eval_data_name cais/mmlu \
 --eval_data_config_name all \
 --eval_set_key test \
---text_keys "question+choices+answer" \
+--text_keys question+choices+answer \
 --n_eval_data_points 100 \
 --num_proc 0 \
 --method sharded-likelihood \

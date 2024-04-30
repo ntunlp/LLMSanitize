@@ -12,7 +12,7 @@ echo "model name ", $model_name
 python main.py \
 --eval_data_name Rowan/hellaswag \
 --eval_set_key test \
---text_keys "ctx+endings+label" \
+--text_keys ctx+endings+label \
 --n_eval_data_points 100 \
 --num_proc 0 \
 --method sharded-likelihood \

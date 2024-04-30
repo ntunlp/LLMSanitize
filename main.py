@@ -62,7 +62,9 @@ def parse_args():
     parser.add_argument("--local_port", type=str, default=None,
                         help="Local model port for service based inference.")
     parser.add_argument("--local_api_type", type=str, default="post",
-                        choices=['openai', 'post'], help="the type of local API call")
+                        choices=['post', 'openai'], help="the type of local API call")
+    parser.add_argument("--no_chat_template", action="store_true",
+                        help="activate it to remove the prompt chat template - for instance if you want a custom one")
     parser.add_argument("--num_samples", type=int, default=1,
                         help="number of samples to generate")
     parser.add_argument("--max_input_tokens", type=int, default=512,

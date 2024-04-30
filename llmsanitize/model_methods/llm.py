@@ -5,10 +5,13 @@ This file implements an LLM class used for model-based contamination detection m
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from llmsanitize.utils.openai_api_utils import (
+from llmsanitize.utils.post_utils import (
+    initialize_post,
+    query_llm_post,
+)
+from llmsanitize.utils.openai_utils import (
     initialize_openai,
-    initialize_openai_local,
-    query_llm_api,
+    query_llm_openai,
 )
 from llmsanitize.utils.utils import dict_to_object
 from llmsanitize.utils.logger import get_child_logger
@@ -25,6 +28,7 @@ class LLM:
         openai_creds_key_file: str = None,
         local_port: str = None,
         local_api_type: str = "post",
+        no_chat_template: bool = False,
         num_samples: int = 1,
         max_input_tokens: int = 512,
         max_output_tokens: int = 128,
@@ -38,42 +42,48 @@ class LLM:
         """
         :param config: config object
             required fields:
+                For local model inference (no API):
+                    - local_model_path
+                    - local_tokenizer_path
+                For vllm-based model initialization:
+                    - local_port
+                    - model_name
                 For openai model initialization:
                     - openai.creds_key_file
-                For vllm-based model initialization:
-                    - local.port
-                    - local.model_path
-                    - local.tokenizer_path
                 Request parameters:
-                    - query.model_name
                     - query.num_samples
                     - query.max_tokens
                     - query.top_logprobs
                     - query.max_request_time
                     - query.sleep_time
         """
+        # run local model with no API
         if local_model_path:
             logger.info(f"Loading local model from {local_model_path} and tokenizer from {local_tokenizer_path}.")
             self.model = AutoModelForCausalLM.from_pretrained(local_model_path, torch_dtype="auto").to(device)
             self.tokenizer = AutoTokenizer.from_pretrained(local_tokenizer_path)
             self.api_base = False
+        # run local model with the vLLM API
         elif local_port:
             logger.info(f"Initializing vllm service from port {local_port}.")
             _config = dict_to_object({"local": {"port": local_port}})
-            initialize_openai_local(_config)
-            self.query_fn = query_llm_api
+            initialize_post(_config)
+            self.query_fn = query_llm_post
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
             self.api_base = True
+        # run model with the OpenAI API, either an OpenAI model, or a local model through vLLM
         else:
             logger.info("Initializing OpenAI API.")
             _config = dict_to_object({"openai": {"creds_key_file": openai_creds_key_file}})
             initialize_openai(_config)
-            self.query_fn = query_llm_api
+            self.query_fn = query_llm_openai
             self.api_base = True
             if model_name is None:
-                model_name = "gpt-3.5-turbo-0125"
+                model_name = "gpt-3.5-turbo-0125" # fall back to GPT-3.5 as default
 
         _query_config = {
             "local": {
+                "tokenizer": self.tokenizer,
                 "port": local_port,
                 "api_type": local_api_type,
             },
@@ -82,6 +92,7 @@ class LLM:
                 "model_name": model_name,
             },
             "query": {
+                "no_chat_template": no_chat_template,
                 "num_samples": num_samples,
                 "max_tokens": max_output_tokens,
                 "top_logprobs": top_logprobs,
@@ -107,6 +118,9 @@ class LLM:
             
             return outputs[0], cost
         else:
+            if not(self.query_config.query.no_chat_template):
+                prompt = [{"role": "user", "content": prompt}]
+                prompt = self.tokenizer.apply_chat_template(prompt, tokenize=False)
             inputs = self.tokenizer(
                 prompt,
                 return_tensors="pt",

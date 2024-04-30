@@ -16,7 +16,6 @@ model=/home/fangkai/pretrained-models/Llama-2-7b-chat-hf # DEBUGGING
 #model="cloudyu/TomGrc_FusionNet_34Bx2_MoE_v0.1_DPO_f16" # n.10
 #model="saltlux/luxia-21.4b-alignment-v1.0" # n.11
 port=6000
-api_type=post # [openai, post]
 
 datasets=(arc gsm8k hellaswag mmlu truthfulqa winogrande)
 vllm_methods=(guided-prompting min-prob cdd)
@@ -27,6 +26,6 @@ do
     for method in "${vllm_methods[@]}"
     do	
 	      echo "METHOD name", $method
-        sh scripts/tests/model/$method/test_$name.sh -m $model -p $port -t $api_type
+        sh scripts/tests/model/$method/test_$name.sh -m $model -p $port -t
     done
 done

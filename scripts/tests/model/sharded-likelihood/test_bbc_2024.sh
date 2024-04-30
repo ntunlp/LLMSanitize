@@ -12,7 +12,7 @@ echo "model name ", $model_name
 python main.py \
 --eval_data_name RealTimeData/bbc_latest \
 --eval_set_key train \
---text_keys "description+section+content" \
+--text_keys description+section+content \
 --n_eval_data_points 100 \
 --num_proc 0 \
 --method sharded-likelihood \
