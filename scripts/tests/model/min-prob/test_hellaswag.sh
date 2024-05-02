@@ -1,12 +1,10 @@
 # Get the options
-while getopts ":p:m:t:" option; do
+while getopts ":p:m:" option; do
    case $option in
       p) # port number
          port=$OPTARG;;
       m) # Enter model name
          model_name=$OPTARG;;
-      t) # local api type
-         local_api_type=$OPTARG;;
    esac
 done
 
@@ -17,7 +15,7 @@ echo "local port: ", $port
 python main.py \
 --eval_data_name Rowan/hellaswag \
 --eval_set_key test \
---text_keys "ctx+endings+label" \
+--text_keys ctx+endings+label \
 --n_eval_data_points 100 \
 --num_proc 0 \
 --method min-prob \

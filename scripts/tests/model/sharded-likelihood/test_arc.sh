@@ -13,7 +13,7 @@ python main.py \
 --eval_data_name allenai/ai2_arc \
 --eval_data_config_name ARC-Challenge \
 --eval_set_key test \
---text_keys "question+choices+answerKey" \
+--text_keys question+choices+answerKey \
 --n_eval_data_points 100 \
 --num_proc 0 \
 --method sharded-likelihood \

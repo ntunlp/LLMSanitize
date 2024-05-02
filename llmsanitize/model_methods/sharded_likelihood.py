@@ -124,8 +124,8 @@ def main_sharded_likelihood(
     logger.info(f"Loaded {num_examples} examples")
 
     # Load tokenizer and tokenize the examples.
-    t = AutoTokenizer.from_pretrained(model_name)
-    tokenized_examples = [t.encode(ex) for ex in examples]
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenized_examples = [tokenizer.encode(ex) for ex in examples]
 
     # Launch a Process for each GPU.
     num_workers = torch.cuda.device_count()

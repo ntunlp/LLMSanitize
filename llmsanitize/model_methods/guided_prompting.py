@@ -132,6 +132,7 @@ def main_guided_prompting(
     openai_creds_key_file: str = None,
     local_port: str = None,
     local_api_type: str = None,
+    no_chat_template: bool = False,
     num_samples: int = 1,
     max_input_tokens: int = 512,
     max_output_tokens: int = 128,
@@ -166,6 +167,7 @@ def main_guided_prompting(
         openai_creds_key_file=openai_creds_key_file,
         local_port=local_port,
         local_api_type=local_api_type,
+        no_chat_template=no_chat_template,
         num_samples=num_samples,
         max_input_tokens=max_input_tokens,
         max_output_tokens=max_output_tokens,
@@ -196,9 +198,10 @@ def main_guided_prompting(
     features["first_part"] = Value(dtype='string', id=None)
     features["second_part"] = Value(dtype='string', id=None)
 
-    processed_examples = random_examples.map(process_fn, with_indices=True, num_proc=num_proc,
-                                             features=features, load_from_cache_file=False) \
-        .filter(lambda example: len(example['general_response']) > 0 and len(example['guided_response']) > 0)
+    processed_examples = random_examples.map(
+        process_fn, with_indices=True, num_proc=num_proc, features=features, load_from_cache_file=False
+    )
+    processed_examples = [example for example in processed_examples if (len(example['general_response']) > 0) and (len(example['guided_response']) > 0)]
 
     scores_diff = [example['guided_score'] - example['general_score'] for example in processed_examples]
     logger.info(f"Tested {len(processed_examples)} examples with guided-prompting for model {model_name}")

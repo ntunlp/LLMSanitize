@@ -1,12 +1,10 @@
 # Get the options
-while getopts ":p:m:t:" option; do
+while getopts ":p:m:" option; do
    case $option in
       p) # port number
          port=$OPTARG;;
       m) # Enter model name
          model_name=$OPTARG;;
-      t) # local api type
-         local_api_type=$OPTARG;;
    esac
 done
 
@@ -15,9 +13,9 @@ echo "local port: ", $port
 
 # test min-K-prob model contamination method
 python main.py \
---eval_data_name "RealTimeData/bbc_latest" \
+--eval_data_name RealTimeData/bbc_latest \
 --eval_set_key train \
---text_keys "description+section+content" \
+--text_keys description+section+content \
 --n_eval_data_points 100 \
 --num_proc 0 \
 --method min-prob \
