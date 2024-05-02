@@ -198,9 +198,10 @@ def main_guided_prompting(
     features["first_part"] = Value(dtype='string', id=None)
     features["second_part"] = Value(dtype='string', id=None)
 
-    processed_examples = random_examples.map(process_fn, with_indices=True, num_proc=num_proc,
-                                             features=features, load_from_cache_file=False) \
-        .filter(lambda example: len(example['general_response']) > 0 and len(example['guided_response']) > 0)
+    processed_examples = random_examples.map(
+        process_fn, with_indices=True, num_proc=num_proc, features=features, load_from_cache_file=False
+    )
+    processed_examples = [example for example in processed_examples if (len(example['general_response']) > 0) and (len(example['guided_response']) > 0)]
 
     scores_diff = [example['guided_score'] - example['general_score'] for example in processed_examples]
     logger.info(f"Tested {len(processed_examples)} examples with guided-prompting for model {model_name}")

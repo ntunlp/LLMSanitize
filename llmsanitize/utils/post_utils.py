@@ -49,11 +49,12 @@ def post_http_request(
     return response
 
 def query_llm_post(config, prompt):
-    # prepare the prompt to the chat template
+    # Prepare the prompt to the chat template
+    # If you are using a chat model, then we recommend using the template.
     if not(config.query.no_chat_template):
         prompt = [{"role": "user", "content": prompt}]
         tokenizer = config.local.tokenizer
-        prompt = tokenizer.apply_chat_template(prompt, tokenize=False)
+        prompt = tokenizer.apply_chat_template(prompt, tokenize=False, add_generation_prompt=True)
 
     output_strs = []
     start = time.time()
@@ -78,6 +79,10 @@ def query_llm_post(config, prompt):
             if response.status_code != 200:
                 raise Exception(json.loads(response.content))
             response = json.loads(response.content)
+            #print("*"*50)
+            #print(prompt)
+            #print("*"*10)
+            #print(response["choices"][0]["text"])
             output_strs += [
                 choice["text"] for choice in response["choices"]
             ]
