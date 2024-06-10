@@ -8,8 +8,8 @@ export CUDA_VISIBLE_DEVICES=4,5;
 server_type=vllm.entrypoints.openai.api_server
 
 python -m $server_type \
-    --model /home/fangkai/pretrained-models/Meta-Llama-3-8B-Instruct \
-    --tokenizer /home/fangkai/pretrained-models/Meta-Llama-3-8B-Instruct \
+    --model /home/fangkai/pretrained-models/gemma-7b-it \
+    --tokenizer /home/fangkai/pretrained-models/gemma-7b-it \
     --gpu-memory-utilization=0.9 \
     --max-num-seqs=200 \
     --disable-log-requests \
