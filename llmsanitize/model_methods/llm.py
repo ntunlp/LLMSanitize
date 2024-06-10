@@ -120,7 +120,7 @@ class LLM:
         else:
             if not(self.query_config.query.no_chat_template):
                 prompt = [{"role": "user", "content": prompt}]
-                prompt = self.tokenizer.apply_chat_template(prompt, tokenize=False)
+                prompt = self.tokenizer.apply_chat_template(prompt, tokenize=False, add_generation_prompt=True)
             inputs = self.tokenizer(
                 prompt,
                 return_tensors="pt",
