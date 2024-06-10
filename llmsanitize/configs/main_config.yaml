@@ -58,4 +58,7 @@ methods:
   - name: "cdd"
     type: "model"
     help: "Method in the paper 'Generalization or Memorization: Data Contamination and Trustworthy Evaluation for Large Language Models'"
-  
+
+  - name: "ts-guessing-question-based"
+    type: "model"
+    help: "Method in the paper 'Investigating Data Contamination in Modern Benchmarks for Large Language Models'"
