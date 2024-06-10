@@ -13,15 +13,15 @@ echo "local port: ", $port
 
 # test guided prompting model contamination method
 python main.py \
---eval_data_name truthful_qa \
---eval_data_config_name generation \
---eval_set_key validation \
---text_key question \
---label_key category \
+--eval_data_name winogrande \
+--eval_data_config_name winogrande_debiased \
+--eval_set_key test \
+--text_key sentence \
+--label_key answer_token \
 --n_eval_data_points -1 \
 --num_proc 40 \
 --method ts-guessing-question-based \
 --local_port $port \
 --model_name $model_name \
---guided_prompting_task_type QA \
+--guided_prompting_task_type FIM \
 --use_local_model

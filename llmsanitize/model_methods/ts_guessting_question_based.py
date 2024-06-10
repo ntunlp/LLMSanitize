@@ -6,6 +6,7 @@ https://arxiv.org/pdf/2308.08493.pdf
 import nltk
 import random
 import numpy as np
+from tqdm import tqdm
 from rouge_score import rouge_scorer
 from datasets import Value
 from functools import partial
@@ -122,6 +123,65 @@ def guided_prompt_process_fn(
     return example
 
 
+def filter_data(
+    eval_data,
+    eval_data_name
+):
+
+    data_points = []
+    if eval_data_name == "truthful_qa":
+        for x in tqdm(eval_data):
+            # Remove questions with 4 or less words
+            n_words = len(word_tokenize(x["text"]))
+            if n_words <= 4:
+                continue
+            # Remove questions of 'Indexical Error' category
+            if 'Indexical Error' in x["category"]:
+                continue 
+
+            data_points.append(x)
+    else:
+        for x in tqdm(eval_data):
+            # The other datasets are: {ARC, HellaSwag, MMLU, Winogrande}
+            if eval_data_name == "allenai/ai2_arc":
+                choices = x["choices"]["text"]
+            if eval_data_name == "Rowan/hellaswag":
+                choices = x["endings"]
+            if eval_data_name == "cais/mmlu":
+                choices = x["choices"]
+            if eval_data_name == "winogrande":
+                choices = [x["option1"], x["option2"]]
+
+            if len(choices) == 2:
+                # Remove questions with Yes/No options
+                if choices[0].lower() in ["yes", "no"] and choices[1].lower() in ["yes", "no"]:
+                    continue
+                # Remove questions with True/False options
+                if choices[0].lower() in ["true", "false"] and choices[1].lower() in ["true", "false"]:
+                    continue
+
+            # Remove data points where the ROUGE-L F1 between any 2 options exceeds 0.65
+            scorer = rouge_scorer.RougeScorer(['rougeLsum'], use_stemmer=True)
+            discard = False
+            for i in range(len(choices)):
+                for j in range(i+1, len(choices)):
+                    choice_i = choices[i]
+                    choice_j = choices[j]
+                    rouge_scores = scorer.score(choice_i, choice_j)
+                    rl = rouge_scores["rougeLsum"].fmeasure
+                    if rl >= 0.65:
+                        discard = True
+                        break 
+                if discard == True:
+                    break
+            if discard == True:
+                continue
+
+            data_points.append(x)
+    logger.info(f"We are left with {len(data_points)} data points")
+
+    return data_points
+
 def main_ts_guessing_question_based(
     eval_data,
     eval_data_name,
@@ -147,9 +207,8 @@ def main_ts_guessing_question_based(
     echo: bool = False,
 ):
 
-    for x in eval_data:
-        print(x.keys())
-        raise Exception
+    # filter out some data points
+    data_points = filter_data(eval_data, eval_data_name)
 
     llm = LLM(
         local_model_path=local_model_path,

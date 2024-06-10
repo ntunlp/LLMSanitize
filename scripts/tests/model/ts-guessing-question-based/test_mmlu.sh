@@ -13,11 +13,11 @@ echo "local port: ", $port
 
 # test guided prompting model contamination method
 python main.py \
---eval_data_name truthful_qa \
---eval_data_config_name generation \
---eval_set_key validation \
+--eval_data_name cais/mmlu \
+--eval_data_config_name all \
+--eval_set_key test \
 --text_key question \
---label_key category \
+--label_key answer_text \
 --n_eval_data_points -1 \
 --num_proc 40 \
 --method ts-guessing-question-based \

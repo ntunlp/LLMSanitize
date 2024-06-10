@@ -13,15 +13,14 @@ echo "local port: ", $port
 
 # test guided prompting model contamination method
 python main.py \
---eval_data_name truthful_qa \
---eval_data_config_name generation \
+--eval_data_name Rowan/hellaswag \
 --eval_set_key validation \
---text_key question \
---label_key category \
+--text_key ctx \
+--label_key activity_label \
 --n_eval_data_points -1 \
 --num_proc 40 \
 --method ts-guessing-question-based \
 --local_port $port \
 --model_name $model_name \
---guided_prompting_task_type QA \
+--guided_prompting_task_type NLI \
 --use_local_model
