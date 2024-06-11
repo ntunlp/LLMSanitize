@@ -48,6 +48,7 @@ So far we support the following contamination detection methods:
 | sharded-likelihood | model contamination | Likelihood | yes | [paper](https://arxiv.org/abs/2310.17623) |
 | min-prob | model contamination | LLM-based method | no | [paper](https://arxiv.org/abs/2310.16789) |
 | cdd | model contamination | Likelihood | no | [paper](https://arxiv.org/abs/2402.15938) |
+| ts-guessing-question-based | model contamination | Completion | no | [paper](https://arxiv.org/abs/2311.09783) |
 
 ## vLLM
 The following methods require to launch a vLLM instance which will handle model inference:
