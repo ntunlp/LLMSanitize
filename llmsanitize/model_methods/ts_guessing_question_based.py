@@ -10,6 +10,7 @@ from rouge_score import rouge_scorer
 from nltk.tokenize import word_tokenize
 from nltk.tag import StanfordPOSTagger
 from llmsanitize.utils.logger import get_child_logger, suspend_logging
+from llmsanitize.utils.dataset_utils import get_answers_list
 from llmsanitize.model_methods.llm import LLM
 
 logger = get_child_logger("ts_guessing_question_based")
@@ -109,16 +110,9 @@ def filter_data(
 
             data_points.append(x)
     else:
+        scorer = rouge_scorer.RougeScorer(['rougeLsum'], use_stemmer=True)
         for x in tqdm(eval_data):
-            # The other datasets are: {ARC, HellaSwag, MMLU, Winogrande}
-            if eval_data_name == "allenai/ai2_arc":
-                choices = x["choices"]["text"]
-            if eval_data_name == "Rowan/hellaswag":
-                choices = x["endings"]
-            if eval_data_name == "cais/mmlu":
-                choices = x["choices"]
-            if eval_data_name == "winogrande":
-                choices = [x["option1"], x["option2"]]
+            choices = get_answers_list(x, eval_data_name)
 
             if len(choices) == 2:
                 # Remove questions with Yes/No options
@@ -129,7 +123,6 @@ def filter_data(
                     continue
 
             # Remove data points where the ROUGE-L F1 between any 2 options exceeds 0.65
-            scorer = rouge_scorer.RougeScorer(['rougeLsum'], use_stemmer=True)
             discard = False
             for i in range(len(choices)):
                 for j in range(i+1, len(choices)):

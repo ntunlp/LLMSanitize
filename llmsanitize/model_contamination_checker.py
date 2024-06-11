@@ -7,7 +7,8 @@ from llmsanitize.model_methods.guided_prompting import main_guided_prompting
 from llmsanitize.model_methods.sharded_likelihood import main_sharded_likelihood
 from llmsanitize.model_methods.min_prob import main_min_prob
 from llmsanitize.model_methods.cdd import main_cdd
-from llmsanitize.model_methods.ts_guessting_question_based import main_ts_guessing_question_based
+from llmsanitize.model_methods.ts_guessing_question_based import main_ts_guessing_question_based
+from llmsanitize.model_methods.ts_guessing_question_multichoice import main_ts_guessing_question_multichoice
 
 
 class ModelContaminationChecker(BaseContaminationChecker):
@@ -30,6 +31,8 @@ class ModelContaminationChecker(BaseContaminationChecker):
             self.contamination_cdd()
         elif method == "ts-guessing-question-based":
             self.contamination_ts_guessing_question_based()
+        elif method == "ts-guessing-question-multichoice":
+            self.contamination_ts_guessing_question_multichoice()
 
     # to use with a vLLM instance
     def contamination_guided_prompting(self):
@@ -155,4 +158,28 @@ class ModelContaminationChecker(BaseContaminationChecker):
             type_hint=self.ts_guessing_type_hint,
             category_hint=self.ts_guessing_category_hint,
             url_hint=self.ts_guessing_url_hint
+        )
+
+    # to use with a vLLM instance
+    def contamination_ts_guessing_question_multichoice(self):
+        main_ts_guessing_question_multichoice(
+            eval_data=self.eval_data,
+            eval_data_name=self.eval_data_name,
+            n_eval_data_points=self.n_eval_data_points,
+            # model parameters
+            local_model_path=self.local_model_path,
+            local_tokenizer_path=self.local_tokenizer_path,
+            model_name=self.model_name,
+            openai_creds_key_file=self.openai_creds_key_file,
+            local_port=self.local_port,
+            local_api_type=self.local_api_type,
+            no_chat_template=self.no_chat_template,
+            num_samples=self.num_samples,
+            max_input_tokens=self.max_input_tokens,
+            max_output_tokens=self.max_output_tokens,
+            temperature=self.temperature,
+            top_logprobs=self.top_logprobs,
+            max_request_time=self.max_request_time,
+            sleep_time=self.sleep_time,
+            echo=self.echo,
         )
