@@ -15,70 +15,71 @@ def parse_args():
     parser = argparse.ArgumentParser()
     # General arguments
     parser.add_argument("--seed", type=int, default=42,
-                        help="random seed")
+                        help="Random seed")
     parser.add_argument("--dataset_name", type=str, default="",
-                        help="if this field is set, we set train_set and eval_set to it")  # ["Rowan/hellaswag"]
+                        help="If this field is set, we set train_set and eval_set to it")  # ["Rowan/hellaswag"]
     parser.add_argument("--train_data_name", type=str, default="",
-                        help="training dataset name")  # ["Rowan/hellaswag"]
+                        help="Training dataset name")  # ["Rowan/hellaswag"]
     parser.add_argument("--train_data_config_name", type=str, default=None,
-                        help="training dataset config name")  # datasets.load_dataset("cais/mmlu", "all")
+                        help="Training dataset config name")  # datasets.load_dataset("cais/mmlu", "all")
     parser.add_argument("--eval_data_name", type=str, default="",
-                        help="eval dataset name")  # ["Rowan/hellaswag"]
+                        help="Eval dataset name")  # ["Rowan/hellaswag"]
     parser.add_argument("--eval_data_config_name", type=str, default=None,
-                        help="eval dataset config name")  # datasets.load_dataset("cais/mmlu", "all")
+                        help="Eval dataset config name")  # datasets.load_dataset("cais/mmlu", "all")
     parser.add_argument("--eval_set_key", type=str, default="test",
-                        help="eval set key")
+                        help="Eval set key")
     parser.add_argument("--text_key", type=str, default="ctx",
-                        help="the key to text content of each data instance.")
+                        help="The key to text content of each data instance.")
     parser.add_argument("--text_keys", type=str, default="",
-                        help="the keys of text contents to be combined of each data instance - pass them as key_1+key_2.")
+                        help="The keys of text contents to be combined of each data instance - pass them as key_1+key_2.")
     parser.add_argument("--label_key", type=str, default="label",
-                        help="the key to label content of each data instance.")
+                        help="The key to label content of each data instance.")
     parser.add_argument("--n_eval_data_points", type=int, default=100,
-                        help="the number of (val/test) data points to keep for evaluating contamination")
+                        help="The number of (val/test) data points to keep for evaluating contamination")
     parser.add_argument("--stream_train_data", default=False, action="store_true",
                         help="Whether to stream over the training dataset (helpful for large datasets like C4)")
     parser.add_argument("--stream_buffer_size", type = int, default=1000,
                         help="Buffer size for streaming over training set. Only used if --stream_train_data is passed.")
     parser.add_argument("--num_proc", type=int, default=20,
-                        help="recommend: 20 for openai calls, 80 for local calls")
+                        help="Recommend: 20 for openai calls, 80 for local calls")
     parser.add_argument("--method", type=str, choices=supported_methods.keys(),
                         help="you must pass a method name within the list supported_methods")
     parser.add_argument("--log_file_path", type=str, default="log.txt",
-                        help="log file path")
+                        help="Log file path")
     parser.add_argument("--output_dir", type=str, default="output",
-                        help="output directory for logging if necessary")
+                        help="Output directory for logging if necessary")
 
     # Method specific-arguments for model contamination detection
     ### Shared across methods
     parser.add_argument("--local_model_path", default=None,
-                        help="local model path for non-service based inference.")
+                        help="Local model path for non-service based inference.")
     parser.add_argument("--local_tokenizer_path", default=None,
-                        help="local tokenizer path for non-service based inference.")
+                        help="Local tokenizer path for non-service based inference.")
     parser.add_argument("--model_name", type=str, default=None,
-                        help="model name for service based inference.")
+                        help="Model name for service based inference.")
     parser.add_argument("--openai_creds_key_file", type=str, default=None,
                         help="OpenAI API key file path.")
     parser.add_argument("--local_port", type=str, default=None,
                         help="Local model port for service based inference.")
     parser.add_argument("--local_api_type", type=str, default="post",
-                        choices=['post', 'openai'], help="the type of local API call")
-    parser.add_argument("--no_chat_template", type=bool, default=True,
-                        help="activate it to remove the prompt chat template - for instance if you want a custom one")
+                        choices=['post', 'openai'], 
+                        help="The type of local API call")
+    parser.add_argument("--no_chat_template", type=bool, default=False,
+                        help="Activate it to remove the prompt chat template - for instance if you want a custom one")
     parser.add_argument("--num_samples", type=int, default=1,
-                        help="number of samples to generate")
+                        help="Number of samples to generate")
     parser.add_argument("--max_input_tokens", type=int, default=512,
-                        help="max number of input tokens")
+                        help="Max number of input tokens")
     parser.add_argument("--max_output_tokens", type=int, default=128,
-                        help="max number of output tokens")
+                        help="Max number of output tokens")
     parser.add_argument("--temperature", type=float, default=0.0,
-                        help="temperature when sampling each sample")
+                        help="Temperature when sampling each sample")
     parser.add_argument("--top_logprobs", type=int, default=0,
-                        help="top logprobs for each sample")
+                        help="Top logprobs for each sample")
     parser.add_argument("--max_request_time", type=int, default=600,
-                        help="max request time for each sample")
+                        help="Max request time for each sample")
     parser.add_argument("--sleep_time", type=int, default=1,
-                        help="sleep time for each sample")
+                        help="Sleep time for each sample")
     parser.add_argument("--echo", default=False, action="store_true",
                         help="Echo back the prompt in addition to the completion")
     parser.add_argument("--use_local_model", action='store_true', default=False)
@@ -101,7 +102,7 @@ def parse_args():
     parser.add_argument("--minkprob_local_port_2", type=str, default=None,
                         help="Local model port for service based inference.")  # TODO: If there is better way to initialize two models.
     parser.add_argument("--minkprob_model_name_2", type=str, default=None,
-                        help="model name for service based inference.")
+                        help="Model name for service based inference.")
     parser.add_argument("--minkprob_do_infer", action='store_true', default=False,
                         help="Add --do_infer if the eval dataset is not used for evaluating the contamination method itself, e.g., WikiMIA.")
     ### Method #4: CDD
@@ -109,6 +110,13 @@ def parse_args():
                         help="alpha hyper-parameter value for the CDD method")
     parser.add_argument("--cdd_xi", type=float, default=0.01,
                         help="xi hyper-parameter value for the CDD method")
+    ### Method #5: TS-Guessing: question-based
+    parser.add_argument("--ts_guessing_type_hint", type=bool, default=False,
+                        help="Whether to give the type as a hint to the LLM.")
+    parser.add_argument("--ts_guessing_category_hint", type=bool, default=False,
+                        help="Whether to give the category as a hint to the LLM.")
+    parser.add_argument("--ts_guessing_url_hint", type=bool, default=False,
+                        help="Whether to give the source url as a hint to the LLM.")
 
     args = parser.parse_args()
 

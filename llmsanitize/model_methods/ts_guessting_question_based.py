@@ -3,6 +3,7 @@ This file implements the model contamination detection through guided prompting.
 https://arxiv.org/pdf/2311.09783
 """
 
+import os
 import numpy as np
 from tqdm import tqdm
 from rouge_score import rouge_scorer
@@ -14,32 +15,81 @@ from llmsanitize.model_methods.llm import LLM
 logger = get_child_logger("ts_guessing_question_based")
 
 
-def build_prompt(text, st):
+def build_prompt(
+    example, 
+    st,
+    eval_data_name,
+    type_hint=False,
+    category_hint=False,
+    url_hint=False
+):
+    text = example["text"]
     tags = st.tag(text.split())
     words = [x for x in tags if x[1] in ['NN', 'JJ', 'VB']]
+    if len(words) == 0:
+        return "failed", ""
     idx = np.random.randint(len(words))
     word = words[idx][0]
-    for i in range(len(text)-len(word)):
+    for i in range(len(text)-len(word)+1):
         if text[i:(i+len(word))] == word:
             text = text[:i] + "[MASK]" + text[(i+len(word)):]
             break
 
     prompt = "Complete the sentence in one word:"
     prompt += f"\n\n{text}"
+    if type_hint:
+        if eval_data_name == "truthful_qa":
+            example_type = example["type"]
+            prompt += f"\nHint: {example_type}"
+    if category_hint:
+        if eval_data_name == "truthful_qa":
+            example_category = example["category"]
+            prompt += f"\nHint: {example_category}"
+    if url_hint:
+        if eval_data_name == "truthful_qa":
+            example_url = example["source"]
+            prompt += f"\nHint: {example_url}"
     prompt += "\nReply the answer only."
 
-    return prompt
+    return prompt, word
 
-def inference(data_points, llm):
+def process_response(response):
+    processed_response = word_tokenize(response)[0]
+
+    return processed_response
+
+def inference(
+    data_points, 
+    n_eval, 
+    eval_data_name,
+    llm, 
+    type_hint=False,
+    category_hint=False,
+    url_hint=False
+):
+    os.environ["CLASSPATH"] = "/home/mathieu/stanford-postagger-full-2020-11-17"
+    os.environ["STANFORD_MODELS"] = "/home/mathieu/stanford-postagger-full-2020-11-17/models"
     st = StanfordPOSTagger('english-bidirectional-distsim.tagger')
-    responses = []
+    responses, masked_words = [], []
     for example in tqdm(data_points):
-        text = example["text"]
-        prompt = build_prompt(text, st)
+        prompt, masked_word = build_prompt(
+            example, 
+            st,
+            eval_data_name,
+            type_hint,
+            category_hint,
+            url_hint
+        )
+        if prompt == "failed":
+            continue
         response, cost = llm.query(prompt)
+        response = process_response(response)
         responses.append(response)
+        masked_words.append(masked_word)
+        if len(responses) == n_eval:
+            break
 
-    return responses
+    return responses, masked_words
 
 @suspend_logging
 def filter_data(
@@ -119,6 +169,10 @@ def main_ts_guessing_question_based(
     max_request_time: int = 600,
     sleep_time: int = 1,
     echo: bool = False,
+    # method-specific parameters
+    type_hint: bool = False,
+    category_hint: bool = False,
+    url_hint: bool = False,
 ):
     # filter out some data points
     data_points = filter_data(eval_data, eval_data_name)
@@ -128,8 +182,6 @@ def main_ts_guessing_question_based(
     if n_eval_data_points > 0:
         p = np.random.permutation(len(data_points))
         data_points = [data_points[x] for x in p]
-        data_points = data_points[:n_eval_data_points]
-        logger.info(f"After subsampling, there are now {len(data_points)} eval data points")
 
     llm = LLM(
         local_model_path=local_model_path,
@@ -149,7 +201,19 @@ def main_ts_guessing_question_based(
         echo=echo,
     )
 
-    responses = inference(data_points, llm)
-    print(responses[0])
-    print(data_points[0])
+    responses, masked_words = inference(
+        data_points, 
+        n_eval_data_points,
+        eval_data_name,
+        llm, 
+        type_hint,
+        category_hint,
+        url_hint
+    )
+    
+    responses = [x.lower() for x in responses]
+    masked_words = [x.lower() for x in masked_words]
+    em = len([i for i in range(len(responses)) if responses[i] == masked_words[i]]) / len(responses)
+    logger.info(f"Question-based completion (type hint: {type_hint} | category hint: {category_hint} | url hint: {url_hint}"))
+    logger.info(f"Exact Match (EM): {em:.2f}")
 

@@ -151,4 +151,8 @@ class ModelContaminationChecker(BaseContaminationChecker):
             max_request_time=self.max_request_time,
             sleep_time=self.sleep_time,
             echo=self.echo,
+            # method-specific parameters
+            type_hint=self.ts_guessing_type_hint,
+            category_hint=self.ts_guessing_category_hint,
+            url_hint=self.ts_guessing_url_hint
         )
