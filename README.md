@@ -37,16 +37,16 @@ Notably, we use the following important libraries:
 So far we support the following contamination detection methods:
 
 | **Method** | **Use Case** | **Short description** | **White-box access?** | **Reference** |  
-|---|---|---|---|---|
+|----------|---|---|---|---|
 | gpt-2 | data contamination | String matching | _ | [paper](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) |
 | gpt-3 | data contamination | String matching | _ | [paper](https://arxiv.org/abs/2005.14165) |
 | exact | data contamination | String matching | _ | [paper](https://arxiv.org/abs/2104.08758) |
 | palm | data contamination | String matching | _ | [paper](https://arxiv.org/abs/2204.02311) |
 | gpt-4 | data contamination | String matching | _ | [paper](https://arxiv.org/abs/2303.08774) |
 | platypus | data contamination | Embeddings similarity | _ | [paper](https://arxiv.org/abs/2308.07317) |
-| guided-prompting | model contamination | Likelihood | yes | [paper](https://arxiv.org/abs/2308.08493) |
+| guided-prompting | model contamination | Likelihood | no | [paper](https://arxiv.org/abs/2308.08493) |
 | sharded-likelihood | model contamination | Likelihood | yes | [paper](https://arxiv.org/abs/2310.17623) |
-| min-prob | model contamination | LLM-based method | no | [paper](https://arxiv.org/abs/2310.16789) |
+| min-prob | model contamination | LLM-based method | yes | [paper](https://arxiv.org/abs/2310.16789) |
 | cdd | model contamination | Likelihood | no | [paper](https://arxiv.org/abs/2402.15938) |
 | ts-guessing-question-based | model contamination | Completion | no | [paper](https://arxiv.org/abs/2311.09783) |
 | ts-guessing-question-multichoice | model contamination | Completion | no | [paper](https://arxiv.org/abs/2311.09783) |
@@ -59,6 +59,8 @@ The following methods require to launch a vLLM instance which will handle model 
 | guided-prompting |
 | min-prob |
 | cdd |
+| ts-guessing-question-based |
+| ts-guessing-question-multichoice |
 
 To launch the instance, first run the following command in a terminal: 
 ```bash
