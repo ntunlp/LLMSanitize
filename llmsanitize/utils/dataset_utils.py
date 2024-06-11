@@ -27,11 +27,9 @@ def get_answer_index(data_point, dataset_name):
         answer_index = data_point["answer"]
     if dataset_name == "truthful_qa":
         best_answer = data_point["best_answer"]
-        correct_answers = data_point["correcr_answers"]
+        correct_answers = data_point["correct_answers"]
         answer_index = correct_answers.index(best_answer)
     if dataset_name == "winogrande":
-        choices = [data_point["option1"], data_point["option2"]]
-        answer = data_point["answer"]
-        answer_index = choices.index(answer)
+        answer_index = int(data_point["answer"]) - 1
 
     return answer_index

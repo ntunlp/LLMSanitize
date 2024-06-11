@@ -15,7 +15,7 @@ echo "local port: ", $port
 python main.py \
 --eval_data_name winogrande \
 --eval_data_config_name winogrande_debiased \
---eval_set_key test \
+--eval_set_key validation \
 --text_key sentence \
 --label_key answer_token \
 --n_eval_data_points 100 \
