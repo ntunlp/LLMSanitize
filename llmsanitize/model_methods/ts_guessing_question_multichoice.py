@@ -7,7 +7,7 @@ import os
 import numpy as np
 from tqdm import tqdm
 from rouge_score import rouge_scorer
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.tag import StanfordPOSTagger
 from llmsanitize.utils.logger import get_child_logger, suspend_logging
 from llmsanitize.utils.dataset_utils import get_answers_list, get_answer_index
@@ -24,28 +24,39 @@ def build_prompt(
     text = example["text"]
 
     choices = get_answers_list(example, eval_data_name)
-    answer_index = get_answer_index(choices, eval_data_name)
+    answer_index = get_answer_index(example, eval_data_name)
     answer = choices[answer_index]
     wrong_choices_indices = [i for i in range(len(choices)) if i != answer_index]
     index = np.random.randint(len(wrong_choices_indices))
-    wrong_choices_index = wrong_choices_indices[index]
+    wrong_choice_index = wrong_choices_indices[index]
 
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-    prompt = "Please fill in the [] in option A based on your benchmark knowledge."
+    wrong_letter = alphabet[wrong_choice_index]
+    prompt = f"Please fill in the [] in option {wrong_letter} based on your benchmark knowledge."
     prompt += "\n\nThe crucial rule is that you should provide different answer in other options below."
-    prompt += f"\n\nQuestion:{text}"
+    prompt += f"\n\nQuestion: {text}"
     prompt += "\nOptions:"
     for i in range(len(choices)):
         letter = alphabet[i]
-        if i == wrong_choices_index:
+        if i == wrong_choice_index:
             prompt += f"\n{letter}: [MASK]"
         else:
             choice = choices[i]
             prompt += f"\n{letter}: [{choice}]"
     prompt += "\n\nReply with answer only."
 
-    return prompt, answer
+    return prompt, answer, wrong_letter
+
+def process_response(response, wrong_letter):
+    symbol = wrong_letter + ":"
+    if symbol in response:
+        response = response.split(symbol)[1]
+        sents = sent_tokenize(response)
+        if len(sents) > 0:
+            response = sents[0]
+
+    return response
 
 def inference(
     data_points,
@@ -54,11 +65,12 @@ def inference(
 ):
     responses, answers = [], []
     for example in tqdm(data_points):
-        prompt, answer = build_prompt(
+        prompt, answer, wrong_letter = build_prompt(
             example,
             eval_data_name
         )
         response, cost = llm.query(prompt)
+        response = process_response(response, wrong_letter)
         responses.append(response)
         answers.append(answer)
 
@@ -122,9 +134,12 @@ def main_ts_guessing_question_multichoice(
 
     responses = [x.lower() for x in responses]
     answers = [x.lower() for x in answers]
+    print("HERE")
+    print(responses[0])
+    print(answers[0])
     em = len([i for i in range(len(responses)) if responses[i] == answers[i]]) / len(responses)
     scorer = rouge_scorer.RougeScorer(['rougeLsum'], use_stemmer=True)
-    rl = np.mean(np.array([scorer.score(responses[i], answers[i]).fmeasure for i in range(len(responses))]))
+    rl = np.mean(np.array([scorer.score(responses[i], answers[i])["rougeLsum"].fmeasure for i in range(len(responses))]))
 
     logger.info(f"Question-based guessing")
     logger.info(f"Exact Match (EM): {em:.2f}, ROUGE-L F1: {rl:.2f}")
