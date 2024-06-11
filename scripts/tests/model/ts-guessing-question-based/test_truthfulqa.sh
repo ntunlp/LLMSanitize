@@ -18,10 +18,10 @@ python main.py \
 --eval_set_key validation \
 --text_key question \
 --label_key category \
---n_eval_data_points 10 \
---num_proc 40 \
+--n_eval_data_points 100 \
 --method ts-guessing-question-based \
 --local_port $port \
 --model_name $model_name \
---guided_prompting_task_type QA \
---use_local_model
+#--ts_guessing_type_hint \
+#--ts_guessing_category_hint \
+#--ts_guessing_url_hint \

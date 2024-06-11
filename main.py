@@ -111,11 +111,11 @@ def parse_args():
     parser.add_argument("--cdd_xi", type=float, default=0.01,
                         help="xi hyper-parameter value for the CDD method")
     ### Method #5: TS-Guessing: question-based
-    parser.add_argument("--ts_guessing_type_hint", type=bool, default=False,
+    parser.add_argument("--ts_guessing_type_hint", action='store_true', default=False,
                         help="Whether to give the type as a hint to the LLM.")
-    parser.add_argument("--ts_guessing_category_hint", type=bool, default=False,
+    parser.add_argument("--ts_guessing_category_hint", action='store_true', default=False,
                         help="Whether to give the category as a hint to the LLM.")
-    parser.add_argument("--ts_guessing_url_hint", type=bool, default=False,
+    parser.add_argument("--ts_guessing_url_hint", action='store_true', default=False,
                         help="Whether to give the source url as a hint to the LLM.")
 
     args = parser.parse_args()

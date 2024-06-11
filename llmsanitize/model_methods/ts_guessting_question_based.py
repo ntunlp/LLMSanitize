@@ -214,6 +214,5 @@ def main_ts_guessing_question_based(
     responses = [x.lower() for x in responses]
     masked_words = [x.lower() for x in masked_words]
     em = len([i for i in range(len(responses)) if responses[i] == masked_words[i]]) / len(responses)
-    logger.info(f"Question-based completion (type hint: {type_hint} | category hint: {category_hint} | url hint: {url_hint}"))
+    logger.info(f"Question-based completion (type hint: {type_hint} | category hint: {category_hint} | url hint: {url_hint})")
     logger.info(f"Exact Match (EM): {em:.2f}")
-

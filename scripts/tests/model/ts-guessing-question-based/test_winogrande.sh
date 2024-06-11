@@ -19,9 +19,9 @@ python main.py \
 --text_key sentence \
 --label_key answer_token \
 --n_eval_data_points 100 \
---num_proc 40 \
 --method ts-guessing-question-based \
 --local_port $port \
 --model_name $model_name \
---guided_prompting_task_type FIM \
---use_local_model
+#--ts_guessing_type_hint \
+#--ts_guessing_category_hint \
+#--ts_guessing_url_hint \
