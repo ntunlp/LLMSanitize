@@ -41,7 +41,14 @@ def sweep(score, x):
 
     return fpr, tpr, auc(fpr, tpr), acc
 
-def do_plot(prediction, answers, sweep_fn=sweep, metric='auc', legend="", output_dir=None):
+def do_plot(
+    prediction,
+    answers,
+    sweep_fn=sweep,
+    metric='auc',
+    legend="",
+    output_dir=None
+):
     """
     Generate the ROC curves by using ntest models as test models and the rest to train.
     """

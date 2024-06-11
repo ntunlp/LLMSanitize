@@ -1,133 +1,51 @@
 """
 This file implements the model contamination detection through guided prompting.
-https://arxiv.org/pdf/2308.08493.pdf
+https://arxiv.org/pdf/2311.09783
 """
 
-import nltk
-import random
 import numpy as np
 from tqdm import tqdm
 from rouge_score import rouge_scorer
-from datasets import Value
-from functools import partial
-from llmsanitize.utils.utils import seed_everything, fill_template
+from nltk.tokenize import word_tokenize
+from nltk.tag import StanfordPOSTagger
 from llmsanitize.utils.logger import get_child_logger, suspend_logging
 from llmsanitize.model_methods.llm import LLM
-import llmsanitize.prompts.guided_prompting.general_instructions as gi_prompts
-import llmsanitize.prompts.guided_prompting.guided_instructions as gui_prompts
-from scipy.stats import bootstrap
 
-logger = get_child_logger("guided_prompting")
+logger = get_child_logger("ts_guessing_question_based")
 
 
-def guided_prompt_split_fn(example, idx, dataset_name, text_key):
-    ''' split content per example to part 1 and part 2
-        For AGnews: split ['text'] into 2 parts
-            ARC: split ['question']+['choices']
-    '''
-    seed_everything(idx)
-    splits = {'guided_prompt_part_1': '', 'guided_prompt_part_2': ''}
-    # split the input field to two parts
-    if dataset_name in ['ag_news', 'gsm8k', 'cais/mmlu']:
-        text = example[text_key]
-        sentences = nltk.sent_tokenize(text)
-        if len(sentences) < 2:
-            return splits
-        first_part_length = random.randint(1, len(sentences) - 1)
-        splits['guided_prompt_part_1'] = ''.join(sentences[:first_part_length])
-        splits['guided_prompt_part_2'] = ''.join(sentences[first_part_length:])
+def build_prompt(text, st):
+    tags = st.tag(text.split())
+    words = [x for x in tags if x[1] in ['NN', 'JJ', 'VB']]
+    idx = np.random.randint(len(words))
+    word = words[idx][0]
+    for i in range(len(text)-len(word)):
+        if text[i:(i+len(word))] == word:
+            text = text[:i] + "[MASK]" + text[(i+len(word)):]
+            break
 
-    # split to question + choices[0], choices[1:]
-    elif dataset_name in ['allenai/ai2_arc']:
-        choices = example['choices']
-        choices = [_label + '.' + _text for _text, _label in zip(choices['text'], choices['label'])]
-        splits['guided_prompt_part_1'] = example[text_key] + '\n' + choices[0]
-        splits['guided_prompt_part_2'] = '\n'.join(choices[1:])
+    prompt = "Complete the sentence in one word:"
+    prompt += f"\n\n{text}"
+    prompt += "\nReply the answer only."
 
-    # NLI tasks
-    elif dataset_name in ['Rowan/hellaswag']:
-        splits['guided_prompt_part_1'] = example[text_key]
-        splits['guided_prompt_part_2'] = example['endings'][int(example['label'])]
-    elif dataset_name in ['truthful_qa']:
-        splits['guided_prompt_part_1'] = example[text_key]
-        splits['guided_prompt_part_2'] = example['best_answer']
-    elif dataset_name == "winogrande":
-        sents = example[text_key].split('_')
-        splits['guided_prompt_part_1'] = sents[0]
-        splits['guided_prompt_part_2'] = sents[1]
-    else:
-        raise (f"Error! guided_prompt_split_fn not found processing for dataset_name: {dataset_name}")
+    return prompt
 
-    return splits
+def inference(data_points, llm):
+    st = StanfordPOSTagger('english-bidirectional-distsim.tagger')
+    responses = []
+    for example in tqdm(data_points):
+        text = example["text"]
+        prompt = build_prompt(text, st)
+        response, cost = llm.query(prompt)
+        responses.append(response)
 
-
-def guided_prompt_process_label(example, dataset_name):
-    if dataset_name == 'cais/mmlu':
-        example['answer_text'] = example['choices'][int(example['answer'])]
-    elif dataset_name == 'winogrande':
-        example['answer_token'] = example['option1'] + '/' + example['option2']
-
-    return example
-
-
-def bootstrap_test(data):
-    ''' bootstrap test (https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html)
-        to check if to reject the H0 hypothesis that there's no difference between guided-prompt and general-prompt
-    Args:
-        data: a sequence of score difference (s_guided - s_general)
-    Return:
-        p-value of diff <= 0
-    '''
-    res = bootstrap((data,), np.mean, n_resamples=10000)
-
-    return (res.bootstrap_distribution <= 0.).sum() / 10000.
-
+    return responses
 
 @suspend_logging
-def guided_prompt_process_fn(
-        example,
-        idx,
-        llm,
-        split_name,
-        dataset_name,
-        label_key,
-        text_key,
-        general_template,
-        guided_template
-):
-    seed_everything(idx)
-    label = str(example[label_key])
-    first_part = example['guided_prompt_part_1']
-    second_part = example['guided_prompt_part_2']
-
-    # query llm
-    vars_map = {"split_name": split_name, "dataset_name": dataset_name, "first_piece": first_part, "label": label}
-    general_prompt = fill_template(general_template, vars_map)
-    guided_prompt = fill_template(guided_template, vars_map)
-    general_response, cost = llm.query(general_prompt)
-    guided_response, cost_ = llm.query(guided_prompt)
-
-    # get scores
-    scorer = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True)
-    general_score = scorer.score(second_part, general_response)['rougeL'].fmeasure
-    guided_score = scorer.score(second_part, guided_response)['rougeL'].fmeasure
-
-    # return
-    example['general_score'] = general_score
-    example['guided_score'] = guided_score
-    example['general_response'] = general_response
-    example['guided_response'] = guided_response
-    example['first_part'] = first_part
-    example['second_part'] = second_part
-
-    return example
-
-
 def filter_data(
     eval_data,
     eval_data_name
 ):
-
     data_points = []
     if eval_data_name == "truthful_qa":
         for x in tqdm(eval_data):
@@ -178,17 +96,13 @@ def filter_data(
                 continue
 
             data_points.append(x)
-    logger.info(f"We are left with {len(data_points)} data points")
 
     return data_points
 
 def main_ts_guessing_question_based(
     eval_data,
     eval_data_name,
-    eval_set_key,
-    text_key,
-    label_key,
-    num_proc,
+    n_eval_data_points,
     # model parameters
     local_model_path: str = None,
     local_tokenizer_path: str = None,
@@ -206,9 +120,16 @@ def main_ts_guessing_question_based(
     sleep_time: int = 1,
     echo: bool = False,
 ):
-
     # filter out some data points
     data_points = filter_data(eval_data, eval_data_name)
+    logger.info(f"We are left with {len(data_points)} data points after filtering")
+
+    # perform the shuffling and subsampling now
+    if n_eval_data_points > 0:
+        p = np.random.permutation(len(data_points))
+        data_points = [data_points[x] for x in p]
+        data_points = data_points[:n_eval_data_points]
+        logger.info(f"After subsampling, there are now {len(data_points)} eval data points")
 
     llm = LLM(
         local_model_path=local_model_path,
@@ -227,4 +148,8 @@ def main_ts_guessing_question_based(
         sleep_time=sleep_time,
         echo=echo,
     )
+
+    responses = inference(data_points, llm)
+    print(responses[0])
+    print(data_points[0])
 

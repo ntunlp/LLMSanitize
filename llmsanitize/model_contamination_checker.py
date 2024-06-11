@@ -134,10 +134,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
         main_ts_guessing_question_based(
             eval_data=self.eval_data,
             eval_data_name=self.eval_data_name,
-            eval_set_key=self.eval_set_key,
-            text_key=self.text_key,
-            label_key=self.label_key,
-            num_proc=self.num_proc,
+            n_eval_data_points=self.n_eval_data_points,
             # model parameters
             local_model_path=self.local_model_path,
             local_tokenizer_path=self.local_tokenizer_path,

@@ -18,7 +18,7 @@ python main.py \
 --eval_set_key validation \
 --text_key question \
 --label_key category \
---n_eval_data_points -1 \
+--n_eval_data_points 10 \
 --num_proc 40 \
 --method ts-guessing-question-based \
 --local_port $port \
