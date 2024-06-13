@@ -35,7 +35,13 @@ def _load_dataset(dataset_path):
 
     return lines
 
-def _compute_logprob_of_token_sequence(tokens, model, context_len=2048, stride=1024, device=0):
+def _compute_logprob_of_token_sequence(
+    tokens,
+    model,
+    context_len=2048,
+    stride=1024,
+    device=0
+):
     """
     Approximates logp(tokens) by sliding a window over the tokens with a stride.
     """

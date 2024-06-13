@@ -63,11 +63,14 @@ class BaseContaminationChecker:
 
     def subsample_eval_data(self):
         if len(self.eval_data) > 0 and self.n_eval_data_points > 0:
-            p = np.random.permutation(len(self.eval_data))
-            p = p[:self.n_eval_data_points]
-            p = list(p)
-            self.eval_data = self.eval_data.select(p)
-            logger.info(f"After sub-sampling, there are now {len(self.eval_data)} eval data points")
+            if not(self.method.startswith("ts-guessing")):
+                p = np.random.permutation(len(self.eval_data))
+                p = p[:self.n_eval_data_points]
+                p = list(p)
+                self.eval_data = self.eval_data.select(p)
+                logger.info(f"After subsampling, there are now {len(self.eval_data)} eval data points")
+            else:
+                logger.info(f"You are using TS-Guessing method, and we will subsample later")
 
     def combine_text_keys(self):
         if self.train_data:

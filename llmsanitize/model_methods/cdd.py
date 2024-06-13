@@ -39,7 +39,14 @@ def get_peak(samples, s_0, alpha):
 
     return peak
 
-def inference(eval_data, llm0, llm, num_samples, alpha, xi):
+def inference(
+    eval_data,
+    llm0,
+    llm,
+    num_samples,
+    alpha,
+    xi
+):
     cdd_results = []
     for data_point in tqdm(eval_data):
         prompt = data_point["text"]
