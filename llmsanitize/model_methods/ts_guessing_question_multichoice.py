@@ -8,8 +8,7 @@ import numpy as np
 from tqdm import tqdm
 from rouge_score import rouge_scorer
 from nltk.tokenize import word_tokenize, sent_tokenize
-from nltk.tag import StanfordPOSTagger
-from llmsanitize.utils.logger import get_child_logger, suspend_logging
+from llmsanitize.utils.logger import get_child_logger
 from llmsanitize.utils.dataset_utils import get_answers_list, get_answer_index
 from llmsanitize.model_methods.llm import LLM
 from llmsanitize.model_methods.ts_guessing_question_based import filter_data

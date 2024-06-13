@@ -69,6 +69,8 @@ class BaseContaminationChecker:
                 p = list(p)
                 self.eval_data = self.eval_data.select(p)
                 logger.info(f"After subsampling, there are now {len(self.eval_data)} eval data points")
+            else:
+                logger.info(f"You are using TS-Guessing method, and we will subsample later")
 
     def combine_text_keys(self):
         if self.train_data:

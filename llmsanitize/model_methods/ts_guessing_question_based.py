@@ -16,16 +16,29 @@ from llmsanitize.model_methods.llm import LLM
 logger = get_child_logger("ts_guessing_question_based")
 
 
+def get_stanford_tagger():
+    if not("CLASSPATH" in os.environ and "STANFORD_MODELS" in os.environ):
+        print("You need to setup global variables CLASSPATH and STANFORD_MODELS specifying the path to the tagger.")
+        print("First download the tagger here: https://nlp.stanford.edu/software/tagger.html#Download")
+        print("Then place it into some directory")
+        home_dir = input("Please specify the directory where you place the tagger: ")
+        # default: /home/mathieu/stanford-postagger-full-2020-11-17
+        os.environ["CLASSPATH"] = f"{home_dir}"
+        os.environ["STANFORD_MODELS"] = f"{home_dir}/models"
+    st = StanfordPOSTagger('english-bidirectional-distsim.tagger')
+
+    return st
+
 def build_prompt(
     example, 
-    st,
+    tagger,
     eval_data_name,
     type_hint=False,
     category_hint=False,
     url_hint=False
 ):
     text = example["text"]
-    tags = st.tag(text.split())
+    tags = tagger.tag(text.split())
     words = [x for x in tags if x[1] in ['NN', 'JJ', 'VB']]
     if len(words) == 0:
         return "failed", ""
@@ -68,14 +81,13 @@ def inference(
     category_hint=False,
     url_hint=False
 ):
-    os.environ["CLASSPATH"] = "/home/mathieu/stanford-postagger-full-2020-11-17"
-    os.environ["STANFORD_MODELS"] = "/home/mathieu/stanford-postagger-full-2020-11-17/models"
-    st = StanfordPOSTagger('english-bidirectional-distsim.tagger')
+    tagger = get_stanford_tagger()
+
     responses, masked_words = [], []
     for example in tqdm(data_points):
         prompt, masked_word = build_prompt(
             example, 
-            st,
+            tagger,
             eval_data_name,
             type_hint,
             category_hint,
@@ -116,10 +128,10 @@ def filter_data(
 
             if len(choices) == 2:
                 # Remove questions with Yes/No options
-                if choices[0].lower() in ["yes", "no"] and choices[1].lower() in ["yes", "no"]:
+                if (choices[0].lower() in ["yes", "no"]) and (choices[1].lower() in ["yes", "no"]):
                     continue
                 # Remove questions with True/False options
-                if choices[0].lower() in ["true", "false"] and choices[1].lower() in ["true", "false"]:
+                if (choices[0].lower() in ["true", "false"]) and (choices[1].lower() in ["true", "false"]):
                     continue
 
             # Remove data points where the ROUGE-L F1 between any 2 options exceeds 0.65
