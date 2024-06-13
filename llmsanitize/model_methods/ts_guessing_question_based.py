@@ -18,11 +18,11 @@ logger = get_child_logger("ts_guessing_question_based")
 
 def get_stanford_tagger():
     if not("CLASSPATH" in os.environ and "STANFORD_MODELS" in os.environ):
-        print("You need to setup global variables CLASSPATH and STANFORD_MODELS specifying the path to the tagger.")
-        print("First download the tagger here: https://nlp.stanford.edu/software/tagger.html#Download")
-        print("Then place it into some directory")
-        home_dir = input("Please specify the directory where you place the tagger: ")
-        # default: /home/mathieu/stanford-postagger-full-2020-11-17
+        logger.info("You are using a model contamination detection method which requires Stanford's Part-of-Speech tagger.")
+        logger.info("You need to setup global variables CLASSPATH and STANFORD_MODELS specifying the path to the tagger.")
+        logger.info("First download the tagger here: https://nlp.stanford.edu/software/tagger.html#Download")
+        logger.info("Then place it into some directory.")
+        home_dir = input("Please specify the directory where you place the tagger (default: /home/mathieu/stanford-postagger-full-2020-11-17): ")
         os.environ["CLASSPATH"] = f"{home_dir}"
         os.environ["STANFORD_MODELS"] = f"{home_dir}/models"
     st = StanfordPOSTagger('english-bidirectional-distsim.tagger')
