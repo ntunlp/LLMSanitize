@@ -37,7 +37,7 @@ Notably, we use the following important libraries:
 The repository supports all the following contamination detection methods:
 
 | **Method** | **Use Case** | **Method Type** | **Model Access** | **Reference** |  
-|---|---|---|------|---|
+|---|---|---|------------|---|
 | gpt-2 | Data | String Matching | _ | Language Models are Unsupervised Multitask Learners ([link](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)), Section 4 |
 | gpt-3 | Data | String Matching | _ | Language Models are Few-Shot Learners ([link](https://arxiv.org/abs/2005.14165)), Section 4 |
 | exact | Data | String Matching | _ | Documenting Large Webtext Corpora: A Case Study on the Colossal Clean Crawled Corpus ([link](https://arxiv.org/abs/2104.08758)), Section 4.2 |
