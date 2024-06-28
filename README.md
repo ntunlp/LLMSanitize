@@ -48,7 +48,7 @@ The repository supports all the following contamination detection methods:
 | guided-prompting | Model | Likelihood | black-box | [paper](https://arxiv.org/abs/2308.08493) |
 | sharded-likelihood | Model | Likelihood | white-box | [paper](https://arxiv.org/abs/2310.17623) |
 | min-prob | Model | LLM-based method | white-box | [paper](https://arxiv.org/abs/2310.16789) |
-| cdd | Model | Likelihood | no | [paper](https://arxiv.org/abs/2402.15938) |
+| cdd | Model | Likelihood | black-box | [paper](https://arxiv.org/abs/2402.15938) |
 | ts-guessing-question-based | Model | Completion | black-box | [paper](https://arxiv.org/abs/2311.09783) |
 | ts-guessing-question-multichoice | Model | Completion | black-box | [paper](https://arxiv.org/abs/2311.09783) |
 
