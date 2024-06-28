@@ -38,19 +38,19 @@ The repository supports all the following contamination detection methods:
 
 | **Method** | **Use Case** | **Short description** | **Model access** | **Reference** |  
 |---|---|---|---|---|
-| gpt-2 | Data | String matching | _ | [paper](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) |
-| gpt-3 | Data | String matching | _ | [paper](https://arxiv.org/abs/2005.14165) |
-| exact | Data | String matching | _ | [paper](https://arxiv.org/abs/2104.08758) |
-| palm | Data | String matching | _ | [paper](https://arxiv.org/abs/2204.02311) |
-| gpt-4 | Data | String matching | _ | [paper](https://arxiv.org/abs/2303.08774) |
-| platypus | Data | Embeddings similarity | _ | [paper](https://arxiv.org/abs/2308.07317) |
+| gpt-2 | Data | String Matching | _ | [paper](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) |
+| gpt-3 | Data | String Matching | _ | [paper](https://arxiv.org/abs/2005.14165) |
+| exact | Data | String Matching | _ | [paper](https://arxiv.org/abs/2104.08758) |
+| palm | Data | String Matching | _ | [paper](https://arxiv.org/abs/2204.02311) |
+| gpt-4 | Data | String Matching | _ | [paper](https://arxiv.org/abs/2303.08774) |
+| platypus | Data | Embeddings Similarity | _ | [paper](https://arxiv.org/abs/2308.07317) |
 |---|---|---|---|---|
-| guided-prompting | Model | Likelihood | black-box | [paper](https://arxiv.org/abs/2308.08493) |
-| sharded-likelihood | Model | Likelihood | white-box | [paper](https://arxiv.org/abs/2310.17623) |
-| min-prob | Model | LLM-based method | white-box | [paper](https://arxiv.org/abs/2310.16789) |
-| cdd | Model | Likelihood | black-box | [paper](https://arxiv.org/abs/2402.15938) |
-| ts-guessing-question-based | Model | Completion | black-box | [paper](https://arxiv.org/abs/2311.09783) |
-| ts-guessing-question-multichoice | Model | Completion | black-box | [paper](https://arxiv.org/abs/2311.09783) |
+| guided-prompting | Model | Prompt Engineering/LLM-based | Black-box | [paper](https://arxiv.org/abs/2308.08493) |
+| sharded-likelihood | Model | Model Likelihood | White-box | [paper](https://arxiv.org/abs/2310.17623) |
+| min-prob | Model | Model Likelihood | White-box | [paper](https://arxiv.org/abs/2310.16789) |
+| cdd | Model | Model Memorization/Model Likelihood | Black-box | [paper](https://arxiv.org/abs/2402.15938) |
+| ts-guessing-question-based | Model | Model Completion | Black-box | [paper](https://arxiv.org/abs/2311.09783) |
+| ts-guessing-question-multichoice | Model | Model Completion | Black-box | [paper](https://arxiv.org/abs/2311.09783) |
 
 ## vLLM
 The following methods require to launch a vLLM instance which will handle model inference:
