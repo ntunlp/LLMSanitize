@@ -36,14 +36,14 @@ Notably, we use the following important libraries:
 ## Supported Methods
 The repository supports all the following contamination detection methods:
 
-| **Method** | **Use Case** | **Method Type** | **Model access** | **Reference** |  
+| **Method** | **Use Case** | **Method Type** | **Model Access** | **Reference** |  
 |---|---|---|---|------------------------------------------------------|
-| gpt-2 | Data | String Matching | _ | Language Models are Unsupervised Multitask Learners ([link](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)) |
-| gpt-3 | Data | String Matching | _ | [paper](https://arxiv.org/abs/2005.14165) |
-| exact | Data | String Matching | _ | [paper](https://arxiv.org/abs/2104.08758) |
-| palm | Data | String Matching | _ | [paper](https://arxiv.org/abs/2204.02311) |
-| gpt-4 | Data | String Matching | _ | [paper](https://arxiv.org/abs/2303.08774) |
-| platypus | Data | Embeddings Similarity | _ | [paper](https://arxiv.org/abs/2308.07317) |
+| gpt-2 | Data | String Matching | _ | Language Models are Unsupervised Multitask Learners ([link](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)), Section 4 |
+| gpt-3 | Data | String Matching | _ | Language Models are Few-Shot Learners ([link](https://arxiv.org/abs/2005.14165)), Section 4 |
+| exact | Data | String Matching | _ | Documenting Large Webtext Corpora: A Case Study on the Colossal Clean Crawled Corpus ([link](https://arxiv.org/abs/2104.08758)), Section 4.2 |
+| palm | Data | String Matching | _ | PaLM: Scaling Language Modeling with Pathways ([link](https://arxiv.org/abs/2204.02311)), Sections 7-8 |
+| gpt-4 | Data | String Matching | _ | GPT-4 Technical Report ([link](https://arxiv.org/abs/2303.08774)), Appendix C |
+| platypus | Data | Embeddings Similarity | _ | Platypus: Quick, Cheap, and Powerful Refinement of LLMs ([link](https://arxiv.org/abs/2308.07317)), Section 2.3 |
 |---|---|---|---|---|
 | guided-prompting | Model | Prompt Engineering/LLM-based | Black-box | [paper](https://arxiv.org/abs/2308.08493) |
 | sharded-likelihood | Model | Model Likelihood | White-box | [paper](https://arxiv.org/abs/2310.17623) |
