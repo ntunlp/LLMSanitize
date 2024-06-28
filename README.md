@@ -44,7 +44,7 @@ The repository supports all the following contamination detection methods:
 | palm | Data | String Matching | _ | PaLM: Scaling Language Modeling with Pathways ([link](https://arxiv.org/abs/2204.02311)), Sections 7-8 |
 | gpt-4 | Data | String Matching | _ | GPT-4 Technical Report ([link](https://arxiv.org/abs/2303.08774)), Appendix C |
 | platypus | Data | Embeddings Similarity | _ | Platypus: Quick, Cheap, and Powerful Refinement of LLMs ([link](https://arxiv.org/abs/2308.07317)), Section 2.3 |
-|---|---|---|---|---|
+|---|---|---|--------|---|
 | guided-prompting | Model | Prompt Engineering/LLM-based | Black-box | Time Travel in LLMs: Tracing Data Contamination in Large Language Models ([link](https://arxiv.org/abs/2308.08493)) |
 | sharded-likelihood | Model | Model Likelihood | White-box | Proving Test Set Contamination in Black-box Language Models ([link](https://arxiv.org/abs/2310.17623)) |
 | min-prob | Model | Model Likelihood | White-box | Detecting Pretraining Data from Large Language Models ([link](https://arxiv.org/abs/2310.16789)) |
