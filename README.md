@@ -34,7 +34,7 @@ Notably, we use the following important libraries:
 - vllm 0.3.3
 
 ## Supported Methods
-So far we support the following contamination detection methods:
+The repository supports all the following contamination detection methods:
 
 | **Method** | **Use Case** | **Short description** | **White-box access?** | **Reference** |  
 |-----------------------------------------------------------|---|---|---|---|
@@ -44,6 +44,9 @@ So far we support the following contamination detection methods:
 | palm | Data | String matching | _ | [paper](https://arxiv.org/abs/2204.02311) |
 | gpt-4 | Data | String matching | _ | [paper](https://arxiv.org/abs/2303.08774) |
 | platypus | Data | Embeddings similarity | _ | [paper](https://arxiv.org/abs/2308.07317) |
+
+---
+
 | guided-prompting | Model | Likelihood | no | [paper](https://arxiv.org/abs/2308.08493) |
 | sharded-likelihood | Model | Likelihood | yes | [paper](https://arxiv.org/abs/2310.17623) |
 | min-prob | Model | LLM-based method | yes | [paper](https://arxiv.org/abs/2310.16789) |
