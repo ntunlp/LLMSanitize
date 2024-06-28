@@ -48,9 +48,9 @@ The repository supports all the following contamination detection methods:
 | guided-prompting | Model | Prompt Engineering/LLM-based | Black-box | Time Travel in LLMs: Tracing Data Contamination in Large Language Models ([link](https://arxiv.org/abs/2308.08493)) |
 | sharded-likelihood | Model | Model Likelihood | White-box | Proving Test Set Contamination in Black-box Language Models ([link](https://arxiv.org/abs/2310.17623)) |
 | min-prob | Model | Model Likelihood | White-box | Detecting Pretraining Data from Large Language Models ([link](https://arxiv.org/abs/2310.16789)) |
-| cdd | Model | Model Memorization/Model Likelihood | Black-box | Generalization or Memorization: Data Contamination and Trustworthy Evaluation for Large Language Models ([link](https://arxiv.org/abs/2402.15938)) |
-| ts-guessing-question-based | Model | Model Completion | Black-box | Investigating Data Contamination in Modern Benchmarks for Large Language Models ([link](https://arxiv.org/abs/2311.09783)) |
-| ts-guessing-question-multichoice | Model | Model Completion | Black-box | Investigating Data Contamination in Modern Benchmarks for Large Language Models ([link](https://arxiv.org/abs/2311.09783)) |
+| cdd | Model | Model Memorization/Model Likelihood | Black-box | Generalization or Memorization: Data Contamination and Trustworthy Evaluation for Large Language Models ([link](https://arxiv.org/abs/2402.15938)), Section 3.2 |
+| ts-guessing-question-based | Model | Model Completion | Black-box | Investigating Data Contamination in Modern Benchmarks for Large Language Models ([link](https://arxiv.org/abs/2311.09783)), Section 3.2.1 |
+| ts-guessing-question-multichoice | Model | Model Completion | Black-box | Investigating Data Contamination in Modern Benchmarks for Large Language Models ([link](https://arxiv.org/abs/2311.09783)), Section 3.2.2 |
 
 ## vLLM
 The following methods require to launch a vLLM instance which will handle model inference:
