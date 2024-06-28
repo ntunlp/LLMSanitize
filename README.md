@@ -37,7 +37,7 @@ Notably, we use the following important libraries:
 The repository supports all the following contamination detection methods:
 
 | **Method** | **Use Case** | **Short description** | **White-box access?** | **Reference** |  
-|-----------------------------------------------------------|---|---|---|---|
+|---|---|---|---|---|
 | gpt-2 | Data | String matching | _ | [paper](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) |
 | gpt-3 | Data | String matching | _ | [paper](https://arxiv.org/abs/2005.14165) |
 | exact | Data | String matching | _ | [paper](https://arxiv.org/abs/2104.08758) |
