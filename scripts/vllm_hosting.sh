@@ -8,8 +8,8 @@ export CUDA_VISIBLE_DEVICES=0,1;
 server_type=vllm.entrypoints.openai.api_server
 
 python -m $server_type \
-    --model /home/fangkai/pretrained-models/Llama-2-7b-chat-hf \
-    --tokenizer /home/fangkai/pretrained-models/Llama-2-7b-chat-hf \
+    --model /data/fangkai/pretrained-models/Llama-2-7b-chat-hf \
+    --tokenizer /data/fangkai/pretrained-models/Llama-2-7b-chat-hf \
     --gpu-memory-utilization=0.9 \
     --max-num-seqs=200 \
     --disable-log-requests \
