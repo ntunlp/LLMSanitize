@@ -6,7 +6,7 @@ The library has been designed and tested with **Python 3.9** and **CUDA 11.8**.
 
 First make sure you have CUDA 11.8 installed, and create a conda environment with Python 3.9: 
 ```bash
-conda create -name llmsanitize python=3.9
+conda create --name llmsanitize python=3.9
 ```
 
 Next activate the environment:
