@@ -24,14 +24,7 @@ Alternatively, you can combine the three steps above by just running:
 sh scripts/install.sh
 ```
 
-Notably, we use the following important libraries:
-- datasets 2.17.1
-- einops 0.7.0
-- huggingface-hub 0.20.3
-- openai 0.27.8
-- torch 2.1.2
-- transformers 4.38.0
-- vllm 0.3.3
+Notably, we use **vllm 0.3.3**.  
 
 ## Supported Methods
 The repository supports all the following contamination detection methods:
