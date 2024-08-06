@@ -66,12 +66,12 @@ To run contamination detection, follow the multiple test scripts in scripts/test
 
 For instance, to run sharded-likelihood on Hellaswag with Llama-2-7B:
 ```bash
-sh llmsanitizescripts/tests/model/sharded-likelihood/test_hellaswag.sh -m <path_to_your_llama-2-7b_folder> 
+sh llmsanitizescripts/tests/closed_data/sharded-likelihood/test_hellaswag.sh -m <path_to_your_llama-2-7b_folder> 
 ```
 
 To run a method using vLLM like guided-prompting for instance, the only difference is to pass the port number as argument:
 ```bash
-sh llmsanitizescripts/tests/model/guided-prompting/test_hellaswag.sh -m <path_to_your_llama-2-7b_folder> -p <port_number_from_your_vllm_instance>
+sh llmsanitizescripts/tests/closed_data/guided-prompting/test_hellaswag.sh -m <path_to_your_llama-2-7b_folder> -p <port_number_from_your_vllm_instance>
 ```
 
 

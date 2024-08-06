@@ -29,13 +29,13 @@ def parse_args():
     parser.add_argument("--eval_set_key", type=str, default="test",
                         help="Eval set key")
     parser.add_argument("--text_key", type=str, default="ctx",
-                        help="The key to text content of each data instance.")
+                        help="The key to text content of each open_data instance.")
     parser.add_argument("--text_keys", type=str, default="",
-                        help="The keys of text contents to be combined of each data instance - pass them as key_1+key_2.")
+                        help="The keys of text contents to be combined of each open_data instance - pass them as key_1+key_2.")
     parser.add_argument("--label_key", type=str, default="label",
-                        help="The key to label content of each data instance.")
+                        help="The key to label content of each open_data instance.")
     parser.add_argument("--n_eval_data_points", type=int, default=100,
-                        help="The number of (val/test) data points to keep for evaluating contamination")
+                        help="The number of (val/test) open_data points to keep for evaluating contamination")
     parser.add_argument("--stream_train_data", default=False, action="store_true",
                         help="Whether to stream over the training dataset (helpful for large datasets like C4)")
     parser.add_argument("--stream_buffer_size", type = int, default=1000,
@@ -49,10 +49,10 @@ def parse_args():
     parser.add_argument("--output_dir", type=str, default="output",
                         help="Output directory for logging if necessary")
 
-    # Method specific-arguments for model contamination detection
+    # Method specific-arguments for closed_data contamination detection
     ### Shared across methods
     parser.add_argument("--local_model_path", default=None,
-                        help="Local model path for non-service based inference.")
+                        help="Local closed_data path for non-service based inference.")
     parser.add_argument("--local_tokenizer_path", default=None,
                         help="Local tokenizer path for non-service based inference.")
     parser.add_argument("--model_name", type=str, default=None,
@@ -60,7 +60,7 @@ def parse_args():
     parser.add_argument("--openai_creds_key_file", type=str, default=None,
                         help="OpenAI API key file path.")
     parser.add_argument("--local_port", type=str, default=None,
-                        help="Local model port for service based inference.")
+                        help="Local closed_data port for service based inference.")
     parser.add_argument("--local_api_type", type=str, default="post",
                         choices=['post', 'openai'], 
                         help="The type of local API call")
@@ -100,7 +100,7 @@ def parse_args():
     parser.add_argument("--minkprob_openai_creds_key_file_2", type=str, default=None,
                         help="OpenAI API key file path.")
     parser.add_argument("--minkprob_local_port_2", type=str, default=None,
-                        help="Local model port for service based inference.")  # TODO: If there is better way to initialize two models.
+                        help="Local closed_data port for service based inference.")  # TODO: If there is better way to initialize two models.
     parser.add_argument("--minkprob_model_name_2", type=str, default=None,
                         help="Model name for service based inference.")
     parser.add_argument("--minkprob_do_infer", action='store_true', default=False,
@@ -159,10 +159,10 @@ def main():
     if args.sharded_likelihood_mp_prawn:
         mp.set_start_method('spawn')
 
-    # assign data / model contamination checker based on method type
-    if supported_methods[args.method]['type'] == 'data':
+    # assign open_data / closed_data contamination checker based on method type
+    if supported_methods[args.method]['type'] == 'open_data':
         ContaminationChecker = DataContaminationChecker
-    elif supported_methods[args.method]['type'] == 'model':
+    elif supported_methods[args.method]['type'] == 'closed_data':
         ContaminationChecker = ModelContaminationChecker
 
     contamination_checker = ContaminationChecker(args)

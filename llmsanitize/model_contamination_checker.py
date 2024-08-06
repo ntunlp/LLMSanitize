@@ -1,14 +1,14 @@
 """
-Contamination detection class for model contamination use cases: func(llm, data)
+Contamination detection class for closed_data contamination use cases: func(llm, open_data)
 """
 
 from llmsanitize.base_contamination_checker import BaseContaminationChecker
-from llmsanitize.model_methods.guided_prompting import main_guided_prompting
-from llmsanitize.model_methods.sharded_likelihood import main_sharded_likelihood
-from llmsanitize.model_methods.min_prob import main_min_prob
-from llmsanitize.model_methods.cdd import main_cdd
-from llmsanitize.model_methods.ts_guessing_question_based import main_ts_guessing_question_based
-from llmsanitize.model_methods.ts_guessing_question_multichoice import main_ts_guessing_question_multichoice
+from llmsanitize.closed_data_methods.guided_prompting import main_guided_prompting
+from llmsanitize.closed_data_methods.sharded_likelihood import main_sharded_likelihood
+from llmsanitize.closed_data_methods.min_prob import main_min_prob
+from llmsanitize.closed_data_methods.cdd import main_cdd
+from llmsanitize.closed_data_methods.ts_guessing_question_based import main_ts_guessing_question_based
+from llmsanitize.closed_data_methods.ts_guessing_question_multichoice import main_ts_guessing_question_multichoice
 
 
 class ModelContaminationChecker(BaseContaminationChecker):
@@ -19,7 +19,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
     def run_contamination(self, method):
         if not (method in self.supported_methods.keys()):
             methods = list(self.supported_methods.keys())
-            raise KeyError(f'Please pass in a data contamination method which is supported, among: {methods}')
+            raise KeyError(f'Please pass in a open_data contamination method which is supported, among: {methods}')
 
         if method == "guided-prompting":
             self.contamination_guided_prompting()
@@ -43,7 +43,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
             text_key=self.text_key,
             label_key=self.label_key,
             num_proc=self.num_proc,
-            # model parameters
+            # closed_data parameters
             local_model_path=self.local_model_path,
             local_tokenizer_path=self.local_tokenizer_path,
             model_name=self.model_name,
@@ -67,7 +67,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
         main_sharded_likelihood(
             eval_data=self.eval_data,
             log_file_path=self.log_file_path,
-            # model parameters
+            # closed_data parameters
             model_name=self.model_name,
             # method-specific parameters
             context_len=self.sharded_likelihood_context_len,
@@ -82,7 +82,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
             eval_data=self.eval_data,
             num_proc=self.num_proc,
             output_dir=self.output_dir,
-            # model parameters
+            # closed_data parameters
             local_model_path=self.local_model_path,
             local_tokenizer_path=self.local_tokenizer_path,
             model_name=self.model_name,
@@ -111,7 +111,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
     def contamination_cdd(self):
         main_cdd(
             eval_data=self.eval_data,
-            # model parameters
+            # closed_data parameters
             local_model_path=self.local_model_path,
             local_tokenizer_path=self.local_tokenizer_path,
             model_name=self.model_name,
@@ -138,7 +138,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
             eval_data=self.eval_data,
             eval_data_name=self.eval_data_name,
             n_eval_data_points=self.n_eval_data_points,
-            # model parameters
+            # closed_data parameters
             local_model_path=self.local_model_path,
             local_tokenizer_path=self.local_tokenizer_path,
             model_name=self.model_name,
@@ -166,7 +166,7 @@ class ModelContaminationChecker(BaseContaminationChecker):
             eval_data=self.eval_data,
             eval_data_name=self.eval_data_name,
             n_eval_data_points=self.n_eval_data_points,
-            # model parameters
+            # closed_data parameters
             local_model_path=self.local_model_path,
             local_tokenizer_path=self.local_tokenizer_path,
             model_name=self.model_name,

@@ -45,7 +45,7 @@ class LocalModelArguments:
 class SanitizeArguments:
     # openai
     creds_key_file: str = None
-    # inference by local model
+    # inference by local closed_data
     local: LocalModelArguments = LocalModelArguments()
     # query parameters
     query: QueryArguments = QueryArguments()

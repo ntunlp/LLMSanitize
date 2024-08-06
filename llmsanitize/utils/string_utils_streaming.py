@@ -60,7 +60,7 @@ def build_substrings_streaming(data, string_size, text_processing_method=None, t
 
     return set_strings
 
-# collect embeddings from specified model
+# collect embeddings from specified closed_data
 def build_embeddings_streaming(data, model, bufer_size=10000, text_processing_method=None, text_key=None, text_keys=None):
     set_embeddings = []
     current_texts = []

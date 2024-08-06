@@ -14,7 +14,7 @@ logger = get_child_logger("vllm_utils")
 
 def initialize_post(config):
     """
-    initialize openai lib to query local served model
+    initialize openai lib to query local served closed_data
     """
     openai.api_key = "EMPTY"
     openai.api_base = f"http://127.0.0.1:{config.local.port}/v1"
@@ -50,7 +50,7 @@ def post_http_request(
 
 def query_llm_post(config, prompt):
     # Prepare the prompt to the chat template
-    # If you are using a chat model, then we recommend using the template.
+    # If you are using a chat closed_data, then we recommend using the template.
     if not(config.query.no_chat_template):
         prompt = [{"role": "user", "content": prompt}]
         tokenizer = config.local.tokenizer

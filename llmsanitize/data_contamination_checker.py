@@ -1,14 +1,14 @@
 """
-Contamination detection class for data contamination use cases: func(data1, data2)
+Contamination detection class for open_data contamination use cases: func(data1, data2)
 """
 
 from llmsanitize.base_contamination_checker import BaseContaminationChecker
-from llmsanitize.data_methods.gpt2 import main_gpt2
-from llmsanitize.data_methods.gpt3 import main_gpt3
-from llmsanitize.data_methods.exact import main_exact
-from llmsanitize.data_methods.palm import main_palm
-from llmsanitize.data_methods.gpt4 import main_gpt4
-from llmsanitize.data_methods.platypus import main_platypus
+from llmsanitize.open_data_methods.gpt2 import main_gpt2
+from llmsanitize.open_data_methods.gpt3 import main_gpt3
+from llmsanitize.open_data_methods.exact import main_exact
+from llmsanitize.open_data_methods.palm import main_palm
+from llmsanitize.open_data_methods.gpt4 import main_gpt4
+from llmsanitize.open_data_methods.platypus import main_platypus
 
 
 class DataContaminationChecker(BaseContaminationChecker):
@@ -18,7 +18,7 @@ class DataContaminationChecker(BaseContaminationChecker):
     def run_contamination(self, method):
         if not(method in self.supported_methods.keys()):
             methods = list(self.supported_methods.keys())
-            raise KeyError(f'Please pass in a data contamination method which is supported, among: {methods}')
+            raise KeyError(f'Please pass in a open_data contamination method which is supported, among: {methods}')
 
         if method == "gpt-2":
             self.contamination_gpt2()
