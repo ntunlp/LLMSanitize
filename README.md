@@ -57,7 +57,7 @@ The following methods require to launch a vLLM instance which will handle model 
 
 To launch the instance, first run the following command in a terminal: 
 ```bash
-sh scripts/vllm_hosting.sh
+sh llmsanitize/scripts/vllm_hosting.sh
 ```
 You are required to specify a **port number** and **model name** in this shell script. 
 
