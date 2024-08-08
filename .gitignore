@@ -6,3 +6,5 @@ log_dir/*
 output_dir/*
 openai_creds/*
 output/*
+build/*
+dist/*
