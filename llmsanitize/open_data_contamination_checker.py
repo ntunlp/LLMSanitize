@@ -11,9 +11,9 @@ from llmsanitize.open_data_methods.gpt4 import main_gpt4
 from llmsanitize.open_data_methods.platypus import main_platypus
 
 
-class DataContaminationChecker(BaseContaminationChecker):
+class OpenDataContaminationChecker(BaseContaminationChecker):
     def __init__(self, args):
-        super(DataContaminationChecker, self).__init__(args)
+        super(OpenDataContaminationChecker, self).__init__(args)
 
     def run_contamination(self, method):
         if not(method in self.supported_methods.keys()):

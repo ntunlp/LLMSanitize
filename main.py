@@ -5,7 +5,7 @@ Main file, to be called to run contamination
 import multiprocessing as mp
 import argparse
 from datetime import datetime
-from llmsanitize import DataContaminationChecker, ModelContaminationChecker
+from llmsanitize import BaseContaminationChecker, OpenDataContaminationChecker, ClosedDataContaminationChecker
 from llmsanitize.configs.config import supported_methods
 from llmsanitize.utils.utils import seed_everything
 from llmsanitize.utils.logger import setting_logger
@@ -160,10 +160,11 @@ def main():
         mp.set_start_method('spawn')
 
     # assign open_data / closed_data contamination checker based on method type
+    ContaminationChecker = BaseContaminationChecker
     if supported_methods[args.method]['type'] == 'open_data':
-        ContaminationChecker = DataContaminationChecker
+        ContaminationChecker = OpenDataContaminationChecker
     elif supported_methods[args.method]['type'] == 'closed_data':
-        ContaminationChecker = ModelContaminationChecker
+        ContaminationChecker = ClosedDataContaminationChecker
 
     contamination_checker = ContaminationChecker(args)
     contamination_checker.run_contamination(args.method)

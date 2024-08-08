@@ -11,9 +11,9 @@ from llmsanitize.closed_data_methods.ts_guessing_question_based import main_ts_g
 from llmsanitize.closed_data_methods.ts_guessing_question_multichoice import main_ts_guessing_question_multichoice
 
 
-class ModelContaminationChecker(BaseContaminationChecker):
+class ClosedDataContaminationChecker(BaseContaminationChecker):
     def __init__(self, args):
-        super(ModelContaminationChecker, self).__init__(args)
+        super(ClosedDataContaminationChecker, self).__init__(args)
         self.args = args
 
     def run_contamination(self, method):
